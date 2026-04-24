@@ -145,6 +145,25 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .edittext-input{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);border-radius:4px;padding:4px 6px;font-size:12px;background:rgba(255,255,255,.55);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;}
 .edittext-input:focus{border-color:var(--orange);background:white;}
 .edittext-input[readonly]{background:transparent;border-color:transparent;cursor:default;}
+/* SATIR DÜZENLEME MODALİ */
+#rowEditOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10002;display:none;align-items:center;justify-content:center;}
+#rowEditOverlay.open{display:flex;}
+.rowedit-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.rowedit-head{padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.rowedit-head h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);}
+.rowedit-body{padding:20px 24px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.rowedit-field{display:flex;flex-direction:column;gap:5px;}
+.rowedit-field.full{grid-column:1/-1;}
+.rowedit-field label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;font-family:'Barlow Condensed',sans-serif;}
+.rowedit-field input,.rowedit-field select{background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.rowedit-field input:focus,.rowedit-field select:focus{border-color:var(--orange);}
+.rowedit-field select option{background:#1a1a1a;}
+.rowedit-footer{padding:16px 24px;border-top:1px solid #2a2a2a;display:flex;gap:8px;justify-content:flex-end;}
+.rowedit-save{padding:10px 24px;background:var(--orange);color:#1a1a1a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;cursor:pointer;}
+.rowedit-save:hover{opacity:.85;}
+.rowedit-cancel{padding:10px 18px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;}
+.btn-edit-row{background:rgba(90,160,255,.12);border:1px solid rgba(90,160,255,.25);color:#7ab8f5;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:3px;}
+.btn-edit-row:hover{background:rgba(90,160,255,.25);}
 .onay-select{width:100%;min-width:110px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.5);font-family:'Barlow',sans-serif;font-size:11.5px;font-weight:500;cursor:pointer;outline:none;color:inherit;padding:5px 4px;border-radius:4px;}
 .onay-select:focus{background:white;}.onay-select option{color:#1a1a1a;background:white;}
 
@@ -937,6 +956,77 @@ async function arsivPDFIndir(ad) {
 }
 window.arsivPDFIndir = arsivPDFIndir;
 
+function closeArsiv() { document.getElementById('arsivOverlay').classList.remove('open'); }
+window.closeArsiv = closeArsiv;
+
+// ── SATIR DÜZENLEME MODALİ ──
+let _rowEditSi = null, _rowEditRi = null;
+
+function toISODate(val) {
+  if (!val) return '';
+  if (val.includes('-') && val.length === 10) return val;
+  const p = val.split('.');
+  if (p.length === 3) return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  return '';
+}
+function fromISODate(val) {
+  if (!val) return '';
+  const p = val.split('-');
+  if (p.length === 3) return `${p[2]}.${p[1]}.${p[0]}`;
+  return val;
+}
+
+function openRowEdit(si, ri) {
+  _rowEditSi = si; _rowEditRi = ri;
+  const r = state[si].rows[ri];
+  document.getElementById('re_ad').value      = r['3'] || '';
+  document.getElementById('re_kod').value     = r['2'] || '';
+  document.getElementById('re_olcu').value    = r['4'] || '';
+  document.getElementById('re_adet').value    = r['5'] || '';
+  document.getElementById('re_makine').value  = r._makine || r.makine || '';
+  document.getElementById('re_yetkili').value = r._yetkili || r.yetkili || '';
+  document.getElementById('re_gelis').value   = r._gelis || r.gelis || '';
+  document.getElementById('re_gelen').value   = r._gelenAdet || r.gelenAdet || '';
+  document.getElementById('re_sip').value     = toISODate(r._sipTarihi || r.sipTarihi || '');
+  document.getElementById('re_termin').value  = toISODate(r._terminTarihi || r.terminTarihi || '');
+  document.getElementById('re_teslim').value  = toISODate(r._teslimTarihi || r.teslimTarihi || '');
+  document.getElementById('rowEditOverlay').classList.add('open');
+}
+window.openRowEdit = openRowEdit;
+
+function closeRowEdit() {
+  document.getElementById('rowEditOverlay').classList.remove('open');
+  _rowEditSi = null; _rowEditRi = null;
+}
+window.closeRowEdit = closeRowEdit;
+
+function closeRowEditOutside(e) {
+  if (e.target === document.getElementById('rowEditOverlay')) closeRowEdit();
+}
+window.closeRowEditOutside = closeRowEditOutside;
+
+async function saveRowEdit() {
+  if (_rowEditSi === null) return;
+  const si = _rowEditSi, ri = _rowEditRi;
+  const r = state[si].rows[ri];
+  r['3']           = document.getElementById('re_ad').value.trim();
+  r['2']           = document.getElementById('re_kod').value.trim();
+  r['4']           = document.getElementById('re_olcu').value.trim();
+  r['5']           = document.getElementById('re_adet').value.trim();
+  r._makine        = document.getElementById('re_makine').value;
+  r._yetkili       = document.getElementById('re_yetkili').value;
+  r._gelis         = document.getElementById('re_gelis').value;
+  r._gelenAdet     = document.getElementById('re_gelen').value;
+  r._sipTarihi     = fromISODate(document.getElementById('re_sip').value);
+  r._terminTarihi  = fromISODate(document.getElementById('re_termin').value);
+  r._teslimTarihi  = fromISODate(document.getElementById('re_teslim').value);
+  if (isOnline) await apiUpdate(si, ri, 0, '');
+  rebuildTable(si);
+  updateStats(si);
+  closeRowEdit();
+}
+window.saveRowEdit = saveRowEdit;
+
 function grupPDFIndir(si, groupRi, groupAd) {
   // Grup başlığından sonraki satırları topla (bir sonraki gruba kadar)
   const rows = state[si].rows;
@@ -1055,7 +1145,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v2.9</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.0</span>
     </div>
     <button id="adminBtn" class="hbtn hbtn-admin" onclick="openAdminPanel()" style="display:none;border:1px solid #2a5a8e;">
       🔑 KULLANICI YÖNETİMİ
@@ -1090,6 +1180,74 @@ function showAdminMsg(text, type) {
         <button class="parti-new-btn" onclick="yeniPartiBaslat()">🚀 YENİ PARTİ BAŞLAT</button>
         <div class="parti-msg" id="partiMsg"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SATIR DÜZENLEME MODALİ ══ -->
+<div id="rowEditOverlay" onclick="closeRowEditOutside(event)">
+  <div class="rowedit-box">
+    <div class="rowedit-head">
+      <h3>✏️ SATIR DÜZENLE</h3>
+      <button class="admin-close" onclick="closeRowEdit()">✕</button>
+    </div>
+    <div class="rowedit-body">
+      <div class="rowedit-field full">
+        <label>Malzeme Adı</label>
+        <input type="text" id="re_ad" placeholder="Malzeme adı"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Malzeme Kodu</label>
+        <input type="text" id="re_kod" placeholder="Kod"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Ölçüler</label>
+        <input type="text" id="re_olcu" placeholder="Ölçü"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Adet</label>
+        <input type="text" id="re_adet" placeholder="Adet"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Makine Sayısı</label>
+        <input type="number" id="re_makine" placeholder="0" min="0"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Yetkili Onayi</label>
+        <select id="re_yetkili">
+          <option value="">—</option>
+          <option value="Onaylandı">Onaylandı</option>
+          <option value="Beklemede">Beklemede</option>
+        </select>
+      </div>
+      <div class="rowedit-field">
+        <label>Geliş Onayi</label>
+        <select id="re_gelis">
+          <option value="">—</option>
+          <option value="Onaylandı">Onaylandı</option>
+          <option value="Onay Bekleniyor">Onay Bekleniyor</option>
+        </select>
+      </div>
+      <div class="rowedit-field">
+        <label>Gelen Adet</label>
+        <input type="number" id="re_gelen" placeholder="0" min="0"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Sipariş Tarihi</label>
+        <input type="date" id="re_sip"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Termin Tarihi</label>
+        <input type="date" id="re_termin"/>
+      </div>
+      <div class="rowedit-field">
+        <label>Teslim Tarihi</label>
+        <input type="date" id="re_teslim"/>
+      </div>
+    </div>
+    <div class="rowedit-footer">
+      <button class="rowedit-cancel" onclick="closeRowEdit()">İptal</button>
+      <button class="rowedit-save" onclick="saveRowEdit()">💾 Kaydet</button>
     </div>
   </div>
 </div>
@@ -5125,10 +5283,10 @@ function makeRow(si, ri, row) {
     const ger = (!isNaN(a) && !isNaN(m)) ? a * m : '';
     const cols = [
       { type:'text', cls:'col-no', val: row._rowNo || '' },
-      { type:'edittext', cls:'col-code', val: row['2'] || '', field:'2', col:2 },
-      { type:'edittext', val: row['3'] || '', field:'3', col:3 },
-      { type:'edittext', val: row['4'] || '', field:'4', col:4 },
-      { type:'edittext', val: row['5'] || '', field:'5', col:5, inputType:'text' },
+      { type:'text', cls:'col-code', val: row['2'] || '' },
+      { type:'text', val: row['3'] || '' },
+      { type:'text', val: row['4'] || '' },
+      { type:'text', val: row['5'] || '' },
       { type:'makine' },
       { type:'gereken', val: ger },
       { type:'yetkili' },
@@ -5220,10 +5378,16 @@ function makeRow(si, ri, row) {
       } else if (c.type === 'actions') {
         const div = document.createElement('div');
         div.className = 'row-actions';
+        // Düzenleme butonu — viewer hariç herkese
+        if (window._currentRole !== 'viewer') {
+          const editBtn = document.createElement('button');
+          editBtn.className = 'btn-edit-row'; editBtn.title = 'Satırı Düzenle'; editBtn.textContent = '✏️';
+          editBtn.onclick = () => openRowEdit(si, ri);
+          div.appendChild(editBtn);
+        }
         const del = document.createElement('button');
         del.className = 'btn-del'; del.title = 'Satırı Sil'; del.textContent = '✕';
         del.onclick = () => deleteRow(si, ri);
-        // Viewer ve operator satır silemez
         if (window._currentRole === 'viewer' || window._currentRole === 'operator') {
           del.style.display = 'none';
         }
