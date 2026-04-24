@@ -190,6 +190,12 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .grup-edit-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;}
 .grup-edit-item input{flex:1;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
 .grup-edit-item input:focus{border-color:var(--orange);}
+/* SİPARİŞ & TESLİM PANELİ */
+.sp-durum{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+.sp-durum-yeni{background:rgba(150,150,150,.15);color:#888;border:1px solid rgba(150,150,150,.3);}
+.sp-durum-onay{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
+.sp-durum-teslim{background:rgba(146,208,80,.15);color:#92d050;border:1px solid rgba(146,208,80,.3);}
+
 /* GRUP AÇ/KAPA */
 .group-row td{cursor:pointer;user-select:none;}
 .group-toggle{margin-right:8px;font-size:11px;display:inline-block;transition:transform .15s;}
@@ -1005,7 +1011,323 @@ window.arsivPDFIndir = arsivPDFIndir;
 function closeArsiv() { document.getElementById('arsivOverlay').classList.remove('open'); }
 window.closeArsiv = closeArsiv;
 
-// ── GRUP AÇ/KAPA ──
+// ── SİPARİŞ FORMU PANELİ ──
+function getSiparisIdx() { return SHEETS.findIndex(s => s.type === 'siparis'); }
+function getTeslimIdx() { return SHEETS.findIndex(s => s.type === 'teslim'); }
+
+function getSiparisRows() { const si = getSiparisIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; }
+function getTeslimRows() { const si = getTeslimIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; }
+
+function buildSiparisPanel(si) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'padding:16px;';
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">ÜRETİMDEN SATIN ALMAYA SİPARİŞ FORMU</div>
+      ${window._currentRole !== 'viewer' ? `<button onclick="openSiparisEkle()" class="add-row-btn">＋ Yeni Sipariş</button>` : ''}
+    </div>
+    <div class="table-wrap">
+      <table id="siparisTable">
+        <thead><tr>
+          <th>NO</th><th>ÜRÜN KODU</th><th>ÜRÜN ADI</th><th>SİP. ADEDİ</th>
+          <th>SİPARİŞİ OLUŞTURAN</th><th>YETKİLİ ONAYI</th>
+          <th>OLUŞTURMA TARİHİ</th><th>TERMİN TARİHİ</th>
+          <th>GELİŞ TARİHİ</th><th>GELİŞ ONAYI</th>
+          <th>GELEN ADET</th><th>SİPARİŞ DURUMU</th><th>NOTLAR</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
+        </tr></thead>
+        <tbody id="siparisBody"></tbody>
+      </table>
+    </div>`;
+  setTimeout(() => renderSiparisRows(), 0);
+  return wrap;
+}
+
+function renderSiparisRows() {
+  const tbody = document.getElementById('siparisBody');
+  if (!tbody) return;
+  const rows = getSiparisRows();
+  tbody.innerHTML = '';
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz sipariş yok — ＋ Yeni Sipariş ile ekleyin</td></tr>';
+    return;
+  }
+  rows.forEach((r, i) => {
+    // Teslim kayıttan geliş bilgisini çek
+    const teslimRows = getTeslimRows();
+    const teslim = teslimRows.find(t => t.urunKodu === r.urunKodu);
+    const gelisAdet = teslim ? teslim.gelisAdet : '';
+    const gelisTarihi = teslim ? teslim.gelisTarihi : '';
+    const teslimAlan = teslim ? teslim.teslimAlan : '';
+
+    // Durum hesapla
+    let durum = 'Yeni Sipariş';
+    let durumClass = 'sp-durum-yeni';
+    if (teslim || r.gelisOnay === 'Onaylandı') { durum = 'Teslim Alındı'; durumClass = 'sp-durum-teslim'; }
+    else if (r.yetkiliOnay === 'Onaylandı') { durum = 'Onay Bekliyor'; durumClass = 'sp-durum-onay'; }
+
+    const tr = document.createElement('tr');
+    tr.className = 'data-row';
+    tr.innerHTML = `
+      <td class="col-no">${i+1}</td>
+      <td style="font-family:'Barlow Condensed',sans-serif;font-weight:600;">${r.urunKodu||''}</td>
+      <td>${r.urunAdi||''}</td>
+      <td style="text-align:center;">${r.sipAdet||''}</td>
+      <td>${r.olusturan||''}</td>
+      <td>${mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => { rows[i].yetkiliOnay=v; saveSiparisRows(); renderSiparisRows(); })}</td>
+      <td style="font-size:11px;color:#888;">${r.olusturmaTarihi||''}</td>
+      <td style="font-size:11px;${isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':''}">${r.terminTarihi||''}</td>
+      <td style="font-size:11px;color:#888;">${gelisTarihi}</td>
+      <td>${mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })}</td>
+      <td style="text-align:center;">${gelisAdet}</td>
+      <td><span class="sp-durum ${durumClass}">${durum}</span></td>
+      <td style="font-size:11px;color:#888;">${r.notlar||''}</td>
+      <td style="font-size:11px;color:#888;">${teslimAlan}</td>
+      <td>
+        <div class="row-actions">
+          ${window._currentRole !== 'viewer' ? `<button class="btn-edit-row" onclick="editSiparis(${i})" title="Düzenle">✏️</button>` : ''}
+          ${(window._currentRole === 'admin' || window._currentRole === 'manager') ? `<button class="btn-del" onclick="deleteSiparis(${i})">✕</button>` : ''}
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function mkSiparisSelect(opts, val, onChange) {
+  const sel = document.createElement('select');
+  sel.className = 'onay-select';
+  if (window._currentRole === 'viewer') sel.disabled = true;
+  opts.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o || '—';
+    if (o === val) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => onChange(sel.value);
+  return sel;
+}
+
+function isTerminYakin(tarih) {
+  if (!tarih) return false;
+  const d = parseTerminDate(tarih);
+  if (!d) return false;
+  const bugun = new Date(); bugun.setHours(0,0,0,0);
+  const fark = (d - bugun) / (1000*60*60*24);
+  return fark >= 0 && fark <= 7;
+}
+
+async function saveSiparisRows() {
+  const si = getSiparisIdx();
+  if (isOnline) await fbSaveAll();
+}
+
+function openSiparisEkle(editIdx = -1) {
+  const rows = getSiparisRows();
+  const r = editIdx >= 0 ? rows[editIdx] : {};
+  const bugun = new Date().toLocaleDateString('tr-TR');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'siparisModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10005;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);">
+      <div style="padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);">${editIdx>=0?'✏️ SİPARİŞ DÜZENLE':'➕ YENİ SİPARİŞ'}</h3>
+        <button onclick="document.getElementById('siparisModal').remove()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <div style="padding:20px 24px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        ${siparisField('Ürün Kodu','sp_kod',r.urunKodu||'')}
+        ${siparisField('Ürün Adı','sp_ad',r.urunAdi||'','full')}
+        ${siparisField('Sipariş Adedi','sp_adet',r.sipAdet||'')}
+        ${siparisField('Sipariş Oluşturan','sp_olusturan',r.olusturan||'')}
+        ${siparisField('Oluşturma Tarihi','sp_otar',r.olusturmaTarihi||bugun)}
+        ${siparisField('Termin Tarihi','sp_termin',r.terminTarihi||'')}
+        ${siparisField('Notlar','sp_notlar',r.notlar||'','full')}
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid #2a2a2a;display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('siparisModal').remove()" style="padding:10px 18px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;">İptal</button>
+        <button onclick="saveSiparis(${editIdx})" style="padding:10px 24px;background:var(--orange);color:#1a1a1a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">💾 Kaydet</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+window.openSiparisEkle = openSiparisEkle;
+
+function siparisField(label, id, val, cls='') {
+  return `<div style="${cls==='full'?'grid-column:1/-1;':''}">
+    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">${label}</label>
+    <input id="${id}" type="text" value="${(val||'').replace(/"/g,'&quot;')}" style="width:100%;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='#3a3a3a'"/>
+  </div>`;
+}
+
+async function saveSiparis(editIdx) {
+  const si = getSiparisIdx();
+  const rows = getSiparisRows();
+  const yeni = {
+    urunKodu: document.getElementById('sp_kod').value.trim(),
+    urunAdi: document.getElementById('sp_ad').value.trim(),
+    sipAdet: document.getElementById('sp_adet').value.trim(),
+    olusturan: document.getElementById('sp_olusturan').value.trim(),
+    olusturmaTarihi: document.getElementById('sp_otar').value.trim(),
+    terminTarihi: document.getElementById('sp_termin').value.trim(),
+    notlar: document.getElementById('sp_notlar').value.trim(),
+    yetkiliOnay: editIdx >= 0 ? (rows[editIdx].yetkiliOnay||'') : '',
+    gelisOnay: editIdx >= 0 ? (rows[editIdx].gelisOnay||'') : '',
+  };
+  if (editIdx >= 0) rows[editIdx] = yeni;
+  else rows.push(yeni);
+  SHEETS[si].rows = rows;
+  document.getElementById('siparisModal').remove();
+  if (isOnline) await fbSaveAll();
+  renderSiparisRows();
+  updateTerminBadge();
+}
+window.saveSiparis = saveSiparis;
+
+function editSiparis(idx) { openSiparisEkle(idx); }
+window.editSiparis = editSiparis;
+
+async function deleteSiparis(idx) {
+  if (!confirm('Bu siparişi silmek istediğinizden emin misiniz?')) return;
+  const si = getSiparisIdx();
+  SHEETS[si].rows.splice(idx, 1);
+  if (isOnline) await fbSaveAll();
+  renderSiparisRows();
+  updateTerminBadge();
+}
+window.deleteSiparis = deleteSiparis;
+
+// ── TESLİM KAYIT PANELİ ──
+function buildTeslimPanel(si) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'padding:16px;';
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">ORİMAK MAKİNE — TESLİM KAYIT FORMU</div>
+      ${window._currentRole !== 'viewer' ? `<button onclick="openTeslimEkle()" class="add-row-btn">＋ Yeni Kayıt</button>` : ''}
+    </div>
+    <div class="table-wrap">
+      <table id="teslimTable">
+        <thead><tr>
+          <th>NO</th><th>ÜRÜN KODU</th><th>ÜRÜN ADI</th>
+          <th>GELİŞ ADEDİ</th><th>GELİŞ TARİHİ</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
+        </tr></thead>
+        <tbody id="teslimBody"></tbody>
+      </table>
+    </div>`;
+  setTimeout(() => renderTeslimRows(), 0);
+  return wrap;
+}
+
+function renderTeslimRows() {
+  const tbody = document.getElementById('teslimBody');
+  if (!tbody) return;
+  const rows = getTeslimRows();
+  tbody.innerHTML = '';
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz teslim kaydı yok</td></tr>';
+    return;
+  }
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'data-row';
+    tr.innerHTML = `
+      <td class="col-no">${i+1}</td>
+      <td style="font-family:'Barlow Condensed',sans-serif;font-weight:600;">${r.urunKodu||''}</td>
+      <td>${r.urunAdi||''}</td>
+      <td style="text-align:center;">${r.gelisAdet||''}</td>
+      <td style="font-size:11px;">${r.gelisTarihi||''}</td>
+      <td>${r.teslimAlan||''}</td>
+      <td>
+        <div class="row-actions">
+          ${window._currentRole !== 'viewer' ? `<button class="btn-edit-row" onclick="editTeslim(${i})" title="Düzenle">✏️</button>` : ''}
+          ${(window._currentRole === 'admin' || window._currentRole === 'manager') ? `<button class="btn-del" onclick="deleteTeslim(${i})">✕</button>` : ''}
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function openTeslimEkle(editIdx = -1) {
+  const rows = getTeslimRows();
+  const r = editIdx >= 0 ? rows[editIdx] : {};
+  const siparisRows = getSiparisRows();
+  const bugun = new Date().toLocaleDateString('tr-TR');
+  const options = siparisRows.map(s => `<option value="${s.urunKodu}" ${s.urunKodu===r.urunKodu?'selected':''}>${s.urunKodu} — ${s.urunAdi}</option>`).join('');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'teslimModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10005;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #92d050;border-radius:12px;width:480px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.8);">
+      <div style="padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:#92d050;">${editIdx>=0?'✏️ KAYIT DÜZENLE':'➕ YENİ TESLİM KAYDI'}</h3>
+        <button onclick="document.getElementById('teslimModal').remove()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">Ürün Kodu (Siparişten Seç)</label>
+          <select id="tk_kod" style="width:100%;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:9px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;" onchange="autoFillTeslimAdi()">
+            <option value="">— Manuel giriş —</option>
+            ${options}
+          </select>
+        </div>
+        ${siparisField('Ürün Kodu (Manuel)','tk_kod_m',r.urunKodu||'')}
+        ${siparisField('Geliş Adedi','tk_adet',r.gelisAdet||'')}
+        ${siparisField('Geliş Tarihi','tk_tarih',r.gelisTarihi||bugun)}
+        ${siparisField('Teslim Alan','tk_alan',r.teslimAlan||'')}
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid #2a2a2a;display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('teslimModal').remove()" style="padding:10px 18px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;">İptal</button>
+        <button onclick="saveTeslim(${editIdx})" style="padding:10px 24px;background:#92d050;color:#1a1a1a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">💾 Kaydet</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+window.openTeslimEkle = openTeslimEkle;
+
+function autoFillTeslimAdi() {
+  const sel = document.getElementById('tk_kod');
+  if (sel && sel.value) document.getElementById('tk_kod_m').value = sel.value;
+}
+window.autoFillTeslimAdi = autoFillTeslimAdi;
+
+async function saveTeslim(editIdx) {
+  const si = getTeslimIdx();
+  const rows = getTeslimRows();
+  const kodSel = document.getElementById('tk_kod').value;
+  const kodM = document.getElementById('tk_kod_m').value.trim();
+  const kod = kodSel || kodM;
+  const siparisRows = getSiparisRows();
+  const siparis = siparisRows.find(s => s.urunKodu === kod);
+  const yeni = {
+    urunKodu: kod,
+    urunAdi: siparis ? siparis.urunAdi : kod,
+    gelisAdet: document.getElementById('tk_adet').value.trim(),
+    gelisTarihi: document.getElementById('tk_tarih').value.trim(),
+    teslimAlan: document.getElementById('tk_alan').value.trim(),
+  };
+  if (editIdx >= 0) rows[editIdx] = yeni;
+  else rows.push(yeni);
+  SHEETS[si].rows = rows;
+  document.getElementById('teslimModal').remove();
+  if (isOnline) await fbSaveAll();
+  renderTeslimRows();
+  renderSiparisRows(); // Sipariş formunu da güncelle
+}
+window.saveTeslim = saveTeslim;
+
+function editTeslim(idx) { openTeslimEkle(idx); }
+window.editTeslim = editTeslim;
+
+async function deleteTeslim(idx) {
+  if (!confirm('Bu kaydı silmek istediğinizden emin misiniz?')) return;
+  const si = getTeslimIdx();
+  SHEETS[si].rows.splice(idx, 1);
+  if (isOnline) await fbSaveAll();
+  renderTeslimRows();
+  renderSiparisRows();
+}
+window.deleteTeslim = deleteTeslim;
 const _collapsedGroups = {}; // { 'si_ri': true }
 
 function toggleGroup(si, ri) {
@@ -1430,7 +1752,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.4</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.5</span>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
       🔔
@@ -5434,6 +5756,16 @@ const OFFLINE_DATA = [
         "4": "1080 x İndiksiyonlu Mil x 4 ADET"
       }
     ]
+  },
+  {
+    "name": "SİPARİŞ FORMU",
+    "type": "siparis",
+    "rows": []
+  },
+  {
+    "name": "TESLİM KAYIT",
+    "type": "teslim",
+    "rows": []
   }
 ];
 
@@ -5527,6 +5859,7 @@ function buildState() {
   state = {};
   SHEETS.forEach((sheet, si) => {
     state[si] = { rows: [], name: sheet.name };
+    if (sheet.type === 'siparis' || sheet.type === 'teslim') return; // özel sayfalar
     let no = 0;
     sheet.rows.forEach(row => {
       const g = isGroupRow(row);
@@ -5612,6 +5945,19 @@ function buildSheets() {
     const panel = document.createElement('div');
     panel.className = 'sheet-panel' + (si === 0 ? ' active' : '');
     panel.id = 'panel-' + si;
+
+    // Özel sayfa tipleri
+    if (sheet.type === 'siparis') {
+      panel.appendChild(buildSiparisPanel(si));
+      container.appendChild(panel);
+      return;
+    }
+    if (sheet.type === 'teslim') {
+      panel.appendChild(buildTeslimPanel(si));
+      container.appendChild(panel);
+      return;
+    }
+
     const wrap = document.createElement('div');
     wrap.className = 'table-wrap';
     const table = document.createElement('table');
@@ -5628,6 +5974,7 @@ function buildSheets() {
     wrap.appendChild(table);
     panel.appendChild(wrap);
     container.appendChild(panel);
+  });
   });
 }
 
