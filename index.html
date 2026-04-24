@@ -150,6 +150,28 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .edittext-input{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);border-radius:4px;padding:4px 6px;font-size:12px;background:rgba(255,255,255,.55);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;}
 .edittext-input:focus{border-color:var(--orange);background:white;}
 .edittext-input[readonly]{background:transparent;border-color:transparent;cursor:default;}
+/* TERMİN PANELİ */
+#terminOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
+#terminOverlay.open{display:flex;}
+.termin-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #c00;border-radius:12px;width:680px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.termin-head{padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.termin-head h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;color:#ff6666;}
+.termin-sub{padding:10px 24px 0;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#666;letter-spacing:1px;}
+.termin-body{padding:16px 24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px;}
+.termin-item{background:#222;border:1px solid #2e2e2e;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s;}
+.termin-item:hover{border-color:#444;}
+.termin-item.kirmizi{border-left:3px solid #c00;}
+.termin-item.sari{border-left:3px solid #f5a623;}
+.termin-item.yesil{border-left:3px solid #92d050;}
+.termin-gun{min-width:52px;text-align:center;}
+.termin-gun .gun-sayi{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;line-height:1;}
+.termin-gun .gun-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:#666;margin-top:2px;}
+.termin-info{flex:1;}
+.termin-ad{font-weight:600;font-size:13px;color:#eee;margin-bottom:3px;}
+.termin-meta{font-size:11px;color:#666;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;}
+.termin-tarih{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#888;text-align:right;}
+.termin-empty{text-align:center;padding:40px;color:#555;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;font-size:13px;}
+
 /* SİTE YÖNETİMİ */
 #siteYonetimOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
 #siteYonetimOverlay.open{display:flex;}
@@ -1116,6 +1138,107 @@ window.saveGrupAdi = saveGrupAdi;
 
 // openAdminPanel artık yukarıda tanımlı
 
+// ── TERMİN YAKLAŞAN ÜRÜNLER ──
+function parseTerminDate(val) {
+  if (!val) return null;
+  if (val.includes('-')) { const d = new Date(val); return isNaN(d) ? null : d; }
+  if (val.includes('.')) {
+    const [g,a,y] = val.split('.');
+    const d = new Date(`${y}-${a.padStart(2,'0')}-${g.padStart(2,'0')}`);
+    return isNaN(d) ? null : d;
+  }
+  return null;
+}
+
+function getTerminUrunler(gunSinir = 7) {
+  const bugun = new Date(); bugun.setHours(0,0,0,0);
+  const sinir = new Date(bugun); sinir.setDate(sinir.getDate() + gunSinir);
+  const sonuclar = [];
+
+  SHEETS.forEach((sheet, si) => {
+    if (!state[si]) return;
+    let grupAdi = '';
+    state[si].rows.forEach((r, ri) => {
+      if (r._group) { grupAdi = r['2'] || ''; return; }
+      const termin = parseTerminDate(r._terminTarihi || r.terminTarihi || '');
+      if (!termin) return;
+      // Teslim edilmişse atla
+      const gelis = r._gelis || r.gelis || '';
+      if (gelis === 'Onaylandı') return;
+      // Termin bugün veya 7 gün içinde
+      if (termin >= bugun && termin <= sinir) {
+        const kalan = Math.round((termin - bugun) / (1000*60*60*24));
+        sonuclar.push({ si, ri, ad: r['3'] || r['2'] || '?', sayfa: sheet.name, grup: grupAdi, termin, kalan });
+      }
+      // Geçmiş termin (gecikmiş)
+      if (termin < bugun) {
+        const gecen = Math.round((bugun - termin) / (1000*60*60*24));
+        sonuclar.push({ si, ri, ad: r['3'] || r['2'] || '?', sayfa: sheet.name, grup: grupAdi, termin, kalan: -gecen, gecikti: true });
+      }
+    });
+  });
+
+  sonuclar.sort((a, b) => a.kalan - b.kalan);
+  return sonuclar;
+}
+
+function updateTerminBadge() {
+  const urunler = getTerminUrunler(7);
+  const badge = document.getElementById('terminBadge');
+  if (urunler.length > 0) {
+    badge.style.display = 'block';
+    badge.textContent = urunler.length > 99 ? '99+' : urunler.length;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function openTerminPanel() {
+  document.getElementById('terminOverlay').classList.add('open');
+  const urunler = getTerminUrunler(7);
+  const bugun = new Date(); bugun.setHours(0,0,0,0);
+  const sub = document.getElementById('terminSub');
+  const body = document.getElementById('terminBody');
+  sub.textContent = `Bugün: ${bugun.toLocaleDateString('tr-TR')} — Önümüzdeki 7 gün ve gecikmeli ürünler`;
+  body.innerHTML = '';
+
+  if (urunler.length === 0) {
+    body.innerHTML = '<div class="termin-empty">✅ Önümüzdeki 7 günde termini yaklaşan ürün yok</div>';
+    return;
+  }
+
+  urunler.forEach(u => {
+    const div = document.createElement('div');
+    const cls = u.gecikti ? 'kirmizi' : u.kalan <= 2 ? 'kirmizi' : u.kalan <= 4 ? 'sari' : 'yesil';
+    div.className = `termin-item ${cls}`;
+    div.onclick = () => { closeTerminPanel(); switchTab(u.si); };
+
+    const gunRenk = u.gecikti ? '#ff6666' : u.kalan <= 2 ? '#ff8888' : u.kalan <= 4 ? '#f5a623' : '#92d050';
+    const gunText = u.gecikti ? `+${Math.abs(u.kalan)}` : u.kalan === 0 ? 'BUGÜN' : `${u.kalan}`;
+    const gunLabel = u.gecikti ? 'GÜN GECİKTİ' : u.kalan === 0 ? '' : 'GÜN KALDI';
+
+    div.innerHTML = `
+      <div class="termin-gun">
+        <div class="gun-sayi" style="color:${gunRenk}">${gunText}</div>
+        <div class="gun-label">${gunLabel}</div>
+      </div>
+      <div class="termin-info">
+        <div class="termin-ad">${u.ad}</div>
+        <div class="termin-meta">📄 ${u.sayfa} ${u.grup ? '› ' + u.grup : ''}</div>
+      </div>
+      <div class="termin-tarih">${u.termin.toLocaleDateString('tr-TR')}</div>
+    `;
+    body.appendChild(div);
+  });
+}
+window.openTerminPanel = openTerminPanel;
+
+function closeTerminPanel() { document.getElementById('terminOverlay').classList.remove('open'); }
+window.closeTerminPanel = closeTerminPanel;
+
+function closeTerminOutside(e) { if (e.target === document.getElementById('terminOverlay')) closeTerminPanel(); }
+window.closeTerminOutside = closeTerminOutside;
+
 // ── SATIR DÜZENLEME MODALİ ──
 let _rowEditSi = null, _rowEditRi = null;
 
@@ -1302,8 +1425,12 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.2</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.3</span>
     </div>
+    <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
+      🔔
+      <span id="terminBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#c00;color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 5px;font-family:'Barlow Condensed',sans-serif;min-width:16px;text-align:center;"></span>
+    </button>
     <button id="siteYonetimBtn" class="hbtn hbtn-admin" onclick="openSiteYonetim()" style="display:none;border:1px solid #2a5a8e;">
       ⚙️ SİTE YÖNETİMİ
     </button>
@@ -1317,6 +1444,18 @@ function showAdminMsg(text, type) {
     <button class="hbtn hbtn-dark" onclick="window.print()">🖨 Yazdır</button>
   </div>
 </header>
+
+<!-- ══ TERMİN YAKLAŞAN ÜRÜNLER ══ -->
+<div id="terminOverlay" onclick="closeTerminOutside(event)">
+  <div class="termin-box">
+    <div class="termin-head">
+      <h2>🔔 TERMİN YAKLAŞAN ÜRÜNLER</h2>
+      <button class="admin-close" onclick="closeTerminPanel()">✕</button>
+    </div>
+    <div class="termin-sub" id="terminSub"></div>
+    <div class="termin-body" id="terminBody"></div>
+  </div>
+</div>
 
 <!-- ══ SİTE YÖNETİMİ ══ -->
 <div id="siteYonetimOverlay" onclick="closeSiteYonetimOutside(event)">
@@ -5408,6 +5547,7 @@ function buildUI() {
     document.getElementById(id).style.display = '';
   });
   updateStats(0);
+  setTimeout(updateTerminBadge, 500);
   document.getElementById('searchInput').addEventListener('input', e => filterTable(e.target.value));
 }
 
