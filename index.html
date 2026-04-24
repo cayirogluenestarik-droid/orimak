@@ -712,7 +712,6 @@ async function openArsiv() {
     const arsivler = partiler.filter(p => p.ad !== aktifAd);
     sel.innerHTML = '';
     if (arsivler.length === 0) {
-      sel.innerHTML = '<option>Arşivde veri yok</option>';
       document.getElementById('arsivContent').innerHTML = '<div style="color:#555;padding:40px;text-align:center;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">ARŞİVDE VERİ BULUNMUYOR</div>';
       return;
     }
@@ -721,46 +720,106 @@ async function openArsiv() {
       o.value = p.ad; o.textContent = `${p.ad} (${p.tarih})`;
       sel.appendChild(o);
     });
-    sel.onchange = () => arsivGoster(sel.value);
-    arsivGoster(arsivler[0].ad);
+    sel.onchange = () => arsivPDFHazirla(sel.value);
+    arsivPDFHazirla(arsivler[0].ad);
   } catch(e) {
     sel.innerHTML = '<option>Hata</option>';
   }
 }
 window.openArsiv = openArsiv;
 
-async function arsivGoster(ad) {
+async function arsivPDFHazirla(ad) {
   const content = document.getElementById('arsivContent');
-  content.innerHTML = '<div style="color:#666;padding:20px;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">⟳ YÜKLENIYOR...</div>';
+  content.innerHTML = `
+    <div style="text-align:center;padding:60px 40px;">
+      <div style="font-size:56px;margin-bottom:20px;">📦</div>
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:700;color:#eee;letter-spacing:2px;margin-bottom:10px;">${ad}</div>
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;margin-bottom:36px;">Tüm sayfalar PDF olarak indirilecek</div>
+      <button id="pdfIndir" style="background:linear-gradient(135deg,#b35a00,#8a4400);color:#fff;border:none;border-radius:8px;padding:16px 40px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;cursor:pointer;">
+        📥 PDF OLARAK İNDİR
+      </button>
+    </div>`;
+  document.getElementById('pdfIndir').onclick = async function() {
+    this.textContent = '⟳ Hazırlanıyor...';
+    this.disabled = true;
+    await arsivPDFIndir(ad);
+    this.textContent = '📥 PDF OLARAK İNDİR';
+    this.disabled = false;
+  };
+}
+}
+
+async function arsivPDFIndir(ad) {
   try {
     const snap = await window._fsGetDoc(window._fsDoc(window._db, 'arsiv', ad.replace(/[^a-zA-Z0-9]/g, '_')));
-    if (!snap.exists()) { content.innerHTML = '<div style="color:#f77;padding:20px;">Veri bulunamadı.</div>'; return; }
+    if (!snap.exists()) { alert('Arşiv verisi bulunamadı.'); return; }
     const sheets = JSON.parse(snap.data().data);
-    content.innerHTML = `<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#888;letter-spacing:1px;margin-bottom:16px;">📦 ${ad} — Salt okunur arşiv görünümü</div>`;
+    const tarih = new Date().toLocaleDateString('tr-TR');
+
+    // PDF içeriği oluştur
+    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>${ad} - Arşiv</title>
+    <style>
+      body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:20px;}
+      h1{font-size:16px;margin-bottom:4px;}
+      .subtitle{font-size:11px;color:#666;margin-bottom:20px;}
+      h2{font-size:13px;background:#f0f0f0;padding:6px 10px;margin:20px 0 6px 0;border-left:4px solid #e07000;}
+      table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+      th{background:#e07000;color:#fff;padding:5px 8px;text-align:left;font-size:10px;}
+      td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px;}
+      tr:nth-child(even){background:#f9f9f9;}
+      .onay{color:#2a7a2a;font-weight:bold;}
+      .bekle{color:#b35a00;font-weight:bold;}
+      .bos{color:#999;}
+      @media print{body{margin:10px;}}
+    </style></head><body>
+    <h1>ORİMAK MAKİNA — ${ad}</h1>
+    <div class="subtitle">Arşiv Raporu — ${tarih}</div>`;
+
     sheets.forEach(sheet => {
-      const rows = sheet.rows.filter(r => r['3'] || r['2']);
+      const rows = sheet.rows.filter(r => !r._group && (r['3'] || r['2']));
       if (rows.length === 0) return;
-      const tbl = document.createElement('div');
-      tbl.style.cssText = 'margin-bottom:24px;';
-      tbl.innerHTML = `<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:8px;padding:8px 12px;background:#1e1e1e;border-radius:6px;">${sheet.name}</div>`;
-      const table = document.createElement('table');
-      table.style.cssText = 'width:100%;border-collapse:collapse;font-size:12px;';
-      table.innerHTML = `<thead><tr style="background:#1a1a1a;"><th style="padding:8px;text-align:left;color:#888;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;">MALZEME</th><th style="padding:8px;color:#888;font-family:Barlow Condensed,sans-serif;">ADET</th><th style="padding:8px;color:#888;font-family:Barlow Condensed,sans-serif;">YETKİLİ ONAYI</th><th style="padding:8px;color:#888;font-family:Barlow Condensed,sans-serif;">GELİŞ ONAYI</th><th style="padding:8px;color:#888;font-family:Barlow Condensed,sans-serif;">GELEN ADET</th></tr></thead>`;
-      const tbody = document.createElement('tbody');
-      rows.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.style.cssText = 'border-bottom:1px solid #222;';
-        tr.innerHTML = `<td style="padding:8px;color:#ccc;">${r['3']||r['2']||''}</td><td style="padding:8px;text-align:center;color:#aaa;">${r['5']||''}</td><td style="padding:8px;text-align:center;color:#aaa;">${r.yetkili||'—'}</td><td style="padding:8px;text-align:center;color:#aaa;">${r.gelis||'—'}</td><td style="padding:8px;text-align:center;color:#aaa;">${r.gelenAdet||'—'}</td>`;
-        tbody.appendChild(tr);
+      html += `<h2>${sheet.name}</h2>
+      <table><thead><tr>
+        <th>#</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
+        <th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
+        <th>MAKİNE</th><th>SİP. TARİH</th><th>TERMİN</th>
+      </tr></thead><tbody>`;
+      rows.forEach((r, i) => {
+        const yetkili = r.yetkili || '';
+        const gelis = r.gelis || '';
+        const yetkiliClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : 'bos';
+        const gelisClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : 'bos';
+        html += `<tr>
+          <td>${i+1}</td>
+          <td>${r['3']||r['2']||''}</td>
+          <td>${r['4']||''}</td>
+          <td>${r['5']||''}</td>
+          <td class="${yetkiliClass}">${yetkili||'—'}</td>
+          <td class="${gelisClass}">${gelis||'—'}</td>
+          <td>${r.gelenAdet||'—'}</td>
+          <td>${r.makine||'—'}</td>
+          <td>${r.sipTarihi||'—'}</td>
+          <td>${r.terminTarihi||'—'}</td>
+        </tr>`;
       });
-      table.appendChild(tbody);
-      tbl.appendChild(table);
-      content.appendChild(tbl);
+      html += `</tbody></table>`;
     });
+
+    html += `</body></html>`;
+
+    // Yeni pencerede aç ve yazdır
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 500);
+
   } catch(e) {
-    content.innerHTML = '<div style="color:#f77;padding:20px;">Hata: ' + e.message + '</div>';
+    alert('Hata: ' + e.message);
   }
 }
+window.arsivPDFIndir = arsivPDFIndir;
 
 function closeArsiv() { document.getElementById('arsivOverlay').classList.remove('open'); }
 window.closeArsiv = closeArsiv;
@@ -829,10 +888,12 @@ function showAdminMsg(text, type) {
 <div id="arsivOverlay">
   <div class="arsiv-header">
     <h2>📁 ARŞİV</h2>
-    <select id="arsivSelect" style="background:#222;border:1px solid #444;border-radius:5px;padding:7px 12px;color:#eee;font-family:'Barlow Condensed',sans-serif;font-size:13px;outline:none;margin-right:10px;"></select>
+    <select id="arsivSelect" style="background:#222;border:1px solid #444;border-radius:5px;padding:7px 12px;color:#eee;font-family:'Barlow Condensed',sans-serif;font-size:13px;outline:none;margin-right:10px;min-width:200px;"></select>
     <button class="hbtn hbtn-dark" onclick="closeArsiv()">✕ Kapat</button>
   </div>
-  <div class="arsiv-content" id="arsivContent"></div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;">
+    <div id="arsivContent"></div>
+  </div>
 </div>
 
 
