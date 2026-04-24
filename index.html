@@ -847,48 +847,68 @@ function grupPDFIndir(si, groupRi, groupAd) {
   let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${groupAd}</title>
   <style>
-    @page{size:A4 landscape;margin:10mm;}
-    body{font-family:Arial,sans-serif;font-size:9px;color:#000;margin:0;}
-    h1{font-size:13px;margin-bottom:2px;}
-    .sub{font-size:9px;color:#666;margin-bottom:4px;}
-    h2{font-size:11px;background:#f0f0f0;padding:4px 8px;margin:10px 0 4px 0;border-left:3px solid #e07000;}
+    @page{size:A4 landscape;margin:8mm;}
+    body{font-family:Arial,sans-serif;font-size:8px;color:#000;margin:0;}
+    h1{font-size:12px;margin-bottom:2px;}
+    .sub{font-size:8px;color:#666;margin-bottom:6px;}
+    h2{font-size:10px;background:#f0f0f0;padding:3px 6px;margin:8px 0 3px 0;border-left:3px solid #e07000;}
     table{width:100%;border-collapse:collapse;table-layout:fixed;}
-    th{background:#e07000;color:#fff;padding:4px 5px;text-align:left;font-size:8px;word-wrap:break-word;}
-    td{padding:4px 5px;border-bottom:1px solid #eee;font-size:8px;word-wrap:break-word;}
+    th{background:#e07000;color:#fff;padding:3px 4px;text-align:left;font-size:7px;word-wrap:break-word;overflow:hidden;}
+    td{padding:3px 4px;border-bottom:1px solid #eee;font-size:7px;word-wrap:break-word;overflow:hidden;}
     tr:nth-child(even){background:#f9f9f9;}
     .onay{color:#2a7a2a;font-weight:bold;}
     .bekle{color:#b35a00;font-weight:bold;}
-    col.c1{width:3%;}col.c2{width:22%;}col.c3{width:8%;}col.c4{width:5%;}
-    col.c5{width:10%;}col.c6{width:10%;}col.c7{width:7%;}
-    col.c8{width:7%;}col.c9{width:9%;}col.c10{width:9%;}
+    colgroup col:nth-child(1){width:2%;}
+    colgroup col:nth-child(2){width:7%;}
+    colgroup col:nth-child(3){width:18%;}
+    colgroup col:nth-child(4){width:7%;}
+    colgroup col:nth-child(5){width:4%;}
+    colgroup col:nth-child(6){width:5%;}
+    colgroup col:nth-child(7){width:5%;}
+    colgroup col:nth-child(8){width:9%;}
+    colgroup col:nth-child(9){width:8%;}
+    colgroup col:nth-child(10){width:8%;}
+    colgroup col:nth-child(11){width:8%;}
+    colgroup col:nth-child(12){width:5%;}
+    colgroup col:nth-child(13){width:9%;}
+    colgroup col:nth-child(14){width:5%;}
   </style></head><body>
   <h1>ORİMAK — ${sheetName}</h1>
   <div class="sub">${groupAd} | ${tarih}</div>
   <h2>${groupAd}</h2>
-  <table>
-  <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"><col class="c6"><col class="c7"><col class="c8"><col class="c9"><col class="c10"></colgroup>
+  <table><colgroup>${Array(14).fill('<col>').join('')}</colgroup>
   <thead><tr>
-    <th>#</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
-    <th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
-    <th>MAKİNE</th><th>SİP. TARİH</th><th>TERMİN</th>
+    <th>NO</th><th>MALZEME KODU</th><th>MALZEME ADI</th><th>ÖLÇÜLER</th><th>ADET</th>
+    <th>MAKİNE</th><th>GEREKEN</th><th>YETKİLİ ONAYI</th>
+    <th>SİP. TARİH</th><th>TERMİN</th><th>TESLİM</th>
+    <th>GELEN</th><th>GELİŞ ONAYI</th><th>DURUM</th>
   </tr></thead><tbody>`;
 
   grupRows.forEach((r, i) => {
     const yetkili = r._yetkili || r.yetkili || '';
     const gelis = r._gelis || r.gelis || '';
+    const makine = r._makine || r.makine || '';
+    const gelenAdet = r._gelenAdet || r.gelenAdet || '';
+    const adet = parseFloat(r['5']) || '';
+    const mak = parseFloat(makine) || '';
+    const gereken = (adet && mak) ? adet * mak : '—';
     const yClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : '';
     const gClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : '';
     html += `<tr>
-      <td>${i+1}</td>
-      <td>${r['3']||r['2']||''}</td>
+      <td>${r._rowNo || i+1}</td>
+      <td>${r['2']||''}</td>
+      <td>${r['3']||''}</td>
       <td>${r['4']||''}</td>
       <td>${r['5']||''}</td>
+      <td>${makine||'—'}</td>
+      <td>${gereken}</td>
       <td class="${yClass}">${yetkili||'—'}</td>
-      <td class="${gClass}">${gelis||'—'}</td>
-      <td>${r._gelenAdet||r.gelenAdet||'—'}</td>
-      <td>${r._makine||r.makine||'—'}</td>
       <td>${r._sipTarihi||r.sipTarihi||'—'}</td>
       <td>${r._terminTarihi||r.terminTarihi||'—'}</td>
+      <td>${r._teslimTarihi||r.teslimTarihi||'—'}</td>
+      <td>${gelenAdet||'—'}</td>
+      <td class="${gClass}">${gelis||'—'}</td>
+      <td>${r['14']||'—'}</td>
     </tr>`;
   });
 
