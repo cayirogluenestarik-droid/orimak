@@ -150,6 +150,30 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .edittext-input{width:100%;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);border-radius:4px;padding:4px 6px;font-size:12px;background:rgba(255,255,255,.55);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;}
 .edittext-input:focus{border-color:var(--orange);background:white;}
 .edittext-input[readonly]{background:transparent;border-color:transparent;cursor:default;}
+/* SİTE YÖNETİMİ */
+#siteYonetimOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
+#siteYonetimOverlay.open{display:flex;}
+.siteynt-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:720px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.siteynt-head{padding:16px 24px 0;border-bottom:1px solid #2a2a2a;display:flex;align-items:flex-end;justify-content:space-between;}
+.siteynt-tab{background:none;border:none;border-bottom:2px solid transparent;color:#666;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:10px 18px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.siteynt-tab:hover{color:#aaa;}
+.siteynt-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.siteynt-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.sy-panel{display:none;}
+.sy-panel.active{display:block;}
+.sayfa-edit-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;}
+.sayfa-edit-item input{flex:1;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
+.sayfa-edit-item input:focus{border-color:var(--orange);}
+.sayfa-save-btn{padding:7px 14px;background:var(--orange);color:#1a1a1a;border:none;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;}
+.grup-edit-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;}
+.grup-edit-item input{flex:1;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
+.grup-edit-item input:focus{border-color:var(--orange);}
+/* GRUP AÇ/KAPA */
+.group-row td{cursor:pointer;user-select:none;}
+.group-toggle{margin-right:8px;font-size:11px;display:inline-block;transition:transform .15s;}
+.group-row.collapsed .group-toggle{transform:rotate(-90deg);}
+tr.group-hidden{display:none !important;}
+
 /* SATIR DÜZENLEME MODALİ */
 #rowEditOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10002;display:none;align-items:center;justify-content:center;}
 #rowEditOverlay.open{display:flex;}
@@ -434,7 +458,7 @@ function onLoggedIn(u) {
   window._currentSayfalar = u.sayfalar || [];
 
   if (role === 'admin') {
-    document.getElementById('adminBtn').style.display = 'inline-flex';
+    document.getElementById('siteYonetimBtn').style.display = 'inline-flex';
     document.getElementById('partiBtn').style.display = 'inline-flex';
     document.getElementById('arsivBtn').style.display = 'inline-flex';
     document.getElementById('versionBadge').style.display = 'inline';
@@ -499,17 +523,12 @@ document.addEventListener('keydown', function(e) {
 })();
 
 // ── ADMIN PANELİ ──
-function openAdminPanel() {
-  document.getElementById('adminOverlay').classList.add('open');
-  document.getElementById('newUser').value = '';
-  document.getElementById('newPass').value = '';
-  document.getElementById('adminMsg').className = 'admin-msg';
-  renderUserList();
-}
+function openAdminPanel() { openSiteYonetim(); }
 window.openAdminPanel = openAdminPanel;
 
 function closeAdminPanel() {
-  document.getElementById('adminOverlay').classList.remove('open');
+  document.getElementById('adminOverlay') && document.getElementById('adminOverlay').classList.remove('open');
+  closeSiteYonetim();
 }
 window.closeAdminPanel = closeAdminPanel;
 
@@ -964,6 +983,139 @@ window.arsivPDFIndir = arsivPDFIndir;
 function closeArsiv() { document.getElementById('arsivOverlay').classList.remove('open'); }
 window.closeArsiv = closeArsiv;
 
+// ── GRUP AÇ/KAPA ──
+const _collapsedGroups = {}; // { 'si_ri': true }
+
+function toggleGroup(si, ri) {
+  const key = `${si}_${ri}`;
+  _collapsedGroups[key] = !_collapsedGroups[key];
+  const tbody = document.getElementById('tbody-' + si);
+  const rows = tbody.querySelectorAll('tr');
+  let inGroup = false, groupTr = null;
+  rows.forEach(tr => {
+    const tRi = parseInt(tr.dataset.ri);
+    if (isNaN(tRi)) return;
+    if (tRi === ri) { groupTr = tr; inGroup = true; return; }
+    if (inGroup) {
+      if (state[si].rows[tRi] && state[si].rows[tRi]._group) { inGroup = false; return; }
+      tr.classList.toggle('group-hidden', !!_collapsedGroups[key]);
+    }
+  });
+  if (groupTr) groupTr.classList.toggle('collapsed', !!_collapsedGroups[key]);
+}
+window.toggleGroup = toggleGroup;
+
+// ── SİTE YÖNETİMİ ──
+let _syActiveTab = 0;
+
+function openSiteYonetim() {
+  document.getElementById('siteYonetimOverlay').classList.add('open');
+  switchSYTab(0);
+}
+window.openSiteYonetim = openSiteYonetim;
+
+function closeSiteYonetim() { document.getElementById('siteYonetimOverlay').classList.remove('open'); }
+window.closeSiteYonetim = closeSiteYonetim;
+
+function closeSiteYonetimOutside(e) {
+  if (e.target === document.getElementById('siteYonetimOverlay')) closeSiteYonetim();
+}
+window.closeSiteYonetimOutside = closeSiteYonetimOutside;
+
+function switchSYTab(idx) {
+  _syActiveTab = idx;
+  [0,1,2].forEach(i => {
+    document.getElementById(`syTab${i}`).classList.toggle('active', i === idx);
+    document.getElementById(`syPanel${i}`).classList.toggle('active', i === idx);
+  });
+  if (idx === 0) renderUserList();
+  if (idx === 1) renderSayfaListesi();
+  if (idx === 2) renderGrupSayfaSel();
+}
+window.switchSYTab = switchSYTab;
+
+// Sayfa listesi düzenleme
+function renderSayfaListesi() {
+  const list = document.getElementById('sayfaListesi');
+  list.innerHTML = '';
+  SHEETS.forEach((sheet, i) => {
+    const div = document.createElement('div');
+    div.className = 'sayfa-edit-item';
+    div.innerHTML = `
+      <span style="font-size:12px;color:#555;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;min-width:24px;">${i+1}.</span>
+      <input type="text" value="${sheet.name}" id="sayfaInput_${i}" placeholder="Sayfa adı"/>
+      <button class="sayfa-save-btn" onclick="saveSayfaAdi(${i})">💾 Kaydet</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+async function saveSayfaAdi(i) {
+  const yeniAd = document.getElementById(`sayfaInput_${i}`).value.trim();
+  if (!yeniAd) return;
+  SHEETS[i].name = yeniAd;
+  if (isOnline) await fbSaveAll();
+  buildTabs();
+  renderSayfaListesi();
+}
+window.saveSayfaAdi = saveSayfaAdi;
+
+// Grup listesi düzenleme
+function renderGrupSayfaSel() {
+  const sel = document.getElementById('grupSayfaSel');
+  sel.innerHTML = '';
+  SHEETS.forEach((s, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = s.name;
+    sel.appendChild(o);
+  });
+  renderGrupListesi();
+}
+
+function renderGrupListesi() {
+  const si = parseInt(document.getElementById('grupSayfaSel').value);
+  const list = document.getElementById('grupListesi');
+  list.innerHTML = '';
+  if (!state[si]) return;
+  const gruplar = state[si].rows.filter(r => r._group);
+  if (gruplar.length === 0) {
+    list.innerHTML = '<div style="color:#555;font-size:12px;padding:8px;">Bu sayfada grup başlığı yok.</div>';
+    return;
+  }
+  gruplar.forEach((g, gi) => {
+    const ri = state[si].rows.indexOf(g);
+    const div = document.createElement('div');
+    div.className = 'grup-edit-item';
+    div.innerHTML = `
+      <span style="font-size:12px;color:#555;font-family:'Barlow Condensed',sans-serif;min-width:24px;">${gi+1}.</span>
+      <input type="text" value="${g['2']||''}" id="grupInput_${si}_${ri}" placeholder="Grup adı"/>
+      <button class="sayfa-save-btn" onclick="saveGrupAdi(${si}, ${ri})">💾 Kaydet</button>
+    `;
+    list.appendChild(div);
+  });
+}
+window.renderGrupListesi = renderGrupListesi;
+
+async function saveGrupAdi(si, ri) {
+  const yeniAd = document.getElementById(`grupInput_${si}_${ri}`).value.trim();
+  if (!yeniAd) return;
+  state[si].rows[ri]['2'] = yeniAd;
+  SHEETS[si].rows = state[si].rows.map(r => {
+    const clean = {};
+    Object.keys(r).forEach(k => { if (!k.startsWith('_')) clean[k] = r[k]; });
+    if (r._yetkili !== undefined) clean.yetkili = r._yetkili;
+    if (r._gelis !== undefined) clean.gelis = r._gelis;
+    if (r._gelenAdet !== undefined) clean.gelenAdet = r._gelenAdet;
+    if (r._makine !== undefined) clean.makine = r._makine;
+    return clean;
+  });
+  if (isOnline) await fbSaveAll();
+  rebuildTable(si);
+}
+window.saveGrupAdi = saveGrupAdi;
+
+// openAdminPanel artık yukarıda tanımlı
+
 // ── SATIR DÜZENLEME MODALİ ──
 let _rowEditSi = null, _rowEditRi = null;
 
@@ -1150,13 +1302,13 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.1</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.2</span>
     </div>
-    <button id="adminBtn" class="hbtn hbtn-admin" onclick="openAdminPanel()" style="display:none;border:1px solid #2a5a8e;">
-      🔑 KULLANICI YÖNETİMİ
+    <button id="siteYonetimBtn" class="hbtn hbtn-admin" onclick="openSiteYonetim()" style="display:none;border:1px solid #2a5a8e;">
+      ⚙️ SİTE YÖNETİMİ
     </button>
     <button id="partiBtn" class="hbtn hbtn-green" onclick="openPartiPanel()" style="display:none">
-      📦 PARTİ YÖNETİMİ
+      📦 PARTİ
     </button>
     <button id="arsivBtn" class="hbtn hbtn-purple" onclick="openArsiv()" style="display:none">
       📁 ARŞİV
@@ -1165,6 +1317,59 @@ function showAdminMsg(text, type) {
     <button class="hbtn hbtn-dark" onclick="window.print()">🖨 Yazdır</button>
   </div>
 </header>
+
+<!-- ══ SİTE YÖNETİMİ ══ -->
+<div id="siteYonetimOverlay" onclick="closeSiteYonetimOutside(event)">
+  <div class="siteynt-box">
+    <div class="siteynt-head">
+      <div style="display:flex;gap:0;">
+        <button class="siteynt-tab active" id="syTab0" onclick="switchSYTab(0)">👤 Kullanıcılar</button>
+        <button class="siteynt-tab" id="syTab1" onclick="switchSYTab(1)">📄 Sayfalar</button>
+        <button class="siteynt-tab" id="syTab2" onclick="switchSYTab(2)">📋 Gruplar</button>
+      </div>
+      <button class="admin-close" onclick="closeSiteYonetim()">✕</button>
+    </div>
+    <div class="siteynt-body">
+      <!-- Kullanıcılar -->
+      <div id="syPanel0" class="sy-panel active">
+        <div class="admin-section-title">Mevcut Kullanıcılar</div>
+        <div class="user-list" id="userList"></div>
+        <div class="admin-section-title">Yeni Kullanıcı Ekle</div>
+        <div class="admin-add-form">
+          <div class="form-row">
+            <div><label>Kullanıcı Adı</label><input type="text" id="newUser" placeholder="kullanici_adi" autocomplete="off"/></div>
+            <div><label>Şifre</label><input type="password" id="newPass" placeholder="şifre" autocomplete="off"/></div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">Rol</label>
+            <select id="newRole" style="width:100%;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;">
+              <option value="viewer">👁 Viewer — Sadece görüntüler</option>
+              <option value="operator" selected>⚙️ Operator — Onay/adet güncelleyebilir</option>
+              <option value="manager">📋 Manager — Satır ekle, parti, arşiv</option>
+              <option value="admin">🔑 Admin — Tam yetki</option>
+            </select>
+          </div>
+          <button class="admin-add-btn" onclick="addUser()">➕ KULLANICI EKLE</button>
+          <div class="admin-msg" id="adminMsg"></div>
+        </div>
+      </div>
+      <!-- Sayfalar -->
+      <div id="syPanel1" class="sy-panel">
+        <div class="admin-section-title">Sayfa İsimleri</div>
+        <div id="sayfaListesi" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <!-- Gruplar -->
+      <div id="syPanel2" class="sy-panel">
+        <div style="margin-bottom:12px;">
+          <label style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">Sayfa Seç</label>
+          <select id="grupSayfaSel" onchange="renderGrupListesi()" style="width:100%;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;margin-bottom:12px;"></select>
+        </div>
+        <div class="admin-section-title">Grup Başlıkları</div>
+        <div id="grupListesi" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ PARTİ YÖNETİMİ ══ -->
 <div id="partiOverlay" onclick="closePartiOutside(event)">
@@ -5289,13 +5494,21 @@ function makeRow(si, ri, row) {
     const td = document.createElement('td');
     td.colSpan = HEADERS.length;
     td.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
-    const span = document.createElement('span');
-    span.textContent = row['2'];
+    const left = document.createElement('span');
+    left.style.cssText = 'display:flex;align-items:center;gap:0;flex:1;';
+    const toggle = document.createElement('span');
+    toggle.className = 'group-toggle'; toggle.textContent = '▼';
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = row['2'];
+    left.appendChild(toggle);
+    left.appendChild(nameSpan);
+    // Tıklayınca aç/kapat
+    td.onclick = () => toggleGroup(si, ri);
     const pdfBtn = document.createElement('button');
     pdfBtn.innerHTML = '📄 PDF';
     pdfBtn.style.cssText = 'background:rgba(227,100,0,.2);border:1px solid rgba(227,100,0,.4);color:#e36400;border-radius:4px;padding:3px 10px;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-left:8px;';
     pdfBtn.onclick = (e) => { e.stopPropagation(); grupPDFIndir(si, ri, row['2']); };
-    td.appendChild(span);
+    td.appendChild(left);
     td.appendChild(pdfBtn);
     tr.appendChild(td);
   } else {
