@@ -188,12 +188,22 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 /* ── ADMIN PANELİ ── */
 #adminOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
 #adminOverlay.open{display:flex;}
-.admin-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.admin-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:700px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
 .admin-head{padding:22px 28px 18px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
 .admin-head h2{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--orange);}
 .admin-close{background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;}
 .admin-close:hover{color:#eee;background:#333;}
 .admin-body{padding:22px 28px;overflow-y:auto;flex:1;}
+.u-edit-btn{background:rgba(90,160,255,.12);border:1px solid rgba(90,160,255,.3);color:#7ab8f5;border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;margin-right:4px;}
+.u-edit-btn:hover{background:rgba(90,160,255,.25);}
+.edit-panel{background:#161616;border:1px solid #2a2a2a;border-left:3px solid var(--orange);border-radius:8px;padding:16px;margin-top:8px;display:none;}
+.edit-panel.open{display:block;}
+.edit-panel-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--orange);margin-bottom:12px;text-transform:uppercase;}
+.sayfa-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;}
+.sayfa-cb{display:flex;align-items:center;gap:7px;padding:6px 8px;background:#222;border:1px solid #2e2e2e;border-radius:5px;font-size:11px;color:#ccc;cursor:pointer;user-select:none;}
+.sayfa-cb input{accent-color:var(--orange);width:14px;height:14px;cursor:pointer;flex-shrink:0;}
+.edit-save-btn{margin-top:12px;padding:8px 20px;background:var(--orange);color:#1a1a1a;border:none;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;}
+.edit-save-btn:hover{opacity:.85;}
 .admin-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:12px;}
 .user-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
 .user-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;}
@@ -360,7 +370,12 @@ async function doLogin() {
   try {
     const rows = await sbGet(`select=*&kullanici_adi=eq.${encodeURIComponent(u)}&sifre=eq.${encodeURIComponent(p)}`);
     if (rows && rows.length > 0) {
-      const match = { user: rows[0].kullanici_adi, role: rows[0].rol, id: rows[0].id };
+      const match = {
+        user: rows[0].kullanici_adi,
+        role: rows[0].rol,
+        id: rows[0].id,
+        sayfalar: rows[0].sayfalar ? rows[0].sayfalar.split(',').map(s => s.trim()).filter(Boolean) : []
+      };
       localStorage.setItem(SESSION_KEY, JSON.stringify(match));
       document.getElementById('loginOverlay').classList.add('hidden');
       err.classList.remove('show');
@@ -387,9 +402,9 @@ function onLoggedIn(u) {
   avatar.textContent = u.user[0].toUpperCase();
   name.textContent = u.user;
 
-  // Rol bazlı buton görünürlüğü
   const role = u.role;
   window._currentRole = role;
+  window._currentSayfalar = u.sayfalar || [];
 
   if (role === 'admin') {
     document.getElementById('adminBtn').style.display = 'inline-flex';
@@ -399,15 +414,33 @@ function onLoggedIn(u) {
   } else if (role === 'manager') {
     document.getElementById('partiBtn').style.display = 'inline-flex';
     document.getElementById('arsivBtn').style.display = 'inline-flex';
-  } else if (role === 'operator') {
-    // sadece veri girişi — ekstra buton yok
   }
-  // Viewer ve operator satır ekleyemez
+
   if (role === 'viewer' || role === 'operator') {
     const addBtn = document.getElementById('addRowBtn');
     if (addBtn) addBtn.style.display = 'none';
   }
+
+  // Sayfa kısıtlaması — UI hazır olunca uygula
+  if (u.sayfalar && u.sayfalar.length > 0) {
+    setTimeout(() => applySayfaKisitlama(u.sayfalar), 100);
+  }
 }
+
+function applySayfaKisitlama(sayfalar) {
+  if (!sayfalar || sayfalar.length === 0) return;
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.sheet-panel');
+  let ilkGorunen = -1;
+  SHEETS.forEach((sheet, i) => {
+    const gorunur = sayfalar.includes(sheet.name);
+    if (tabBtns[i]) tabBtns[i].style.display = gorunur ? '' : 'none';
+    if (panels[i]) panels[i].style.display = gorunur ? '' : 'none';
+    if (gorunur && ilkGorunen === -1) ilkGorunen = i;
+  });
+  if (ilkGorunen >= 0) switchTab(ilkGorunen);
+}
+window.applySayfaKisitlama = applySayfaKisitlama;
 
 // Enter tuşu desteği
 document.addEventListener('keydown', function(e) {
@@ -465,17 +498,57 @@ async function renderUserList() {
     const users = await sbGet('select=*&order=id.asc');
     list.innerHTML = '';
     users.forEach(u => {
+      const sayfalar = u.sayfalar ? u.sayfalar.split(',').map(s => s.trim()) : [];
+      const tumSayfalar = SHEETS.map(s => s.name);
+      const erisimText = u.rol === 'admin'
+        ? 'Tüm sayfalar'
+        : sayfalar.length === 0
+          ? '<span style="color:#e36400;">Tüm sayfalar</span>'
+          : sayfalar.join(', ');
+
       const div = document.createElement('div');
-      div.className = 'user-item' + (u.rol === 'admin' ? ' u-admin' : '');
+      div.style.cssText = 'margin-bottom:8px;';
+      div.id = `userrow_${u.id}`;
       div.innerHTML = `
-        <div class="u-avatar">${u.kullanici_adi[0].toUpperCase()}</div>
-        <div class="user-info">
-          <div class="u-name">${u.kullanici_adi} <span class="role-badge ${rolBadgeClass(u.rol)}">${rolLabel(u.rol)}</span></div>
-          <div class="u-role" style="font-size:10px;color:#555;margin-top:2px;">${u.rol === 'admin' ? 'Tam yetki' : u.rol === 'manager' ? 'Satır ekle, parti, arşiv' : u.rol === 'operator' ? 'Onay/adet giriş' : 'Sadece görüntüle'}</div>
+        <div class="user-item" style="border-radius:7px 7px 0 0;margin-bottom:0;">
+          <div class="u-avatar ${u.rol === 'admin' ? '' : ''}">${u.kullanici_adi[0].toUpperCase()}</div>
+          <div class="user-info">
+            <div class="u-name">${u.kullanici_adi} <span class="role-badge ${rolBadgeClass(u.rol)}">${rolLabel(u.rol)}</span></div>
+            <div class="u-role" style="font-size:10px;color:#555;margin-top:2px;">📄 ${erisimText}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            ${u.rol !== 'admin' ? `<button class="u-edit-btn" onclick="toggleEditPanel(${u.id})">✏️ Düzenle</button>` : ''}
+            ${u.rol !== 'admin'
+              ? `<button class="u-del-btn" onclick="deleteUser(${u.id}, '${u.kullanici_adi}')">🗑</button>`
+              : '<span style="font-size:11px;color:#555;padding:0 8px;">Silinemez</span>'}
+          </div>
         </div>
-        ${u.rol !== 'admin'
-          ? `<button class="u-del-btn" onclick="deleteUser(${u.id}, '${u.kullanici_adi}')">🗑 Sil</button>`
-          : '<span style="font-size:11px;color:#555;padding:0 8px;">Silinemez</span>'}
+        ${u.rol !== 'admin' ? `
+        <div class="edit-panel" id="editpanel_${u.id}">
+          <div class="edit-panel-title">✏️ ${u.kullanici_adi} — Sayfa Erişimi & Rol</div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">Rol</label>
+            <select id="editrol_${u.id}" style="background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;">
+              <option value="viewer" ${u.rol==='viewer'?'selected':''}>👁 Viewer — Sadece görüntüler</option>
+              <option value="operator" ${u.rol==='operator'?'selected':''}>⚙️ Operator — Onay/adet güncelleyebilir</option>
+              <option value="manager" ${u.rol==='manager'?'selected':''}>📋 Manager — Satır ekle, parti, arşiv</option>
+            </select>
+          </div>
+          <label style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">
+            Erişebileceği Sayfalar <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;">(boşsa tümüne erişir)</span>
+          </label>
+          <div class="sayfa-grid">
+            ${tumSayfalar.map(s => `
+              <label class="sayfa-cb">
+                <input type="checkbox" data-uid="${u.id}" data-sayfa="${s}" ${sayfalar.length === 0 || sayfalar.includes(s) ? 'checked' : ''}>
+                ${s}
+              </label>`).join('')}
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="edit-save-btn" onclick="saveUserEdit(${u.id}, '${u.kullanici_adi}')">💾 Kaydet</button>
+            <button onclick="toggleEditPanel(${u.id})" style="padding:8px 16px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;">İptal</button>
+          </div>
+        </div>` : ''}
       `;
       list.appendChild(div);
     });
@@ -483,6 +556,41 @@ async function renderUserList() {
     list.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Bağlantı hatası.</div>';
   }
 }
+
+function toggleEditPanel(uid) {
+  const panel = document.getElementById(`editpanel_${uid}`);
+  if (!panel) return;
+  // Diğer açık panelleri kapat
+  document.querySelectorAll('.edit-panel.open').forEach(p => {
+    if (p.id !== `editpanel_${uid}`) p.classList.remove('open');
+  });
+  panel.classList.toggle('open');
+}
+window.toggleEditPanel = toggleEditPanel;
+
+async function saveUserEdit(uid, username) {
+  const rol = document.getElementById(`editrol_${uid}`).value;
+  const checkboxes = document.querySelectorAll(`input[data-uid="${uid}"]`);
+  const secili = [];
+  checkboxes.forEach(cb => { if (cb.checked) secili.push(cb.dataset.sayfa); });
+  // Tüm sayfalar seçiliyse boş bırak (tümüne erişim)
+  const tumSayfalar = SHEETS.map(s => s.name);
+  const sayfalarVal = secili.length === tumSayfalar.length ? '' : secili.join(',');
+
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${SB_TBL}?id=eq.${uid}`, {
+      method: 'PATCH',
+      headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+      body: JSON.stringify({ rol, sayfalar: sayfalarVal })
+    });
+    if (!r.ok) throw new Error(await r.text());
+    showAdminMsg(`"${username}" güncellendi!`, 'ok');
+    renderUserList();
+  } catch(e) {
+    showAdminMsg('Güncelleme hatası: ' + e.message, 'err');
+  }
+}
+window.saveUserEdit = saveUserEdit;
 
 async function deleteUser(id, username) {
   if (!confirm(`"${username}" kullanıcısını silmek istediğinize emin misiniz?`)) return;
