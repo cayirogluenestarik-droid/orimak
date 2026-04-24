@@ -1,0 +1,5386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Malzeme Listesi — Orimak</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#1A1A1A;--orange:#F5A623;--cream:#FFF8F0;--mint:#BBE6D9;--green:#92D050;--red:#C00000;--white:#fff;--border:#2e2e2e;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:#111;color:#eee;min-height:100vh;}
+
+/* HEADER */
+.page-header{background:var(--dark);border-bottom:3px solid var(--orange);padding:0 32px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:100;height:72px;box-shadow:0 4px 24px rgba(0,0,0,.5);}
+.logo-img{height:46px;width:auto;background:white;border-radius:6px;padding:4px 10px;}
+.header-divider{width:1px;height:36px;background:#333;}
+.header-text .title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:3px;color:var(--white);line-height:1;}
+.header-text .sub{font-size:11px;color:var(--orange);letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.header-date{font-size:12px;color:#666;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+.hbtn{border:none;border-radius:5px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
+.hbtn:hover{opacity:.85;}
+.hbtn-orange{background:var(--orange);color:var(--dark);}
+.hbtn-dark{background:#333;color:#eee;}
+.hbtn-admin{background:linear-gradient(135deg,#1d3a5e,#16304f);color:#7ab8f5;border:1px solid #2a5a8e!important;box-shadow:0 0 10px rgba(90,160,255,.2);}
+.hbtn-admin:hover{opacity:1!important;background:linear-gradient(135deg,#2a4f7a,#1d3d63)!important;box-shadow:0 0 18px rgba(90,160,255,.4);}
+.header-user-chip{display:flex;align-items:center;gap:7px;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:20px;padding:4px 12px 4px 6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#888;letter-spacing:.5px;}
+.header-user-chip .chip-avatar{width:22px;height:22px;border-radius:50%;background:var(--orange);color:#1a1a1a;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.header-user-chip .chip-name{color:#ccc;font-weight:600;}
+.sync-status{font-size:11px;padding:4px 10px;border-radius:12px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+.sync-ok{background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);}
+.sync-err{background:rgba(192,0,0,.15);color:#ff6666;border:1px solid rgba(192,0,0,.3);}
+.sync-loading{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
+
+/* SETUP BANNER */
+.setup-banner{background:linear-gradient(135deg,#1a0f00,#2a1800);border:1px solid var(--orange);border-radius:10px;margin:20px 32px;padding:24px 28px;}
+.setup-banner h3{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--orange);letter-spacing:2px;margin-bottom:12px;}
+.setup-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.step{display:flex;gap:12px;align-items:flex-start;}
+.step-num{background:var(--orange);color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:13px;color:#ccc;line-height:1.6;}
+.step-text a{color:var(--orange);text-decoration:none;}
+.step-text a:hover{text-decoration:underline;}
+.step-text code{background:#2a2a2a;padding:2px 6px;border-radius:3px;font-size:12px;color:#ffa;font-family:monospace;}
+.setup-input-wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.setup-input{background:#222;border:1px solid #444;border-radius:6px;padding:10px 14px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;flex:1;min-width:300px;transition:border-color .2s;}
+.setup-input:focus{border-color:var(--orange);}
+.setup-input::placeholder{color:#555;}
+
+/* TABS */
+.tabs-wrap{background:#161616;border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:2px;overflow-x:auto;}
+.tab-btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#666;padding:13px 18px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.tab-btn:hover{color:#bbb;background:rgba(255,255,255,.03);}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange);background:rgba(245,166,35,.05);}
+.tab-count{background:#333;color:#999;border-radius:10px;padding:1px 7px;font-size:10px;}
+.tab-btn.active .tab-count{background:var(--orange);color:var(--dark);}
+
+/* STATS */
+.stats-bar{background:#181818;padding:10px 32px;display:flex;gap:0;align-items:center;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.stat{display:flex;align-items:center;gap:8px;font-size:12px;color:#777;padding:4px 20px;border-right:1px solid #2a2a2a;}
+.stat:first-child{padding-left:0;}.stat:last-child{border-right:none;}
+.stat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.stat-num{font-weight:700;color:#ddd;font-size:14px;margin-left:2px;}
+
+/* TOOLBAR */
+.toolbar{padding:12px 32px;background:#161616;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;max-width:380px;}
+.search-input{width:100%;background:#222;border:1px solid #333;border-radius:6px;padding:9px 14px 9px 36px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--orange);}
+.search-input::placeholder{color:#555;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#555;}
+.filter-label{font-size:12px;color:#666;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+.add-row-btn{background:linear-gradient(135deg,#2a6e4a,#1d5236);color:#7fda9e;border:1px solid #2a6e4a;border-radius:6px;padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
+.add-row-btn:hover{background:linear-gradient(135deg,#338a5c,#246440);}
+.hbtn-green{background:linear-gradient(135deg,#1d5c3a,#155230);color:#7fda9e;border:1px solid #2a6e4a!important;}
+.hbtn-green:hover{opacity:1!important;background:linear-gradient(135deg,#246440,#1a6038)!important;}
+.hbtn-purple{background:linear-gradient(135deg,#3a1d5c,#2d1552);color:#c49ef5;border:1px solid #5a2a8e!important;}
+.hbtn-purple:hover{opacity:1!important;background:linear-gradient(135deg,#4a2470,#381a64)!important;}
+.role-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;}
+.role-admin{background:rgba(245,166,35,.2);color:var(--orange);border:1px solid rgba(245,166,35,.4);}
+.role-manager{background:rgba(146,208,80,.2);color:#92D050;border:1px solid rgba(146,208,80,.4);}
+.role-operator{background:rgba(90,160,255,.2);color:#7ab8f5;border:1px solid rgba(90,160,255,.4);}
+.role-viewer{background:rgba(150,150,150,.2);color:#999;border:1px solid rgba(150,150,150,.3);}
+#partiOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
+#partiOverlay.open{display:flex;}
+.parti-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #92D050;border-radius:12px;width:520px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.parti-head{padding:22px 28px 18px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.parti-head h2{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:#92D050;}
+.parti-body{padding:22px 28px;overflow-y:auto;flex:1;}
+.parti-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.parti-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:12px 16px;cursor:pointer;transition:border-color .2s;}
+.parti-item:hover{border-color:#444;}
+.parti-item.active-parti{border-color:#92D050;background:rgba(146,208,80,.08);}
+.parti-item .p-icon{font-size:20px;}
+.parti-item .p-info{flex:1;}
+.parti-item .p-name{font-weight:600;font-size:13px;color:#eee;}
+.parti-item .p-date{font-size:11px;color:#666;margin-top:2px;}
+.parti-item .p-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;}
+.p-badge-active{background:rgba(146,208,80,.2);color:#92D050;border:1px solid rgba(146,208,80,.4);}
+.p-badge-arsiv{background:rgba(150,150,150,.15);color:#777;border:1px solid rgba(150,150,150,.3);}
+.parti-new-form{background:#222;border:1px solid #2e2e2e;border-radius:8px;padding:18px;margin-top:4px;}
+.parti-new-form label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;}
+.parti-new-form input{width:100%;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;margin-bottom:12px;}
+.parti-new-form input:focus{border-color:#92D050;}
+.parti-new-btn{width:100%;padding:11px;background:linear-gradient(135deg,#1d5c3a,#155230);color:#7fda9e;border:1px solid #2a6e4a;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;cursor:pointer;transition:opacity .2s;}
+.parti-new-btn:hover{opacity:.85;}
+.parti-msg{margin-top:10px;font-size:12px;text-align:center;padding:8px;border-radius:5px;display:none;}
+.parti-msg.ok{display:block;background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);}
+.parti-msg.err{display:block;background:rgba(192,0,0,.15);color:#ff7777;border:1px solid rgba(192,0,0,.3);}
+#arsivOverlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10001;display:none;flex-direction:column;}
+#arsivOverlay.open{display:flex;}
+.arsiv-header{background:#1a1a1a;border-bottom:2px solid var(--orange);padding:16px 28px;display:flex;align-items:center;gap:16px;}
+.arsiv-header h2{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--orange);flex:1;}
+.arsiv-content{flex:1;overflow:auto;padding:20px 28px;}
+
+/* LEGEND */
+.legend{display:flex;gap:0;flex-wrap:wrap;background:#141414;border-bottom:1px solid var(--border);padding:8px 32px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#777;padding:3px 16px;border-right:1px solid #2a2a2a;letter-spacing:.5px;}
+.legend-item:first-child{padding-left:0;}.legend-item:last-child{border-right:none;}
+.legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+/* TABLE */
+.sheet-panel{display:none;}.sheet-panel.active{display:block;}
+.table-wrap{overflow-x:auto;padding:20px 32px 60px;}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;min-width:1200px;border-radius:8px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+thead th{background:var(--dark);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:11px 10px;text-align:center;border-bottom:2px solid var(--orange);white-space:nowrap;}
+thead th:nth-child(3),thead th:nth-child(4){text-align:left;}
+
+tr.group-row td{background:linear-gradient(90deg,#252525,#1e1e1e);color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:7px 12px;border-top:2px solid #2a2a2a;border-bottom:1px solid #2a2a2a;}
+tr.group-row td::before{content:"▸ ";color:var(--orange);opacity:.6;}
+
+tr.data-row td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.08);background:var(--cream);color:#1a1a1a;transition:filter .15s;vertical-align:middle;text-align:center;}
+tr.data-row td:nth-child(3){text-align:left;}tr.data-row td:nth-child(4){text-align:left;font-size:11.5px;color:#555;}
+tr.data-row:hover td{filter:brightness(.94);}
+tr.data-row.status-onay td{background:var(--orange)!important;color:#1a1a1a!important;}
+tr.data-row.status-bekle td{background:var(--mint)!important;color:#1a1a1a!important;}
+tr.data-row.status-gelis td{background:var(--green)!important;color:#1a1a1a!important;}
+tr.data-row.status-eksik td{background:var(--red)!important;color:white!important;}
+
+td.col-no{width:42px;font-weight:700;color:#999;font-size:11px;font-family:'Barlow Condensed',sans-serif;}
+td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;}
+
+.cell-input{width:64px;border:1px solid rgba(0,0,0,.2);border-radius:4px;padding:4px 6px;font-size:12px;text-align:center;background:rgba(255,255,255,.55);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;}
+.cell-input:focus{border-color:var(--orange);background:white;}
+.onay-select{width:100%;min-width:110px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.5);font-family:'Barlow',sans-serif;font-size:11.5px;font-weight:500;cursor:pointer;outline:none;color:inherit;padding:5px 4px;border-radius:4px;}
+.onay-select:focus{background:white;}.onay-select option{color:#1a1a1a;background:white;}
+
+.row-actions{display:flex;gap:4px;justify-content:center;}
+.btn-del{background:rgba(192,0,0,.12);border:1px solid rgba(192,0,0,.3);color:#c00;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.btn-del:hover{background:rgba(192,0,0,.3);}
+.date-input{width:110px;border:1px solid rgba(0,0,0,.2);border-radius:4px;padding:3px 5px;font-size:11px;text-align:center;background:rgba(255,255,255,.55);font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;color:#1a1a1a;cursor:pointer;}
+.date-input:focus{border-color:var(--orange);background:white;}
+.date-input::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer;}
+.teslimat-ok{font-size:11px;font-weight:700;color:#1a7a1a;white-space:nowrap;}
+.teslimat-eksik{font-size:11px;font-weight:700;color:#c00;white-space:nowrap;}
+.teslimat-fazla{font-size:11px;font-weight:700;color:#0055bb;white-space:nowrap;}
+
+/* LOADING */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 32px;gap:16px;}
+.spinner{width:40px;height:40px;border:3px solid #333;border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:#666;letter-spacing:2px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#1e1e1e;border:1px solid #333;border-top:3px solid var(--orange);border-radius:10px;padding:28px 32px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.modal h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;color:var(--orange);margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:span 2;}
+.form-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#888;font-family:'Barlow Condensed',sans-serif;}
+.form-input,.form-select{background:#2a2a2a;border:1px solid #444;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;width:100%;}
+.form-input:focus,.form-select:focus{border-color:var(--orange);}
+.form-select option{background:#2a2a2a;}
+.modal-note{font-size:12px;color:#666;margin-top:4px;font-style:italic;}
+.modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
+.mbtn{border:none;border-radius:6px;padding:10px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
+.mbtn:hover{opacity:.85;}
+.mbtn-orange{background:var(--orange);color:var(--dark);}
+.mbtn-gray{background:#333;color:#aaa;}
+
+::-webkit-scrollbar{width:7px;height:7px;}
+::-webkit-scrollbar-track{background:#1a1a1a;}
+::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#555;}
+
+/* ── ADMIN PANELİ ── */
+#adminOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
+#adminOverlay.open{display:flex;}
+.admin-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.admin-head{padding:22px 28px 18px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.admin-head h2{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--orange);}
+.admin-close{background:none;border:none;color:#666;font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;}
+.admin-close:hover{color:#eee;background:#333;}
+.admin-body{padding:22px 28px;overflow-y:auto;flex:1;}
+.admin-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:12px;}
+.user-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.user-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;}
+.user-item .u-avatar{width:32px;height:32px;border-radius:50%;background:var(--orange);color:#1a1a1a;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.user-item.u-admin .u-avatar{background:#555;color:#ddd;}
+.user-info{flex:1;}
+.user-info .u-name{font-weight:600;font-size:13px;color:#eee;}
+.user-info .u-role{font-size:11px;color:#666;margin-top:1px;}
+.u-del-btn{background:rgba(192,0,0,.12);border:1px solid rgba(192,0,0,.3);color:#c00;border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.u-del-btn:hover{background:rgba(192,0,0,.3);}
+.admin-add-form{background:#222;border:1px solid #2e2e2e;border-radius:8px;padding:18px;}
+.admin-add-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.admin-add-form label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;}
+.admin-add-form input{width:100%;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.admin-add-form input:focus{border-color:var(--orange);}
+.admin-add-btn{width:100%;padding:11px;background:var(--orange);color:#1a1a1a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;cursor:pointer;transition:opacity .2s;}
+.admin-add-btn:hover{opacity:.85;}
+.admin-msg{margin-top:10px;font-size:12px;text-align:center;padding:8px;border-radius:5px;display:none;}
+.admin-msg.ok{display:block;background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);}
+.admin-msg.err{display:block;background:rgba(192,0,0,.15);color:#ff7777;border:1px solid rgba(192,0,0,.3);}
+
+/* ── GİRİŞ EKRANI ── */
+#loginOverlay{
+  position:fixed;inset:0;background:#111;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow',sans-serif;
+}
+#loginOverlay.hidden{display:none;}
+.login-box{
+  background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);
+  border-radius:12px;padding:42px 48px;width:400px;max-width:94vw;
+  box-shadow:0 24px 80px rgba(0,0,0,.7);
+}
+.login-logo{display:flex;align-items:center;gap:14px;margin-bottom:32px;}
+.login-logo img{height:40px;background:white;border-radius:5px;padding:4px 8px;}
+.login-logo-text .t1{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:3px;color:#fff;}
+.login-logo-text .t2{font-size:11px;color:var(--orange);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
+.login-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:24px;border-bottom:1px solid #2a2a2a;padding-bottom:14px;}
+.login-field{margin-bottom:16px;}
+.login-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#777;margin-bottom:7px;font-family:'Barlow Condensed',sans-serif;}
+.login-field input{
+  width:100%;background:#222;border:1px solid #3a3a3a;border-radius:6px;
+  padding:12px 14px;color:#eee;font-size:14px;font-family:'Barlow',sans-serif;
+  outline:none;transition:border-color .2s;
+}
+.login-field input:focus{border-color:var(--orange);}
+.login-field input::placeholder{color:#444;}
+.login-btn{
+  width:100%;margin-top:8px;padding:13px;
+  background:var(--orange);color:#1a1a1a;border:none;border-radius:6px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:2px;cursor:pointer;transition:opacity .2s;
+}
+.login-btn:hover{opacity:.88;}
+.login-btn:active{opacity:.75;}
+.login-error{
+  display:none;margin-top:14px;padding:10px 14px;
+  background:rgba(192,0,0,.15);border:1px solid rgba(192,0,0,.35);
+  border-radius:6px;color:#ff7777;font-size:13px;text-align:center;letter-spacing:.5px;
+}
+.login-error.show{display:block;}
+.login-footer{margin-top:24px;text-align:center;font-size:11px;color:#444;letter-spacing:.5px;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     GİRİŞ EKRANI
+     Kullanıcılar buraya eklenebilir:
+     USERS dizisine { user, pass } objesi ekle
+══════════════════════════════════════════ -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-text">
+        <div class="t1">ORİMAK</div>
+        <div class="t2">Malzeme Sistemi</div>
+      </div>
+    </div>
+    <div class="login-title">🔒 Sisteme Giriş</div>
+    <div class="login-field">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="loginUser" placeholder="kullanıcı adı" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>Şifre</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">GİRİŞ YAP</button>
+    <div class="login-error" id="loginError">Kullanıcı adı veya şifre hatalı.</div>
+    <div class="login-footer">Orimak © 2026 — Yetkisiz erişim yasaktır.</div>
+  </div>
+</div>
+
+<script type="module">
+// ── FİREBASE İMPORT ──
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD65uIX3qwvyJfpgTUavOC2tjkgPasMEZ8",
+  authDomain: "orimak.firebaseapp.com",
+  projectId: "orimak",
+  storageBucket: "orimak.firebasestorage.app",
+  messagingSenderId: "517250640817",
+  appId: "1:517250640817:web:3428eaeb8790d1e0992b90"
+};
+window._fbApp = initializeApp(firebaseConfig);
+window._db = getFirestore(window._fbApp);
+window._fsDoc = doc;
+window._fsGetDoc = getDoc;
+window._fsSetDoc = setDoc;
+window._fsOnSnapshot = onSnapshot;
+
+// ═══════════════════════════════════════════════
+//  KULLANICI YÖNETİMİ — Supabase
+// ═══════════════════════════════════════════════
+const SB_URL  = 'https://utemzjriobzggtleggqa.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0ZW16anJpb2J6Z2d0bGVnZ3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NzE1MzIsImV4cCI6MjA5MjU0NzUzMn0.VRCqTzp1C06VK-OFeDMrfDrQn-pRU_OIE2f0t0tY3L8';
+const SB_TBL  = 'kullan%C4%B1c%C4%B1lar';
+const SESSION_KEY = 'orimak_auth';
+
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+  };
+}
+
+async function sbGet(filter) {
+  const url = `${SB_URL}/rest/v1/${SB_TBL}?${filter || 'select=*'}`;
+  const r = await fetch(url, { headers: sbHeaders() });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbInsert(row) {
+  const r = await fetch(`${SB_URL}/rest/v1/${SB_TBL}`, {
+    method: 'POST',
+    headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+    body: JSON.stringify(row)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbDelete(id) {
+  const r = await fetch(`${SB_URL}/rest/v1/${SB_TBL}?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: sbHeaders()
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+// ── GİRİŞ ──
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = '⟳ Kontrol ediliyor...';
+  btn.disabled = true;
+  try {
+    const rows = await sbGet(`select=*&kullanici_adi=eq.${encodeURIComponent(u)}&sifre=eq.${encodeURIComponent(p)}`);
+    if (rows && rows.length > 0) {
+      const match = { user: rows[0].kullanici_adi, role: rows[0].rol, id: rows[0].id };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(match));
+      document.getElementById('loginOverlay').classList.add('hidden');
+      err.classList.remove('show');
+      onLoggedIn(match);
+    } else {
+      err.classList.add('show');
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+  } catch(e) {
+    err.textContent = 'Bağlantı hatası. İnternet bağlantınızı kontrol edin.';
+    err.classList.add('show');
+  }
+  btn.textContent = 'GİRİŞ YAP';
+  btn.disabled = false;
+}
+window.doLogin = doLogin;
+
+function onLoggedIn(u) {
+  const chip = document.getElementById('userChip');
+  const avatar = document.getElementById('chipAvatar');
+  const name = document.getElementById('chipName');
+  chip.style.display = 'flex';
+  avatar.textContent = u.user[0].toUpperCase();
+  name.textContent = u.user;
+
+  // Rol bazlı buton görünürlüğü
+  const role = u.role;
+  window._currentRole = role;
+
+  if (role === 'admin') {
+    document.getElementById('adminBtn').style.display = 'inline-flex';
+    document.getElementById('partiBtn').style.display = 'inline-flex';
+    document.getElementById('arsivBtn').style.display = 'inline-flex';
+  } else if (role === 'manager') {
+    document.getElementById('partiBtn').style.display = 'inline-flex';
+    document.getElementById('arsivBtn').style.display = 'inline-flex';
+  } else if (role === 'operator') {
+    // sadece veri girişi — ekstra buton yok
+  }
+  // Viewer ve operator satır ekleyemez
+  if (role === 'viewer' || role === 'operator') {
+    const addBtn = document.getElementById('addRowBtn');
+    if (addBtn) addBtn.style.display = 'none';
+  }
+}
+
+// Enter tuşu desteği
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !document.getElementById('loginOverlay').classList.contains('hidden')) {
+    doLogin();
+  }
+  if (e.key === 'Escape') {
+    if (window.closeAdminPanel) window.closeAdminPanel();
+    if (window.closeModal) window.closeModal();
+  }
+});
+
+// Oturum kontrolü (sayfa yenilenince tekrar sorma)
+(function() {
+  const sess = localStorage.getItem(SESSION_KEY);
+  if (sess) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    try { onLoggedIn(JSON.parse(sess)); } catch(e) {}
+  } else {
+    document.body.style.overflow = 'hidden';
+    const obs = new MutationObserver(function() {
+      if (document.getElementById('loginOverlay').classList.contains('hidden')) {
+        document.body.style.overflow = '';
+        obs.disconnect();
+      }
+    });
+    obs.observe(document.getElementById('loginOverlay'), { attributes: true });
+  }
+})();
+
+// ── ADMIN PANELİ ──
+function openAdminPanel() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('newUser').value = '';
+  document.getElementById('newPass').value = '';
+  document.getElementById('adminMsg').className = 'admin-msg';
+  renderUserList();
+}
+window.openAdminPanel = openAdminPanel;
+
+function closeAdminPanel() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+window.closeAdminPanel = closeAdminPanel;
+
+function closeAdminOutside(e) {
+  if (e.target === document.getElementById('adminOverlay')) closeAdminPanel();
+}
+window.closeAdminOutside = closeAdminOutside;
+
+async function renderUserList() {
+  const list = document.getElementById('userList');
+  list.innerHTML = '<div style="color:#666;font-size:12px;padding:8px;">⟳ Yükleniyor...</div>';
+  try {
+    const users = await sbGet('select=*&order=id.asc');
+    list.innerHTML = '';
+    users.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'user-item' + (u.rol === 'admin' ? ' u-admin' : '');
+      div.innerHTML = `
+        <div class="u-avatar">${u.kullanici_adi[0].toUpperCase()}</div>
+        <div class="user-info">
+          <div class="u-name">${u.kullanici_adi} <span class="role-badge ${rolBadgeClass(u.rol)}">${rolLabel(u.rol)}</span></div>
+          <div class="u-role" style="font-size:10px;color:#555;margin-top:2px;">${u.rol === 'admin' ? 'Tam yetki' : u.rol === 'manager' ? 'Satır ekle, parti, arşiv' : u.rol === 'operator' ? 'Onay/adet giriş' : 'Sadece görüntüle'}</div>
+        </div>
+        ${u.rol !== 'admin'
+          ? `<button class="u-del-btn" onclick="deleteUser(${u.id}, '${u.kullanici_adi}')">🗑 Sil</button>`
+          : '<span style="font-size:11px;color:#555;padding:0 8px;">Silinemez</span>'}
+      `;
+      list.appendChild(div);
+    });
+  } catch(e) {
+    list.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Bağlantı hatası.</div>';
+  }
+}
+
+async function deleteUser(id, username) {
+  if (!confirm(`"${username}" kullanıcısını silmek istediğinize emin misiniz?`)) return;
+  try {
+    await sbDelete(id);
+    renderUserList();
+    showAdminMsg(`"${username}" silindi.`, 'ok');
+  } catch(e) {
+    showAdminMsg('Silme hatası: ' + e.message, 'err');
+  }
+}
+window.deleteUser = deleteUser;
+
+async function addUser() {
+  const u = document.getElementById('newUser').value.trim().toLowerCase();
+  const p = document.getElementById('newPass').value;
+  const rol = document.getElementById('newRole').value;
+  if (!u || !p) { showAdminMsg('Kullanıcı adı ve şifre zorunludur.', 'err'); return; }
+  if (u.length < 3) { showAdminMsg('Kullanıcı adı en az 3 karakter olmalı.', 'err'); return; }
+  if (p.length < 4) { showAdminMsg('Şifre en az 4 karakter olmalı.', 'err'); return; }
+  const addBtn = document.querySelector('.admin-add-btn');
+  addBtn.textContent = '⟳ Ekleniyor...'; addBtn.disabled = true;
+  try {
+    await sbInsert({ kullanici_adi: u, sifre: p, rol });
+    document.getElementById('newUser').value = '';
+    document.getElementById('newPass').value = '';
+    renderUserList();
+    showAdminMsg(`"${u}" (${rol}) başarıyla eklendi!`, 'ok');
+  } catch(e) {
+    const msg = e.message.includes('duplicate') ? 'Bu kullanıcı adı zaten mevcut.' : 'Hata: ' + e.message;
+    showAdminMsg(msg, 'err');
+  }
+  addBtn.textContent = '➕ KULLANICI EKLE'; addBtn.disabled = false;
+}
+window.addUser = addUser;
+
+// ── PARTİ YÖNETİMİ ──
+function rolLabel(rol) {
+  const map = { admin:'🔑 Admin', manager:'📋 Manager', operator:'⚙️ Operator', viewer:'👁 Viewer' };
+  return map[rol] || rol;
+}
+
+function rolBadgeClass(rol) {
+  const map = { admin:'role-admin', manager:'role-manager', operator:'role-operator', viewer:'role-viewer' };
+  return map[rol] || 'role-viewer';
+}
+
+function openPartiPanel() {
+  document.getElementById('partiOverlay').classList.add('open');
+  document.getElementById('newPartiAdi').value = '';
+  document.getElementById('partiMsg').className = 'parti-msg';
+
+  // Checkbox'ları temiz şekilde oluştur
+  const secim = document.getElementById('partiSayfaSecim');
+  secim.innerHTML = '';
+  SHEETS.forEach((sheet, i) => {
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;padding:7px 10px;background:#1a1a1a;border-radius:5px;border:1px solid #2e2e2e;font-size:13px;color:#ccc;user-select:none;';
+    
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = true;
+    cb.dataset.idx = i;
+    cb.style.cssText = 'accent-color:#92D050;width:15px;height:15px;cursor:pointer;flex-shrink:0;';
+    
+    const txt = document.createTextNode(' ' + sheet.name);
+    wrap.appendChild(cb);
+    wrap.appendChild(txt);
+    secim.appendChild(wrap);
+  });
+
+  renderPartiList();
+}
+window.openPartiPanel = openPartiPanel;
+
+function closePartiPanel() { document.getElementById('partiOverlay').classList.remove('open'); }
+window.closePartiPanel = closePartiPanel;
+
+function closePartiOutside(e) { if (e.target === document.getElementById('partiOverlay')) closePartiPanel(); }
+window.closePartiOutside = closePartiOutside;
+
+async function renderPartiList() {
+  const list = document.getElementById('partiList');
+  list.innerHTML = '<div style="color:#666;font-size:12px;padding:8px;">⟳ Yükleniyor...</div>';
+  try {
+    const snap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'));
+    const partiler = snap.exists() ? (snap.data().list || []) : [];
+    const aktifSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'aktif'));
+    const aktifAd = aktifSnap.exists() ? aktifSnap.data().ad : null;
+    list.innerHTML = '';
+    if (partiler.length === 0) {
+      list.innerHTML = '<div style="color:#555;font-size:12px;padding:8px;">Henüz parti yok.</div>';
+      return;
+    }
+    [...partiler].reverse().forEach(p => {
+      const isAktif = p.ad === aktifAd;
+      const div = document.createElement('div');
+      div.className = 'parti-item' + (isAktif ? ' active-parti' : '');
+      div.innerHTML = `
+        <div class="p-icon">${isAktif ? '🟢' : '📦'}</div>
+        <div class="p-info">
+          <div class="p-name">${p.ad}</div>
+          <div class="p-date">${p.tarih}</div>
+        </div>
+        <span class="p-badge ${isAktif ? 'p-badge-active' : 'p-badge-arsiv'}">${isAktif ? 'AKTİF' : 'ARŞİV'}</span>
+        ${!isAktif ? `<button class="hbtn hbtn-dark" style="font-size:11px;padding:5px 10px;margin-left:6px;" onclick="partiYukle('${p.ad}')">Yükle</button>` : ''}
+      `;
+      list.appendChild(div);
+    });
+  } catch(e) {
+    list.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Hata: ' + e.message + '</div>';
+  }
+}
+
+async function yeniPartiBaslat() {
+  const ad = document.getElementById('newPartiAdi').value.trim();
+  if (!ad) { showPartiMsg('Parti adı boş olamaz.', 'err'); return; }
+
+  // Seçili sayfaları al — data-idx ile güvenli okuma
+  const seciliIndexler = [];
+  document.querySelectorAll('#partiSayfaSecim input[type="checkbox"]').forEach(cb => {
+    if (cb.checked) seciliIndexler.push(parseInt(cb.dataset.idx));
+  });
+  if (seciliIndexler.length === 0) { showPartiMsg('En az bir sayfa seçmelisiniz.', 'err'); return; }
+
+  const secilenAdlar = seciliIndexler.map(i => SHEETS[i].name).join('\n• ');
+  const korunanAdlar = SHEETS.filter((_, i) => !seciliIndexler.includes(i)).map(s => s.name).join('\n• ');
+  const msg = `"${ad}" partisi başlatılacak.\n\n🗑 Sıfırlanacak sayfalar:\n• ${secilenAdlar}` +
+    (korunanAdlar ? `\n\n✅ Korunacak sayfalar:\n• ${korunanAdlar}` : '') +
+    '\n\nDevam etmek istiyor musunuz?';
+  if (!confirm(msg)) return;
+
+  const btn = document.querySelector('.parti-new-btn');
+  btn.textContent = '⟳ Oluşturuluyor...'; btn.disabled = true;
+
+  try {
+    const aktifSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'aktif'));
+    const aktifAd = aktifSnap.exists() ? aktifSnap.data().ad : 'Başlangıç';
+
+    const partiSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'));
+    const partiler = partiSnap.exists() ? (partiSnap.data().list || []) : [];
+    const now = new Date().toLocaleDateString('tr-TR');
+
+    // Aktif partiyi listeye ekle (yoksa)
+    if (!partiler.find(p => p.ad === aktifAd)) {
+      partiler.push({ ad: aktifAd, tarih: now });
+    }
+    // Yeni partiyi ekle (aynı isimde zaten varsa ekleme)
+    if (partiler.find(p => p.ad === ad)) {
+      showPartiMsg(`"${ad}" adında bir parti zaten mevcut!`, 'err');
+      btn.textContent = '🚀 YENİ PARTİ BAŞLAT'; btn.disabled = false;
+      return;
+    }
+    partiler.push({ ad, tarih: now });
+
+    // Sadece seçili sayfaları sıfırla, diğerleri aynen kalsın
+    const yeniSheets = JSON.parse(JSON.stringify(SHEETS)).map((sheet, i) => {
+      if (!seciliIndexler.includes(i)) return sheet; // seçilmeyen sayfa aynen kalsın
+      return {
+        ...sheet,
+        rows: sheet.rows.map(row => {
+          const temiz = { ...row };
+          delete temiz.yetkili; delete temiz.gelis; delete temiz.gelenAdet;
+          delete temiz.makine; delete temiz.sipTarihi; delete temiz.terminTarihi;
+          delete temiz.teslimTarihi;
+          return temiz;
+        })
+      };
+    });
+
+    // Mevcut veriyi arşive kaydet
+    await window._fsSetDoc(window._fsDoc(window._db, 'arsiv', aktifAd.replace(/[^a-zA-Z0-9]/g, '_')), {
+      ad: aktifAd, tarih: now, data: JSON.stringify(SHEETS)
+    });
+
+    // Yeni partiyi aktif yap
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), {
+      data: JSON.stringify(yeniSheets), updatedAt: Date.now()
+    });
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'aktif'), { ad });
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'), { list: partiler });
+
+    SHEETS = yeniSheets;
+    buildState(); rebuildTable(activeSheet); updateStats(activeSheet);
+    showPartiMsg(`"${ad}" başlatıldı! ${seciliIndexler.length} sayfa sıfırlandı.`, 'ok');
+    document.getElementById('newPartiAdi').value = '';
+    renderPartiList();
+  } catch(e) {
+    showPartiMsg('Hata: ' + e.message, 'err');
+  }
+  btn.textContent = '🚀 YENİ PARTİ BAŞLAT'; btn.disabled = false;
+}
+window.yeniPartiBaslat = yeniPartiBaslat;
+
+async function partiYukle(ad) {
+  if (!confirm(`"${ad}" partisini yüklemek istediğinizden emin misiniz? Mevcut aktif veri arşive alınacak.`)) return;
+  try {
+    const arsivSnap = await window._fsGetDoc(window._fsDoc(window._db, 'arsiv', ad.replace(/[^a-zA-Z0-9]/g, '_')));
+    if (!arsivSnap.exists()) { alert('Arşiv verisi bulunamadı.'); return; }
+    const data = JSON.parse(arsivSnap.data().data);
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), { data: JSON.stringify(data), updatedAt: Date.now() });
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'aktif'), { ad });
+    SHEETS = data;
+    buildState(); rebuildTable(activeSheet); updateStats(activeSheet);
+    closePartiPanel();
+    alert(`"${ad}" yüklendi!`);
+  } catch(e) { alert('Hata: ' + e.message); }
+}
+window.partiYukle = partiYukle;
+
+function showPartiMsg(text, type) {
+  const el = document.getElementById('partiMsg');
+  el.textContent = text; el.className = 'parti-msg ' + type;
+  setTimeout(() => { el.className = 'parti-msg'; }, 4000);
+}
+
+// ── ARŞİV ──
+async function openArsiv() {
+  document.getElementById('arsivOverlay').classList.add('open');
+  const sel = document.getElementById('arsivSelect');
+  sel.innerHTML = '<option>⟳ Yükleniyor...</option>';
+  document.getElementById('arsivContent').innerHTML = '';
+  try {
+    const partiSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'));
+    const partiler = partiSnap.exists() ? (partiSnap.data().list || []) : [];
+    const aktifSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'aktif'));
+    const aktifAd = aktifSnap.exists() ? aktifSnap.data().ad : null;
+    const arsivler = partiler.filter(p => p.ad !== aktifAd);
+    sel.innerHTML = '';
+    if (arsivler.length === 0) {
+      document.getElementById('arsivContent').innerHTML = '<div style="color:#555;padding:40px;text-align:center;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">ARŞİVDE VERİ BULUNMUYOR</div>';
+      return;
+    }
+    arsivler.reverse().forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.ad; o.textContent = `${p.ad} (${p.tarih})`;
+      sel.appendChild(o);
+    });
+    sel.onchange = () => arsivPDFHazirla(sel.value);
+    arsivPDFHazirla(arsivler[0].ad);
+  } catch(e) {
+    sel.innerHTML = '<option>Hata</option>';
+  }
+}
+window.openArsiv = openArsiv;
+
+async function arsivPDFHazirla(ad) {
+  const content = document.getElementById('arsivContent');
+  content.innerHTML = `
+    <div style="text-align:center;padding:60px 40px;">
+      <div style="font-size:56px;margin-bottom:20px;">📦</div>
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:700;color:#eee;letter-spacing:2px;margin-bottom:10px;">${ad}</div>
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;margin-bottom:36px;">Tüm sayfalar PDF olarak indirilecek</div>
+      <button id="pdfIndir" style="background:linear-gradient(135deg,#b35a00,#8a4400);color:#fff;border:none;border-radius:8px;padding:16px 40px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;cursor:pointer;">
+        📥 PDF OLARAK İNDİR
+      </button>
+    </div>`;
+  document.getElementById('pdfIndir').onclick = async function() {
+    this.textContent = '⟳ Hazırlanıyor...';
+    this.disabled = true;
+    await arsivPDFIndir(ad);
+    this.textContent = '📥 PDF OLARAK İNDİR';
+    this.disabled = false;
+  };
+}
+
+async function arsivPDFIndir(ad) {
+  try {
+    const snap = await window._fsGetDoc(window._fsDoc(window._db, 'arsiv', ad.replace(/[^a-zA-Z0-9]/g, '_')));
+    if (!snap.exists()) { alert('Arşiv verisi bulunamadı.'); return; }
+    const sheets = JSON.parse(snap.data().data);
+    const tarih = new Date().toLocaleDateString('tr-TR');
+
+    // PDF içeriği oluştur
+    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>${ad} - Arşiv</title>
+    <style>
+      body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:20px;}
+      h1{font-size:16px;margin-bottom:4px;}
+      .subtitle{font-size:11px;color:#666;margin-bottom:20px;}
+      h2{font-size:13px;background:#f0f0f0;padding:6px 10px;margin:20px 0 6px 0;border-left:4px solid #e07000;}
+      table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+      th{background:#e07000;color:#fff;padding:5px 8px;text-align:left;font-size:10px;}
+      td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px;}
+      tr:nth-child(even){background:#f9f9f9;}
+      .onay{color:#2a7a2a;font-weight:bold;}
+      .bekle{color:#b35a00;font-weight:bold;}
+      .bos{color:#999;}
+      @media print{body{margin:10px;}}
+    </style></head><body>
+    <h1>ORİMAK MAKİNA — ${ad}</h1>
+    <div class="subtitle">Arşiv Raporu — ${tarih}</div>`;
+
+    sheets.forEach(sheet => {
+      const rows = sheet.rows.filter(r => !r._group && (r['3'] || r['2']));
+      if (rows.length === 0) return;
+      html += `<h2>${sheet.name}</h2>
+      <table><thead><tr>
+        <th>#</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
+        <th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
+        <th>MAKİNE</th><th>SİP. TARİH</th><th>TERMİN</th>
+      </tr></thead><tbody>`;
+      rows.forEach((r, i) => {
+        const yetkili = r.yetkili || '';
+        const gelis = r.gelis || '';
+        const yetkiliClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : 'bos';
+        const gelisClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : 'bos';
+        html += `<tr>
+          <td>${i+1}</td>
+          <td>${r['3']||r['2']||''}</td>
+          <td>${r['4']||''}</td>
+          <td>${r['5']||''}</td>
+          <td class="${yetkiliClass}">${yetkili||'—'}</td>
+          <td class="${gelisClass}">${gelis||'—'}</td>
+          <td>${r.gelenAdet||'—'}</td>
+          <td>${r.makine||'—'}</td>
+          <td>${r.sipTarihi||'—'}</td>
+          <td>${r.terminTarihi||'—'}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    });
+
+    html += `</body></html>`;
+
+    // Yeni pencerede aç ve yazdır
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 500);
+
+  } catch(e) {
+    alert('Hata: ' + e.message);
+  }
+}
+window.arsivPDFIndir = arsivPDFIndir;
+
+function grupPDFIndir(si, groupRi, groupAd) {
+  // Grup başlığından sonraki satırları topla (bir sonraki gruba kadar)
+  const rows = state[si].rows;
+  const grupRows = [];
+  let collecting = false;
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (r._group && i === groupRi) { collecting = true; continue; }
+    if (collecting) {
+      if (r._group) break; // başka grup başladı, dur
+      if (r['3'] || r['2']) grupRows.push(r);
+    }
+  }
+  if (grupRows.length === 0) { alert('Bu grupta kayıt yok.'); return; }
+
+  const sheetName = SHEETS[si].name;
+  const tarih = new Date().toLocaleDateString('tr-TR');
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${groupAd}</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:20px;}
+    h1{font-size:15px;margin-bottom:2px;}
+    .sub{font-size:11px;color:#666;margin-bottom:4px;}
+    h2{font-size:13px;background:#f0f0f0;padding:6px 10px;margin:16px 0 6px 0;border-left:4px solid #e07000;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:#e07000;color:#fff;padding:5px 8px;text-align:left;font-size:10px;}
+    td{padding:5px 8px;border-bottom:1px solid #eee;font-size:10px;}
+    tr:nth-child(even){background:#f9f9f9;}
+    .onay{color:#2a7a2a;font-weight:bold;}
+    .bekle{color:#b35a00;font-weight:bold;}
+    @media print{body{margin:10px;}}
+  </style></head><body>
+  <h1>ORİMAK — ${sheetName}</h1>
+  <div class="sub">${groupAd} | ${tarih}</div>
+  <h2>${groupAd}</h2>
+  <table><thead><tr>
+    <th>#</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
+    <th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
+    <th>MAKİNE</th><th>SİP. TARİH</th><th>TERMİN</th>
+  </tr></thead><tbody>`;
+
+  grupRows.forEach((r, i) => {
+    const yetkili = r._yetkili || r.yetkili || '';
+    const gelis = r._gelis || r.gelis || '';
+    const yClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : '';
+    const gClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : '';
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${r['3']||r['2']||''}</td>
+      <td>${r['4']||''}</td>
+      <td>${r['5']||''}</td>
+      <td class="${yClass}">${yetkili||'—'}</td>
+      <td class="${gClass}">${gelis||'—'}</td>
+      <td>${r._gelenAdet||r.gelenAdet||'—'}</td>
+      <td>${r._makine||r.makine||'—'}</td>
+      <td>${r._sipTarihi||r.sipTarihi||'—'}</td>
+      <td>${r._terminTarihi||r.terminTarihi||'—'}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 500);
+}
+window.grupPDFIndir = grupPDFIndir;
+
+function showAdminMsg(text, type) {
+  const el = document.getElementById('adminMsg');
+  el.textContent = text;
+  el.className = 'admin-msg ' + type;
+  setTimeout(() => { el.className = 'admin-msg'; }, 3500);
+}
+
+</script>
+
+<header class="page-header">
+  <img class="logo-img" src="data:image/jpeg;base64,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KI+po765j0REzGiPWGsNTa+1PmWstZZ1is2zrOMRVisbjcTXNVy9cqnrMz6I9ERHSIiIiIiIhOstZ6o4haozLWmtM8xecZ3m9+rE4zG4q527l25PpmfREdIiI6REREREQowOlvlfjblr4UR+4nJPxGyuatnyx9OW7hTH7isk/EbK5gAAAAAAAACg65/Ulm0f5ne9SVeUHXP6ks2+47vqS4Wo/pLndP0fvi+no74+rAazH6Bb/eR8T2bdOjwsTHmbf7yPiez0NLcj0tXfLZ/H9FT3Q8doNo8E77HwPx5Z8PHeevQiZlM/GiYiFZPKI69643Lv/wA7OWdf+j4j1YW6jrTuuPy7deLGWzv/ANHxHqw9Ps313j/NDz26PVd75ZZlR3JRHclt3DXUAZAAA/JmubZVkOW4nOc8zPC5fgMHbm9icVir1NqzZtx31111TFNNMemZnZbXmN5k+GPLBoC9r3iTms26a5qtZbluHmmrF5liIjfzVmiZjfviaqp2ppid5mN430Xc1fO3xk5rc/u16ozS5lGlLN7t5fpjA3qowliIn52u73fJF3bvuVx0mZ7MURPZBs049eV94A8NMVich4W5XjeI+a2JmirEYS7GEyumqPRGIqpqqubT6bduqiY7q2DPEzytXN1ru9dtabz3JdEYGveKbOS5dRXd7Pt3sR5yrte3T2PchheAuVqTmZ5idX3q72peOmvMfNc7zRd1BivNx7lEVxTEe1EPkbuutbX6u3f1hndyrfftV5hemd/hqUMB9vk/HLjXp69TiMh4v61y65Rt2asLn+KtTH/21wvNoDylPOVw+uWow/GDGZ9hbcxNWGz/AA1rH03I8KrldPnv4LkSxiAbceBnlptJ5vdw+T8wXDu9kN2uYpqzrT81YnCRP11eGrnztumPtKrs/athnDfirw44wactau4Y6zyrUmU3enyRgMRFzzdW3sLlPsrdfjRXEVR6YcwT7bhFxp4ncCdXWNbcK9X47Is0szEXJsV72cTbid/NX7U70XaJ+triY9MbTtIOnIYg8i3lA9I812VxpLU1jCae4kZfYm5istormLGY26fZYjCdqZmYjvqtTM1Ud+9VO9UZfALU81mrdRaD5beJOs9I5pcy3Osm03jcZgcXbppqqsXqLczTXEVRMbxPjEwusslztfSjcXfvRzH8DJA0rf2RznXiZmOPmcfy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" alt="Orimak Logo">
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <div class="title">2026 MALZEME LİSTESİ</div>
+    <div class="sub">Orimak Makina Sanayi ve Ticaret A.Ş.</div>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="headerDate"></div>
+    <div id="syncStatus" class="sync-status sync-loading">⟳ BAĞLANIYOR</div>
+    <div class="header-user-chip" id="userChip" style="display:none">
+      <div class="chip-avatar" id="chipAvatar">?</div>
+      <span class="chip-name" id="chipName">—</span>
+    </div>
+    <button id="adminBtn" class="hbtn hbtn-admin" onclick="openAdminPanel()" style="display:none;border:1px solid #2a5a8e;">
+      🔑 KULLANICI YÖNETİMİ
+    </button>
+    <button id="partiBtn" class="hbtn hbtn-green" onclick="openPartiPanel()" style="display:none">
+      📦 PARTİ YÖNETİMİ
+    </button>
+    <button id="arsivBtn" class="hbtn hbtn-purple" onclick="openArsiv()" style="display:none">
+      📁 ARŞİV
+    </button>
+    <button class="hbtn hbtn-dark" onclick="loadData()">↺ Yenile</button>
+    <button class="hbtn hbtn-dark" onclick="window.print()">🖨 Yazdır</button>
+  </div>
+</header>
+
+<!-- ══ PARTİ YÖNETİMİ ══ -->
+<div id="partiOverlay" onclick="closePartiOutside(event)">
+  <div class="parti-box">
+    <div class="parti-head">
+      <h2>📦 PARTİ YÖNETİMİ</h2>
+      <button class="admin-close" onclick="closePartiPanel()">✕</button>
+    </div>
+    <div class="parti-body">
+      <div class="admin-section-title">Partiler</div>
+      <div class="parti-list" id="partiList"></div>
+      <div class="admin-section-title">Yeni Parti Başlat</div>
+      <div class="parti-new-form">
+        <label>Parti Adı</label>
+        <input type="text" id="newPartiAdi" placeholder="örn. 2026 - Parti 2" autocomplete="off"/>
+        <label>Hangi Sayfalar Sıfırlansın? <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;">(işaretlenenler sıfırlanır)</span></label>
+        <div id="partiSayfaSecim" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:180px;overflow-y:auto;"></div>
+        <button class="parti-new-btn" onclick="yeniPartiBaslat()">🚀 YENİ PARTİ BAŞLAT</button>
+        <div class="parti-msg" id="partiMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARŞİV GÖRÜNTÜLE ══ -->
+<div id="arsivOverlay">
+  <div class="arsiv-header">
+    <h2>📁 ARŞİV</h2>
+    <select id="arsivSelect" style="background:#222;border:1px solid #444;border-radius:5px;padding:7px 12px;color:#eee;font-family:'Barlow Condensed',sans-serif;font-size:13px;outline:none;margin-right:10px;min-width:200px;"></select>
+    <button class="hbtn hbtn-dark" onclick="closeArsiv()">✕ Kapat</button>
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;">
+    <div id="arsivContent"></div>
+  </div>
+</div>
+
+
+<div id="adminOverlay" onclick="closeAdminOutside(event)">
+  <div class="admin-box">
+    <div class="admin-head">
+      <h2>👤 KULLANICI YÖNETİMİ</h2>
+      <button class="admin-close" onclick="closeAdminPanel()">✕</button>
+    </div>
+    <div class="admin-body">
+      <div class="admin-section-title">Mevcut Kullanıcılar</div>
+      <div class="user-list" id="userList"></div>
+      <div class="admin-section-title">Yeni Kullanıcı Ekle</div>
+      <div class="admin-add-form">
+        <div class="form-row">
+          <div>
+            <label>Kullanıcı Adı</label>
+            <input type="text" id="newUser" placeholder="kullanici_adi" autocomplete="off"/>
+          </div>
+          <div>
+            <label>Şifre</label>
+            <input type="password" id="newPass" placeholder="şifre" autocomplete="off"/>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="form-label" style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;">Rol</label>
+          <select id="newRole" style="width:100%;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;">
+            <option value="viewer">👁 Viewer — Sadece görüntüler</option>
+            <option value="operator" selected>⚙️ Operator — Onay/adet güncelleyebilir</option>
+            <option value="manager">📋 Manager — Satır ekler, parti başlatır, arşive bakar</option>
+            <option value="admin">🔑 Admin — Tam yetki</option>
+          </select>
+        </div>
+        <button class="admin-add-btn" onclick="addUser()">➕ KULLANICI EKLE</button>
+        <div class="admin-msg" id="adminMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="tabs-wrap" id="tabsWrap"></div>
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><div class="stat-dot" style="background:#ccc;border:1px solid #555"></div>Toplam<span class="stat-num" id="statTotal">0</span></div>
+  <div class="stat"><div class="stat-dot" style="background:var(--orange)"></div>Onaylandı<span class="stat-num" id="statOnay">0</span></div>
+  <div class="stat"><div class="stat-dot" style="background:var(--mint)"></div>Beklemede<span class="stat-num" id="statBekle">0</span></div>
+  <div class="stat"><div class="stat-dot" style="background:var(--green)"></div>Geliş Onayı<span class="stat-num" id="statGelis">0</span></div>
+  <div class="stat"><div class="stat-dot" style="background:var(--red)"></div>Eksik Adet<span class="stat-num" id="statEksik">0</span></div>
+</div>
+<div class="toolbar" id="toolBar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="searchInput" placeholder="Malzeme adı, kodu veya ölçü ara...">
+  </div>
+  <span class="filter-label"><span id="visibleCount">0</span> kayıt</span>
+  <button id="addRowBtn" class="add-row-btn" onclick="openModal()">＋ Yeni Satır Ekle</button>
+</div>
+<div class="legend" id="legendBar">
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--cream);border:1px solid #bbb"></div>Boş</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--orange)"></div>Yetkili Onayı</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--mint)"></div>Beklemede</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--green)"></div>Geliş Onaylandı</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--red)"></div>Gelen ≠ Gereken</div>
+</div>
+
+<div id="sheetsContainer"></div>
+
+<!-- MODAL: Yeni Satır -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h2>➕ YENİ MALZEME EKLE</h2>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Sayfa</label>
+        <select class="form-select" id="fSheet"></select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Grup (Nereye eklensin?)</label>
+        <select class="form-select" id="fGroup">
+          <option value="__end__">— Sayfanın En Sonuna —</option>
+        </select>
+        <span class="modal-note">Seçilen grubun sonuna eklenir</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Malzeme Kodu</label>
+        <input class="form-input" id="fCode" placeholder="örn. 3001">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Adet</label>
+        <input class="form-input" type="number" id="fAdet" min="0" placeholder="0">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Malzeme Adı *</label>
+        <input class="form-input" id="fName" placeholder="Malzeme adını girin">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Ölçüler (mm / cm / m)</label>
+        <input class="form-input" id="fOlcu" placeholder="örn. Boy:1200 mm veya 80 x 30 x 165">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-gray" onclick="closeModal()">İptal</button>
+      <button class="mbtn mbtn-orange" id="addBtn" onclick="addRow()">✓ Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Script kodu -->
+<div class="modal-overlay" id="scriptModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="width:700px;max-width:98vw;">
+    <h2>📋 APPS SCRIPT KODU</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px;">Bu kodu Google Apps Script editörüne yapıştır:</p>
+    <textarea id="scriptArea" style="width:100%;height:300px;background:#0d0d0d;border:1px solid #333;border-radius:6px;padding:12px;color:#aef;font-family:monospace;font-size:11px;resize:vertical;outline:none;" readonly></textarea>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-orange" onclick="copyScript()">📋 Kopyala</button>
+      <button class="mbtn mbtn-gray" onclick="document.getElementById('scriptModal').classList.remove('open')">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric'});
+
+const APPS_SCRIPT_CODE = "\n// =====================================================\n// ORIMAK MALZEME L\u0130STES\u0130 - Google Apps Script\n// Bu kodu Google Apps Script'e yap\u0131\u015ft\u0131r ve Deploy et\n// =====================================================\n\nfunction doGet(e) {\n  const action = e.parameter.action || 'getData';\n  \n  if (action === 'getData') {\n    return getData();\n  }\n  \n  return ContentService.createTextOutput(JSON.stringify({error: 'Unknown action'}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doPost(e) {\n  const data = JSON.parse(e.postData.contents);\n  const action = data.action;\n  \n  if (action === 'addRow') return addRow(data);\n  if (action === 'updateRow') return updateRow(data);\n  if (action === 'deleteRow') return deleteRow(data);\n  \n  return ContentService.createTextOutput(JSON.stringify({error: 'Unknown action'}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction getData() {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheets = ss.getSheets();\n  const result = [];\n  \n  sheets.forEach(sheet => {\n    const name = sheet.getName();\n    if (name.startsWith('_')) return; // _ ile ba\u015flayanlar\u0131 atla\n    \n    const data = sheet.getDataRange().getValues();\n    const rows = [];\n    \n    data.forEach((row, i) => {\n      if (i === 0) return; // ba\u015fl\u0131k sat\u0131r\u0131n\u0131 atla\n      \n      const obj = {};\n      if (row[0]) obj['1'] = String(row[0]);\n      if (row[1]) obj['2'] = String(row[1]);\n      if (row[2]) obj['3'] = String(row[2]);\n      if (row[3]) obj['4'] = String(row[3]);\n      if (row[4]) obj['5'] = String(row[4]);\n      if (row[5]) obj['makine'] = String(row[5]);\n      if (row[6]) obj['yetkili'] = String(row[6]);\n      if (row[7]) obj['sipTarihi'] = String(row[7]);\n      if (row[8]) obj['terminTarihi'] = String(row[8]);\n      if (row[9]) obj['teslimTarihi'] = String(row[9]);\n      if (row[10]) obj['gelenAdet'] = String(row[10]);\n      if (row[11]) obj['gelis'] = String(row[11]);\n      if (row[12]) obj['14'] = String(row[12]);\n      obj['_id'] = i + 1; // sat\u0131r numaras\u0131 (1-indexed, ba\u015fl\u0131k hari\u00e7)\n      \n      rows.push(obj);\n    });\n    \n    result.push({ name, rows });\n  });\n  \n  const output = ContentService.createTextOutput(JSON.stringify({sheets: result}))\n    .setMimeType(ContentService.MimeType.JSON);\n  return output;\n}\n\nfunction addRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  const row = [\n    data.rowNo || '',\n    data.code || '',\n    data.name || '',\n    data.olcu || '',\n    data.adet || '',\n    '', // makine\n    '', // yetkili\n    '', // sipTarihi\n    '', // terminTarihi\n    '', // teslimTarihi\n    '', // gelenAdet\n    '', // gelis\n    data.teslimatDurumu || ''\n  ];\n  \n  // Grubun sonunu bul\n  if (data.group && data.group !== '__end__') {\n    const vals = sheet.getDataRange().getValues();\n    let insertRow = vals.length + 1;\n    let inGroup = false;\n    \n    for (let i = 1; i < vals.length; i++) {\n      const isGroupRow = vals[i][1] && !vals[i][2];\n      if (isGroupRow && vals[i][1] === data.group) { inGroup = true; continue; }\n      if (inGroup && isGroupRow) { insertRow = i + 1; break; }\n      if (inGroup) insertRow = i + 2;\n    }\n    \n    sheet.insertRowBefore(insertRow);\n    sheet.getRange(insertRow, 1, 1, row.length).setValues([row]);\n  } else {\n    sheet.appendRow(row);\n  }\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction updateRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  const rowNum = data.rowNum; // 1-indexed, ba\u015fl\u0131k hari\u00e7 -> ger\u00e7ek sat\u0131r = rowNum + 1\n  const col = data.col;\n  const val = data.value;\n  \n  sheet.getRange(rowNum + 1, col).setValue(val);\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction deleteRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  sheet.deleteRow(data.rowNum + 1);\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction err(msg) {\n  return ContentService.createTextOutput(JSON.stringify({error: msg}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n";
+
+const OFFLINE_DATA = [
+  {
+    "name": "BC Malzeme Sipariş Listesi",
+    "rows": [
+      {
+        "2": "SİGMA-T KANAL GRUBU"
+      },
+      {
+        "3": "90x90 Sigma Profil Ağır Şart",
+        "4": "Boy:1690 mm",
+        "5": "4",
+        "6": "2"
+      },
+      {
+        "3": "90x90 Sigma Profil Normal",
+        "4": "Boy:2700 mm",
+        "5": "1",
+        "6": "2"
+      },
+      {
+        "3": "45x90 Sigma Profil Normal",
+        "4": "Boy:2700 mm",
+        "5": "1"
+      },
+      {
+        "3": "45x90 Sigma Profil Normal",
+        "4": "Boy:2000 mm",
+        "5": "1"
+      },
+      {
+        "3": "45x90 Sigma Profil Normal",
+        "4": "Boy:1690 mm",
+        "5": "2"
+      },
+      {
+        "3": "40x80 Sigma Profil Normal Kanal 8",
+        "4": "Boy:3865 mm",
+        "5": "2"
+      },
+      {
+        "3": "Sürgü Profili  Normal Kanal 8",
+        "4": "Boy:3865 mm",
+        "5": "2"
+      },
+      {
+        "3": "30x60 Sigma Profil Normal Kanal 8",
+        "4": "Boy:1490 mm",
+        "5": "1"
+      },
+      {
+        "3": "30x60 Sigma Profil Normal Kanal 8",
+        "4": "Boy: 600 mm",
+        "5": "3"
+      },
+      {
+        "3": "30X30 Sigma Profil Normal Kanal 8",
+        "4": "Boy:300 mm",
+        "5": "1"
+      },
+      {
+        "3": "M6 T Somun Kanal 10",
+        "5": "150"
+      },
+      {
+        "3": "M8 T Somun Kanal 10",
+        "5": "150"
+      },
+      {
+        "3": "M6 T Somun Kanal 8",
+        "5": "100"
+      },
+      {
+        "3": "Kapı Kulbu",
+        "5": "2"
+      },
+      {
+        "3": "45x90 Sigma Kapak",
+        "5": "4"
+      },
+      {
+        "3": "90x90 Sigma Kapak",
+        "5": "2"
+      },
+      {
+        "3": "30x60 Sigma kapak",
+        "5": "3"
+      },
+      {
+        "2": "RAY-ARABA-RULMAN GRUBU"
+      },
+      {
+        "3": "25 mm Lineer Ray",
+        "4": "Boy:1350 mm",
+        "5": "2"
+      },
+      {
+        "3": "25 mm Lineer Ray",
+        "4": "Boy:1550 mm",
+        "5": "2"
+      },
+      {
+        "3": "25 mm Lineer Ray",
+        "4": "Boy:150 mm",
+        "5": "3"
+      },
+      {
+        "3": "25 mm Lineer Ray",
+        "4": "Boy:230 mm",
+        "5": "6"
+      },
+      {
+        "3": "20 mm Lineer Ray",
+        "4": "Boy: 212 mm",
+        "5": "2"
+      },
+      {
+        "3": "HGW 25 CA",
+        "5": "15"
+      },
+      {
+        "3": "HGW 20 CA",
+        "5": "2"
+      },
+      {
+        "3": "Ucpa 206",
+        "5": "16"
+      },
+      {
+        "3": "Ucfl 205",
+        "5": "2"
+      },
+      {
+        "3": "SCE 30 UU",
+        "5": "32"
+      },
+      {
+        "3": "LME 12 UU",
+        "5": "8"
+      },
+      {
+        "3": "6002",
+        "5": "2"
+      },
+      {
+        "3": "6004",
+        "5": "4"
+      },
+      {
+        "3": "6 x 30 KAMA",
+        "5": "8"
+      },
+      {
+        "3": "5 x 15 KAMA",
+        "5": "2"
+      },
+      {
+        "3": "8 x 40 KAMA",
+        "5": "9"
+      },
+      {
+        "3": "18 lik SEKMAN",
+        "5": "3"
+      },
+      {
+        "3": "KM7 SOMUN",
+        "5": "4"
+      },
+      {
+        "2": "AKTARMA GRUBU"
+      },
+      {
+        "3": "T10 25diş 25 genişlik kasnak",
+        "5": "2"
+      },
+      {
+        "3": "T10 25 diş 25 genişlik kasnak",
+        "5": "2"
+      },
+      {
+        "3": "Modül 2 - 22 diş pinyon dişli",
+        "5": "2"
+      },
+      {
+        "3": "8M 40 diş 30 genişlik kasnak",
+        "5": "3"
+      },
+      {
+        "3": "8M 30 diş 30 Genişlik kasnak",
+        "5": "3"
+      },
+      {
+        "3": "Modül 2 Kramiyer",
+        "4": "Boy:1350 mm",
+        "5": "2"
+      },
+      {
+        "1": "55",
+        "3": "8M-30 720",
+        "5": "3"
+      },
+      {
+        "1": "56",
+        "3": "Konveyör Kayışı",
+        "5": "68"
+      },
+      {
+        "1": "57",
+        "3": "8M-30 880",
+        "5": "1"
+      },
+      {
+        "1": "58",
+        "3": "T10-25 Genişlik Kayış",
+        "4": "Boy:3700 mm",
+        "5": "2"
+      },
+      {
+        "3": "18 lik Kaplin",
+        "5": "1"
+      },
+      {
+        "3": "30 luk Alın Sıkmalı Kaplin",
+        "5": "1"
+      },
+      {
+        "2": "TAMBUR GRUBU"
+      },
+      {
+        "3": "60LIK GALVENİZ RULO",
+        "4": "BOY:1465MM",
+        "5": "21"
+      },
+      {
+        "1": "63",
+        "3": "60LIK GALVENİZ RULO",
+        "4": "BOY:1465MM",
+        "5": "20"
+      },
+      {
+        "1": "64",
+        "3": "60LIK GALVENİZ RULO",
+        "4": "BOY:1465MM",
+        "5": "27"
+      },
+      {
+        "3": "60LIK GALVENİZ RULO",
+        "4": "BOY:1295MM",
+        "5": "1"
+      },
+      {
+        "2": "MOTOR-REDÜKTÖR GRUBU"
+      },
+      {
+        "3": "2,2 Kw 3000 devir AGM2E 90L 2e",
+        "5": "3"
+      },
+      {
+        "3": "0,55 Kw 1500 devir C.AGMEL 71 M 4c",
+        "5": "3"
+      },
+      {
+        "3": "EN040.00-B007",
+        "5": "3"
+      },
+      {
+        "3": "EN063.00-B09",
+        "5": "3"
+      },
+      {
+        "2": "KABLO KANALI GRUBU"
+      },
+      {
+        "3": "CKS-15 HAREKETLİ KABLO KANALI",
+        "5": "1"
+      },
+      {
+        "2": "NALBUR GRUBU"
+      },
+      {
+        "3": "Pleksiglass mavi",
+        "4": "1944*574*6MM",
+        "5": "2"
+      },
+      {
+        "3": "M20 MAKİNE AYAK",
+        "5": "14"
+      },
+      {
+        "3": "M12 MAKİNE AYAK",
+        "4": "EN  AZ 100MMUZUNLUK",
+        "5": "2"
+      },
+      {
+        "3": "10 KG SEFOX TUTKAL",
+        "5": "1"
+      },
+      {
+        "3": "NAYLON",
+        "4": "7*5 MT",
+        "5": "1"
+      },
+      {
+        "3": "STREC",
+        "5": "1"
+      },
+      {
+        "3": "SİLTE",
+        "4": "20 MT",
+        "5": "1"
+      },
+      {
+        "3": "FREN TAKOZU M6*10",
+        "5": "5"
+      },
+      {
+        "1": "91",
+        "3": "SİVRİ SETSKUR M6*10",
+        "5": "150"
+      },
+      {
+        "1": "92",
+        "3": "KADEMELİ SİPER BASTON VE YAYI",
+        "5": "1"
+      },
+      {
+        "1": "93",
+        "3": "KUTU KAPAK TUTUCU",
+        "5": "2"
+      },
+      {
+        "1": "94",
+        "3": "KAPAK MENTEŞESİ",
+        "5": "3"
+      },
+      {
+        "1": "95",
+        "3": "NORMAL KAPAK MENTEŞESİ",
+        "5": "1"
+      },
+      {
+        "1": "96",
+        "3": "40'lık Yan bariyer profili",
+        "4": "BOY:400MM",
+        "5": "1"
+      },
+      {
+        "1": "97",
+        "3": "40'lık Yan bariyer profili",
+        "4": "BOY:1000MM",
+        "5": "1"
+      },
+      {
+        "1": "98",
+        "3": "40'lık Yan bariyer plastiği",
+        "4": "BOY:400MM",
+        "5": "1"
+      },
+      {
+        "1": "99",
+        "3": "40'lık Yan bariyer plastiği",
+        "4": "BOY:1000MM",
+        "5": "1"
+      },
+      {
+        "1": "100",
+        "3": "Konsol Bağlantı Takımı Orta",
+        "5": "4"
+      },
+      {
+        "1": "101",
+        "3": "Konsol Bağlantı Mil 150 mm",
+        "5": "4"
+      },
+      {
+        "1": "102"
+      },
+      {
+        "2": "PNÖMATİK GRUBU"
+      },
+      {
+        "3": "40*350 PİSTON",
+        "5": "10"
+      },
+      {
+        "2": "ELEKTRONİK GRUBU"
+      },
+      {
+        "3": "BOXPC",
+        "5": "1"
+      },
+      {
+        "2": "ELEKTRİK GRUBU"
+      },
+      {
+        "3": "METAL KABLO KANALI",
+        "4": "2 MT",
+        "5": "2"
+      },
+      {
+        "3": "40*60 PLASTİK KABLO KANALI",
+        "4": "2MT",
+        "5": "3"
+      },
+      {
+        "3": "60*60 PLASTİK KABLO KANALI",
+        "4": "2 MT",
+        "5": "6"
+      },
+      {
+        "3": "PANO RAYI",
+        "4": "2MT",
+        "5": "1"
+      },
+      {
+        "3": "Pano Anahtarı",
+        "5": "1"
+      },
+      {
+        "3": "El Sıkışma ETİKETİ",
+        "5": "2"
+      },
+      {
+        "3": "Elektrik ETİKETİ",
+        "5": "2"
+      },
+      {
+        "3": "Forklift ve Kurulum Etiketi",
+        "5": "2"
+      },
+      {
+        "3": "LAMBA VE APARATLARI",
+        "5": "1"
+      },
+      {
+        "3": "KLİPS CIRT KELEPÇE",
+        "5": "3"
+      },
+      {
+        "3": "VİDALI Kablo Tutucu ( Öpücük)",
+        "5": "1"
+      },
+      {
+        "3": "Yapışkanlı Öpücük",
+        "5": "1"
+      },
+      {
+        "3": "2 Numara SPiRAL",
+        "5": "1"
+      },
+      {
+        "3": "Kalite Kontrol Etiketi",
+        "5": "1"
+      },
+      {
+        "3": "Kablo REKORU PG-13.5",
+        "5": "2"
+      },
+      {
+        "1": "129",
+        "3": "Kablo REKORU PG-36",
+        "5": "4"
+      },
+      {
+        "3": "0,5'lik yüzük",
+        "5": "100"
+      },
+      {
+        "3": "2.5'luk yüzük",
+        "5": "30"
+      },
+      {
+        "3": "0.75 Yüzük",
+        "5": "50"
+      },
+      {
+        "3": "1.5'luk yüzük",
+        "5": "20"
+      },
+      {
+        "3": "1'lik yüzük",
+        "5": "20"
+      },
+      {
+        "3": "6'lık yüzük",
+        "5": "10"
+      },
+      {
+        "3": "U Yüzük",
+        "5": "20"
+      },
+      {
+        "3": "Yuvarlak Yüzük",
+        "5": "50"
+      },
+      {
+        "3": "Acil Stop yazısı",
+        "5": "3"
+      },
+      {
+        "3": "Acil Stop butonu",
+        "5": "3"
+      },
+      {
+        "3": "Acil Stop kutusu",
+        "5": "2"
+      },
+      {
+        "3": "8x0.5 kablo",
+        "4": "3 MT",
+        "5": "1"
+      },
+      {
+        "3": "5x2.5 kablo",
+        "4": "3 MT",
+        "5": "1"
+      },
+      {
+        "3": "Ethernet Kablosu",
+        "4": "3 MT",
+        "5": "1"
+      },
+      {
+        "3": "4X1.5 Kablo",
+        "4": "50 MT",
+        "5": "1"
+      },
+      {
+        "3": "4x1.5 Kablo Hareketli",
+        "4": "10 MT",
+        "5": "1"
+      },
+      {
+        "3": "5 Metre pemax piston sensörü",
+        "5": "8"
+      },
+      {
+        "3": "4'lük ve 8'lik Makoron",
+        "4": "2 MT",
+        "5": "1"
+      },
+      {
+        "3": "M12 Sensör WEGNÖR",
+        "5": "12"
+      },
+      {
+        "3": "M8 metal sensör 4 MM ALGILAMA KISA",
+        "5": "5"
+      },
+      {
+        "3": "M8 metal sensör 4 MM ALGILAMA UZUN",
+        "5": "9"
+      },
+      {
+        "3": "M12 4 PİNLİ Kablo DUZ ( PVC)",
+        "4": "5MT",
+        "5": "4"
+      },
+      {
+        "1": "156",
+        "3": "M12 4PİNLİ  Kablo DUZ (PUR)",
+        "4": "10 MT",
+        "5": "1"
+      },
+      {
+        "3": "M12 4PİNLİ  Kablo DUZ (PUR)",
+        "4": "5 MT",
+        "5": "2"
+      },
+      {
+        "3": "M12  4 PİNLİ Kablo DUZ(PVC)",
+        "4": "10MT",
+        "5": "5"
+      },
+      {
+        "3": "M8 3 PİNLİ Kablo DUZ  (PVC)",
+        "4": "5 MT",
+        "5": "8"
+      },
+      {
+        "3": "M8 3PİNLİ Kablo DUZ  (PVC)",
+        "4": "10MT",
+        "5": "6"
+      },
+      {
+        "3": "Klips",
+        "5": "4"
+      },
+      {
+        "3": "Led Lamba VE APARATLARI",
+        "5": "1"
+      },
+      {
+        "3": "2X0.5 kablo",
+        "4": "75 MT",
+        "5": "1"
+      },
+      {
+        "3": "4x0.5 kablo (Hareketli)",
+        "4": "20 MT",
+        "5": "1"
+      },
+      {
+        "3": "4x0.5 kablo",
+        "4": "35MT",
+        "5": "1"
+      },
+      {
+        "3": "10 lu 2.5 luk Köprü",
+        "5": "2"
+      },
+      {
+        "3": "2'li Mavi Klemens",
+        "5": "15"
+      },
+      {
+        "3": "2.5'lik Kırmızı Klemens",
+        "5": "10"
+      },
+      {
+        "3": "4'lük Sarı-Yeşil Klemens",
+        "5": "2"
+      },
+      {
+        "3": "4'lük Mavi Klemens",
+        "5": "2"
+      },
+      {
+        "3": "4'lük Gri Klemens",
+        "5": "6"
+      },
+      {
+        "3": "2.5'luk Gri Klemens",
+        "5": "3"
+      },
+      {
+        "3": "Stoper Klemens",
+        "5": "4"
+      },
+      {
+        "3": "4 Lü Köprü",
+        "5": "1"
+      },
+      {
+        "3": "Şalter",
+        "5": "1"
+      },
+      {
+        "3": "Modbas DİJİTSU",
+        "5": "1"
+      },
+      {
+        "3": "C32 3'lü-Şalter",
+        "5": "3"
+      },
+      {
+        "3": "C16 Şalter TEKLİ",
+        "5": "1"
+      },
+      {
+        "3": "Slim Role",
+        "5": "2"
+      },
+      {
+        "3": "Güç Kaynağı",
+        "5": "1"
+      },
+      {
+        "3": "Pano Prizi",
+        "5": "1"
+      },
+      {
+        "3": "Dağıtıcı Trafo",
+        "5": "1"
+      },
+      {
+        "3": "FREN DİRENCİ",
+        "5": "3"
+      },
+      {
+        "3": "05 Siyah Kablo",
+        "4": "50 MT",
+        "5": "1"
+      },
+      {
+        "3": "05 Mavi Kablo",
+        "4": "5 MT",
+        "5": "1"
+      },
+      {
+        "3": "05 Kırmızı Kablo",
+        "4": "5 MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 Siyah kablo",
+        "4": "25 MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 Kırmızı Kablo",
+        "4": "15 MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 Mavi Kablo",
+        "4": "10 MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 Sarı-Yeşil Kablo",
+        "4": "10 MT",
+        "5": "1"
+      },
+      {
+        "3": "1.5 Siyah Kablo",
+        "4": "10 MT",
+        "5": "1"
+      },
+      {
+        "3": "WİELAND RST16 CONNEKTOR",
+        "5": "2"
+      },
+      {
+        "3": "KAÇAK AKIM SİGORTASI SİEMENS 40A 30MA",
+        "5": "1"
+      },
+      {
+        "3": "4 LUK SIYAH KABLO",
+        "4": "5 MT",
+        "5": "1"
+      },
+      {
+        "3": "4 LUK KIRMIZI KABLO",
+        "4": "5 MT",
+        "5": "1"
+      },
+      {
+        "1": "217"
+      },
+      {
+        "1": "219"
+      },
+      {
+        "2": "YASKAWA GRUBU"
+      },
+      {
+        "3": "015-CEFPR01",
+        "5": "1"
+      },
+      {
+        "3": "022-1BF00",
+        "5": "6"
+      },
+      {
+        "3": "021-1BF00",
+        "5": "6"
+      },
+      {
+        "3": "CIPR-GA50C2006ABAA-BAAASA",
+        "5": "3"
+      },
+      {
+        "3": "CIPR-GA50C2012ABAA-BAAASA",
+        "5": "3"
+      },
+      {
+        "2": "SMC GRUBU"
+      },
+      {
+        "3": "KAPATMA SİLİNDİRİ"
+      },
+      {
+        "2": "AS2201F-02-08SA",
+        "3": "KAPATMA SİLİNDİRİ",
+        "5": "16"
+      },
+      {
+        "2": "GKM12-24",
+        "3": "KAPATMA SİLİNDİRİ",
+        "5": "4"
+      },
+      {
+        "2": "KJ12D",
+        "3": "KAPATMA SİLİNDİRİ",
+        "5": "4"
+      },
+      {
+        "2": "SYJ7120-5LOU-01F-Q",
+        "3": "VALF",
+        "5": "8"
+      },
+      {
+        "2": "KQ2L08-01AS",
+        "3": "VALF",
+        "5": "8"
+      },
+      {
+        "2": "KQ2H08-01AS",
+        "3": "VALF",
+        "5": "16"
+      },
+      {
+        "2": "VHS24P-190AS",
+        "3": "VALF",
+        "5": "16"
+      },
+      {
+        "2": "CP96SDB40-50C",
+        "3": "SİLİNDİR",
+        "5": "2"
+      },
+      {
+        "2": "AS2201F-02-08SA",
+        "3": "SİLİNDİR",
+        "5": "4"
+      },
+      {
+        "2": "SYJ7120-5LOU-01F-Q",
+        "3": "VALF",
+        "5": "1"
+      },
+      {
+        "2": "KQ2L08-01AS",
+        "3": "VALF",
+        "5": "1"
+      },
+      {
+        "1": "253",
+        "2": "KQ2H08-01AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "VHS24P-190AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "CDQ2B40-40DMZ",
+        "3": "ÇİFT STROK",
+        "5": "1"
+      },
+      {
+        "2": "CDQ2A40-60DMZ",
+        "3": "ÇİFT STROK",
+        "5": "1"
+      },
+      {
+        "2": "AS2201F-01-08SA",
+        "3": "ÇİFT STROK",
+        "5": "4"
+      },
+      {
+        "2": "NT-04",
+        "3": "ÇİFT STROK",
+        "5": "2"
+      },
+      {
+        "2": "SYJ7120-5LOU-01F-Q",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "KQ2L08-01AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "KQ2H08-01AS",
+        "3": "VALF",
+        "5": "4"
+      },
+      {
+        "1": "262",
+        "2": "VHS24P-190AS",
+        "3": "VALF",
+        "5": "4"
+      },
+      {
+        "2": "CD55B40-40M",
+        "3": "KOMPAKT",
+        "5": "2"
+      },
+      {
+        "2": "AS2201F-01-08SA",
+        "3": "KOMPAKT",
+        "5": "4"
+      },
+      {
+        "2": "GKM10-20",
+        "3": "KOMPAKT",
+        "5": "2"
+      },
+      {
+        "2": "SYJ7120-5LOU-01F-Q",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "KQ2L08-01AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "KQ2H08-01AS",
+        "3": "VALF",
+        "5": "4"
+      },
+      {
+        "2": "VHS24P-190AS",
+        "3": "VALF",
+        "5": "4"
+      },
+      {
+        "2": "AR20K-F02BE-Y-D",
+        "3": "REGÜLATÖR",
+        "5": "4"
+      },
+      {
+        "1": "271",
+        "2": "KQ2L08-02AS",
+        "3": "REGÜLATÖR",
+        "5": "8"
+      },
+      {
+        "2": "MGPM25TF-30Z",
+        "3": "VAKUM SİLİNDİRI",
+        "5": "1"
+      },
+      {
+        "2": "AS2201F-01-08SA",
+        "3": "VAKUM SİLİNDİRI",
+        "5": "2"
+      },
+      {
+        "2": "SYJ7120-5LOU-01F-Q",
+        "3": "VALF",
+        "5": "1"
+      },
+      {
+        "2": "KQ2L08-01AS",
+        "3": "VALF",
+        "5": "1"
+      },
+      {
+        "2": "KQ2H08-01AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "VHS24P-190AS",
+        "3": "VALF",
+        "5": "2"
+      },
+      {
+        "2": "ZP3C-T50BFS-AG02",
+        "3": "VAKUM PED",
+        "5": "4"
+      },
+      {
+        "2": "ZH10DSA-06-06-08",
+        "3": "VAKUM PED",
+        "5": "4"
+      },
+      {
+        "1": "280",
+        "2": "AN15-C08",
+        "3": "VAKUM PED",
+        "5": "4"
+      },
+      {
+        "2": "KQ2E06-G02A",
+        "3": "VAKUM PED",
+        "5": "4"
+      },
+      {
+        "2": "VHS40-F04-D",
+        "3": "ŞARTLANDIRICI",
+        "5": "1"
+      },
+      {
+        "2": "AW40-F04-D",
+        "3": "ŞARTLANDIRICI",
+        "5": "1"
+      },
+      {
+        "2": "Y400T-D",
+        "3": "ŞARTLANDIRICI",
+        "5": "1"
+      },
+      {
+        "2": "ISE30A-01-P-G",
+        "3": "ŞARTLANDIRICI",
+        "5": "1"
+      },
+      {
+        "2": "KQ2L10-04AS",
+        "3": "ŞARTLANDIRICI",
+        "5": "2"
+      },
+      {
+        "2": "VHS44P-190AS",
+        "3": "ŞARTLANDIRICI",
+        "5": "1"
+      },
+      {
+        "2": "KQ2UD06-08A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "1"
+      },
+      {
+        "1": "289",
+        "2": "KQ2T08-00A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "10"
+      },
+      {
+        "2": "KQ2U08-00A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "5"
+      },
+      {
+        "2": "KQ2T10-08A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "7"
+      },
+      {
+        "2": "KQ2T10-00A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "1"
+      },
+      {
+        "2": "KQ2R08-10A",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "2"
+      },
+      {
+        "2": "D-M9BZ",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "6"
+      },
+      {
+        "2": "TU0805C-20",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "1"
+      },
+      {
+        "2": "TU1065C-20",
+        "3": "FİTTİNG VE DİĞER",
+        "5": "0"
+      },
+      {
+        "1": "298"
+      },
+      {
+        "1": "307"
+      },
+      {
+        "1": "325"
+      },
+      {
+        "1": "334"
+      },
+      {
+        "1": "343"
+      },
+      {
+        "1": "352"
+      },
+      {
+        "1": "361"
+      },
+      {
+        "1": "370"
+      },
+      {
+        "1": "379"
+      },
+      {
+        "1": "397"
+      },
+      {
+        "1": "406"
+      },
+      {
+        "1": "415"
+      },
+      {
+        "1": "424"
+      },
+      {
+        "1": "433"
+      },
+      {
+        "1": "442"
+      },
+      {
+        "1": "451"
+      }
+    ]
+  },
+  {
+    "name": "BC TALAŞLI İMALAT",
+    "rows": [
+      {
+        "2": "FREZE GRUBU"
+      },
+      {
+        "2": "3001",
+        "3": "Soğuk Çekme",
+        "4": "90 x 20 x 95",
+        "5": "4"
+      },
+      {
+        "2": "3003",
+        "3": "Soğuk Çekme",
+        "4": "80 x 30 x 165",
+        "5": "8"
+      },
+      {
+        "2": "3004",
+        "3": "Alüminyum",
+        "4": "50 x 15 x 80",
+        "5": "16"
+      },
+      {
+        "2": "3005",
+        "3": "Soğuk Çekme",
+        "4": "50 x 15 x 40",
+        "5": "4"
+      },
+      {
+        "2": "3006",
+        "3": "Alüminyum",
+        "4": "80 x 50 x 80",
+        "5": "2"
+      },
+      {
+        "2": "3007",
+        "3": "Alüminyum",
+        "4": "80 x 50 x 80",
+        "5": "5"
+      },
+      {
+        "2": "3008",
+        "3": "Soğuk Çekme",
+        "4": "60 x 30 x 155",
+        "5": "8"
+      },
+      {
+        "2": "3009",
+        "3": "Soğuk Çekme",
+        "4": "40 x 20 x 100",
+        "5": "16"
+      },
+      {
+        "2": "3010",
+        "3": "Soğuk Çekme",
+        "4": "40 x 40 x 90",
+        "5": "1"
+      },
+      {
+        "2": "3011",
+        "3": "Alüminyum",
+        "4": "100 x 20 x 155",
+        "5": "3"
+      },
+      {
+        "2": "3012",
+        "3": "Alüminyum",
+        "4": "40 x 40 x 65",
+        "5": "2"
+      },
+      {
+        "2": "3013",
+        "3": "Alüminyum",
+        "4": "60 x 20 x 80",
+        "5": "2"
+      },
+      {
+        "2": "3014",
+        "3": "Soğuk Çekme",
+        "4": "50 x 30 x 90",
+        "5": "8"
+      },
+      {
+        "2": "TORNA GRUBU"
+      },
+      {
+        "1": "NO",
+        "2": "MALZEME\nKODU",
+        "3": "ÇAP",
+        "4": "UZUNLUK x MALZEME x ADET",
+        "10": "TERMİN\nTARİHİ",
+        "11": "TESLİM\nTARİHİ",
+        "14": "TESLİMAT\nDURUMU"
+      },
+      {
+        "2": "4005-4006",
+        "3": "30",
+        "4": "670 x İndüks. Mil x 16 ADET"
+      },
+      {
+        "2": "4003",
+        "3": "20",
+        "4": "130 x Transmisyon mil x 2 ADET"
+      },
+      {
+        "2": "4009",
+        "3": "30",
+        "4": "2890 x İndüks. Mil x 1 ADET"
+      },
+      {
+        "2": "4010",
+        "3": "30",
+        "4": "3400 x İndüks. Mil x 1 ADET"
+      },
+      {
+        "2": "4011",
+        "3": "30",
+        "4": "2810 x İndüks. Mil x 1 ADET"
+      },
+      {
+        "2": "4012",
+        "3": "30",
+        "4": "550 x İndüks. Mil x 1 ADET"
+      },
+      {
+        "2": "4013",
+        "3": "25",
+        "4": "965 x Transmisyon mil x 1 ADET"
+      },
+      {
+        "2": "4014",
+        "3": "25",
+        "4": "1245 x Transmisyon mil x 1 ADET"
+      },
+      {
+        "2": "4015",
+        "3": "25",
+        "4": "220 x Kromlu Mil x 3 ADET"
+      },
+      {
+        "2": "4016",
+        "3": "20",
+        "4": "180 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "4017",
+        "3": "65",
+        "4": "45 x İmalat Çeliği x 2 ADET"
+      },
+      {
+        "2": "4020",
+        "3": "25",
+        "4": "135 x İmalat Çeliği x 2 ADET"
+      },
+      {
+        "2": "4018-4022",
+        "3": "12",
+        "4": "1 boy x İndüks. Mil x 2 ADET"
+      },
+      {
+        "2": "4019-4021",
+        "3": "12",
+        "4": "1 boy x Kromlu Mil x 1 ADET"
+      },
+      {
+        "2": "4031",
+        "3": "20",
+        "4": "700 x Transmisyon mil x 1 ADET"
+      },
+      {
+        "2": "4032",
+        "3": "16 (2mm et kalınlığı)",
+        "4": "1500 x Boru (Erhun) x 2 ADET"
+      }
+    ]
+  },
+  {
+    "name": "QS HAZIR MALZEMELER",
+    "rows": [
+      {
+        "2": "SİGMA-T KANAL GRUBU"
+      },
+      {
+        "3": "KTD 76 Alimunyum Yuvarlak Profil",
+        "4": "BOY:2515 MM",
+        "5": "1"
+      },
+      {
+        "3": "KTD76 Kapak",
+        "5": "2"
+      },
+      {
+        "3": "40x40 Sigma Profil (KANAL10)",
+        "4": "BOY:590MM",
+        "5": "2"
+      },
+      {
+        "3": "45x90 Sigma Profil (KANAL 10)",
+        "4": "BOY:2698MM",
+        "5": "3"
+      },
+      {
+        "3": "40x40 Sigma Profil (KANAL10)",
+        "4": "BOY:2698MM",
+        "5": "1"
+      },
+      {
+        "3": "18x37 Sürgü Profili (KANAL10)",
+        "4": "BOY:2698MM",
+        "5": "4"
+      },
+      {
+        "3": "30x60 Sigma Profil (KANAL8)",
+        "4": "BOY:2690MM",
+        "5": "2"
+      },
+      {
+        "3": "40x40 Sigma Profil Kapağı",
+        "5": "2"
+      },
+      {
+        "3": "KANAL 10 M8 T Somun",
+        "5": "102"
+      },
+      {
+        "3": "KANAL 10 M6 T Somun",
+        "5": "20"
+      },
+      {
+        "3": "45-90 sıgma profil (KANAL10)",
+        "4": "BOY:2600MM",
+        "5": "1"
+      },
+      {
+        "3": "45-90 sıgma profil (KANAL10)",
+        "4": "BOY:1300MM",
+        "5": "2"
+      },
+      {
+        "3": "90-90 köşe bağlantı geniş",
+        "5": "2"
+      },
+      {
+        "3": "45x90 Sigma Profil Plastik Kapak",
+        "5": "2"
+      },
+      {
+        "2": "RAY-ARABA-RULMAN GRUBU"
+      },
+      {
+        "3": "Lineer Kızak 20lik",
+        "4": "BOY:2520MM",
+        "5": "4"
+      },
+      {
+        "3": "Lineer Kızak 20lik",
+        "4": "BOY:2880 MM",
+        "5": "1"
+      },
+      {
+        "3": "Lineer Kızak 20lik",
+        "4": "BOY:160MM",
+        "5": "4"
+      },
+      {
+        "3": "Lineer Kızak 20lik",
+        "4": "BOY:2530",
+        "5": "1"
+      },
+      {
+        "3": "Lineer Araba HGH20 CA",
+        "5": "18"
+      },
+      {
+        "3": "UCF 206",
+        "5": "6"
+      },
+      {
+        "3": "6002 Rulman",
+        "5": "30"
+      },
+      {
+        "3": "6004 Rulman",
+        "5": "14"
+      },
+      {
+        "3": "KM8 SOMUN",
+        "5": "4"
+      },
+      {
+        "3": "20 lik segman",
+        "5": "15"
+      },
+      {
+        "3": "15 lık segman",
+        "5": "20"
+      },
+      {
+        "3": "25 lik segman",
+        "5": "3"
+      },
+      {
+        "3": "17 lik segman",
+        "5": "5"
+      },
+      {
+        "3": "8-40 kama",
+        "5": "2"
+      },
+      {
+        "3": "8-70 kama",
+        "5": "1"
+      },
+      {
+        "3": "10-40 kama",
+        "5": "3"
+      },
+      {
+        "3": "6-25 kama",
+        "5": "2"
+      },
+      {
+        "3": "08B2 Zincir",
+        "4": "BOY:3500MM",
+        "5": "1"
+      },
+      {
+        "3": "08B2 Zincir Eki",
+        "5": "1"
+      },
+      {
+        "2": "AKTARMA GRUBU"
+      },
+      {
+        "3": "Y. Modul Kayış Serbest Dişli",
+        "5": "1"
+      },
+      {
+        "3": "Y. Modul Motor Dişlisi",
+        "5": "1"
+      },
+      {
+        "3": "Y. Kayış Gerdirme Kasnak",
+        "5": "2"
+      },
+      {
+        "3": "Zincir Gergi Dişlisi",
+        "5": "4"
+      },
+      {
+        "3": "Zincir Gergi Dişli",
+        "5": "1"
+      },
+      {
+        "3": "Mil Zincir Dişli",
+        "5": "2"
+      },
+      {
+        "3": "120'lik Tambur Dişlisi",
+        "5": "1"
+      },
+      {
+        "1": "56",
+        "3": "T10 25lik Kayış",
+        "4": "BOY:6700MM",
+        "5": "1"
+      },
+      {
+        "1": "57"
+      },
+      {
+        "1": "58"
+      },
+      {
+        "2": "TAMBUR GRUBU"
+      },
+      {
+        "3": "Ø80 Kauçuk Tambur",
+        "5": "2"
+      },
+      {
+        "3": "Ø120 Kauçuk Tambur",
+        "5": "1"
+      },
+      {
+        "2": "BIÇAK GRUBU"
+      },
+      {
+        "3": "Yatay Kesici",
+        "5": "1"
+      },
+      {
+        "3": "Dikey Kesici",
+        "5": "7"
+      },
+      {
+        "2": "REDÜKTÖR GRUBU"
+      },
+      {
+        "3": "PLPE070-010-SSSA3AD-E14/30/50/70/B5/M5",
+        "5": "1"
+      },
+      {
+        "3": "EN063-B08-B14",
+        "5": "1"
+      },
+      {
+        "3": "YAY",
+        "5": "1"
+      },
+      {
+        "2": "KABLO KANALI GRUBU"
+      },
+      {
+        "3": "CK15F020R025 Kablo Kanalı",
+        "4": "Boy 1800 mm ve ayak set",
+        "5": "8"
+      },
+      {
+        "3": "CK20 F 025 R040",
+        "4": "Boy 3000 mm ve ayak set",
+        "5": "1"
+      },
+      {
+        "2": "NALBUR GRUBU"
+      },
+      {
+        "3": "M20 MAKİNA AYAK",
+        "5": "4"
+      },
+      {
+        "3": "M8*30 YILDIZ TUTAMAÇ",
+        "5": "4"
+      },
+      {
+        "3": "M8*50 YILDIZ TUTAMAÇ",
+        "5": "2"
+      },
+      {
+        "3": "FREN TAKOZU M6 BOY 10mm",
+        "5": "2"
+      },
+      {
+        "3": "MERKEZLİ KİLİT (İSPANYOLET)",
+        "5": "2"
+      },
+      {
+        "3": "NORMAL KİLİT ELEKTRİK PANO",
+        "5": "1"
+      },
+      {
+        "3": "KAPAK MENTEŞESİ",
+        "5": "7"
+      },
+      {
+        "3": "PLEKSİ",
+        "4": "BOY:1370*461*6 MM",
+        "5": "2"
+      },
+      {
+        "1": "85",
+        "3": "PLEKSİ",
+        "4": "BOY:1370*551*6MM",
+        "5": "2"
+      },
+      {
+        "1": "86",
+        "3": "M6 FREN TAKOZU",
+        "4": "BOY:10MM",
+        "5": "2"
+      },
+      {
+        "1": "87",
+        "3": "şilte",
+        "5": "1"
+      },
+      {
+        "1": "88",
+        "3": "strec",
+        "5": "1"
+      },
+      {
+        "3": "5*5 MT NAYLON",
+        "5": "1"
+      },
+      {
+        "2": "ELEKTRONİK GRUBU"
+      },
+      {
+        "3": "EKRAN 21 INCH",
+        "5": "1"
+      },
+      {
+        "3": "BOX PC",
+        "5": "1"
+      },
+      {
+        "3": "KLAVYE MOUSE",
+        "5": "1"
+      },
+      {
+        "3": "MOUSE PAD",
+        "5": "1"
+      },
+      {
+        "2": "PNÖMATİK GRUBU"
+      },
+      {
+        "3": "MGPM25TF-25Z",
+        "5": "14"
+      },
+      {
+        "3": "KQ2S06-01AS",
+        "5": "10"
+      },
+      {
+        "3": "KQ2L06-01AS",
+        "5": "18"
+      },
+      {
+        "3": "CD55B63-30M",
+        "5": "2"
+      },
+      {
+        "3": "KJ12D",
+        "5": "2"
+      },
+      {
+        "3": "C5063-A",
+        "5": "2"
+      },
+      {
+        "3": "KQ2L06-01AS",
+        "5": "6"
+      },
+      {
+        "3": "CDQ2A25-25DZ",
+        "5": "2"
+      },
+      {
+        "3": "KQ2L06-M5A",
+        "5": "4"
+      },
+      {
+        "3": "CQ2WB20-10D",
+        "5": "7"
+      },
+      {
+        "3": "KQ2S06-M5A",
+        "5": "14"
+      },
+      {
+        "3": "CD55B20-10",
+        "5": "7"
+      },
+      {
+        "3": "KQ2L06-M5A",
+        "5": "14"
+      },
+      {
+        "3": "VQZ1121B-5LJ1-M5-Q",
+        "5": "19"
+      },
+      {
+        "3": "SY100-30-4A-6",
+        "5": "0"
+      },
+      {
+        "1": "114",
+        "3": "KQ2S06-M5A",
+        "5": "38"
+      },
+      {
+        "3": "KQ2S06-M5A",
+        "5": "19"
+      },
+      {
+        "3": "KQ2U06-00A",
+        "5": "20"
+      },
+      {
+        "3": "KQ2T06-02AS",
+        "5": "8"
+      },
+      {
+        "3": "KQ2L06-02AS",
+        "5": "3"
+      },
+      {
+        "3": "KORTAPA ORINGLI 3/8",
+        "5": "3"
+      },
+      {
+        "3": "KQ2H10-03AS",
+        "5": "3"
+      },
+      {
+        "3": "SYJ7120-5DZ-01F-Q",
+        "5": "4"
+      },
+      {
+        "3": "KQ2L06-01AS",
+        "5": "4"
+      },
+      {
+        "3": "KQ2S06-01AS",
+        "5": "4"
+      },
+      {
+        "3": "KQ2L10-00A",
+        "5": "2"
+      },
+      {
+        "3": "KQ2R06-10A",
+        "5": "2"
+      },
+      {
+        "3": "KQ2S06-01AS",
+        "5": "4"
+      },
+      {
+        "3": "AR20K-F02BE-Y-D",
+        "5": "2"
+      },
+      {
+        "3": "KQ2L06-02AS",
+        "5": "4"
+      },
+      {
+        "3": "IR2020-F02BG-A",
+        "5": "2"
+      },
+      {
+        "3": "KQ2L10-02AS",
+        "5": "4"
+      },
+      {
+        "3": "KQ2U10-00A",
+        "5": "3"
+      },
+      {
+        "3": "AW40-F04-D",
+        "5": "1"
+      },
+      {
+        "3": "VHS40-F04-D",
+        "5": "1"
+      },
+      {
+        "3": "VHS44P-190AS",
+        "5": "1"
+      },
+      {
+        "3": "ISE20-P-01-L",
+        "5": "1"
+      },
+      {
+        "3": "Y400T-D",
+        "5": "1"
+      },
+      {
+        "3": "KQ2L10-04AS",
+        "5": "1"
+      },
+      {
+        "3": "TU0604B-100",
+        "5": "1"
+      },
+      {
+        "3": "TU1065B-20",
+        "5": "1"
+      },
+      {
+        "2": "ELEKTRİK GRUBU"
+      },
+      {
+        "3": "lamba ve tutamac",
+        "5": "1"
+      },
+      {
+        "3": "40-60 kablo kanalı ve kapağı",
+        "4": "BOY:5000MM VE KAPAĞI",
+        "5": "1"
+      },
+      {
+        "3": "kaydırmaz bant",
+        "5": "1"
+      },
+      {
+        "3": "pano rayı",
+        "4": "BOY:2500MM",
+        "5": "1"
+      },
+      {
+        "3": "1 nolu spral",
+        "5": "1"
+      },
+      {
+        "3": "2 nolu spral",
+        "5": "2"
+      },
+      {
+        "1": "132",
+        "3": "3 nolu spral",
+        "5": "2"
+      },
+      {
+        "3": "klips",
+        "5": "3"
+      },
+      {
+        "3": "acil stop ve yazısı",
+        "5": "2"
+      },
+      {
+        "3": "pako şartel",
+        "5": "1"
+      },
+      {
+        "3": "vidalı öpücük",
+        "5": "30"
+      },
+      {
+        "3": "yapışkınlı öpücük",
+        "5": "25"
+      },
+      {
+        "3": "4 mm algılamalı sensör uzun m8 3 pın",
+        "5": "5"
+      },
+      {
+        "3": "4 mm algılamalı kısa m8 3pın sensör",
+        "5": "6"
+      },
+      {
+        "3": "m8 sensör kablosu dırsek hareketlı",
+        "4": "BOY:10MT",
+        "5": "1"
+      },
+      {
+        "1": "141",
+        "3": "m8 sensor kablosu dırsek normal",
+        "4": "BOY:5MT",
+        "5": "3"
+      },
+      {
+        "3": "m8 sensor kablosu dırsek normal",
+        "4": "BOY:10MT",
+        "5": "2"
+      },
+      {
+        "3": "4*0.5 kablo",
+        "4": "BOY:75MT",
+        "5": "1"
+      },
+      {
+        "3": "2*0.5 kablo",
+        "4": "BOY:15MT",
+        "5": "1"
+      },
+      {
+        "3": "3*0.5 hareketli kablo",
+        "4": "BOY:10MT",
+        "5": "1"
+      },
+      {
+        "3": "ethernet kablo",
+        "4": "BOY:3MT",
+        "5": "1"
+      },
+      {
+        "3": "ethernet kablo",
+        "4": "BOY:0.5 MT",
+        "5": "1"
+      },
+      {
+        "3": "ethernet kablo",
+        "4": "BOY:0.6 MT",
+        "5": "1"
+      },
+      {
+        "3": "m12 karton gördü sensörü",
+        "5": "1"
+      },
+      {
+        "1": "150",
+        "3": "m12 sensör kablosu 4 pınlı",
+        "4": "BOY:5MT",
+        "5": "1"
+      },
+      {
+        "3": "pg16 rekor",
+        "5": "1"
+      },
+      {
+        "3": "8 lık makaron",
+        "5": "1"
+      },
+      {
+        "3": "4 luk makaron",
+        "5": "1"
+      },
+      {
+        "3": "12*30 burç",
+        "5": "4"
+      },
+      {
+        "3": "20*30 burç",
+        "5": "1"
+      },
+      {
+        "3": "nuve",
+        "5": "1"
+      },
+      {
+        "3": "pano prız",
+        "5": "1"
+      },
+      {
+        "3": "guç kaynağı",
+        "5": "1"
+      },
+      {
+        "1": "159",
+        "3": "c32 sigorta 3 LÜ",
+        "5": "1"
+      },
+      {
+        "3": "slim röle",
+        "5": "1"
+      },
+      {
+        "3": "2.5 luk kırmızı klemens",
+        "5": "4"
+      },
+      {
+        "3": "2.5 luk mavi klemens",
+        "5": "6"
+      },
+      {
+        "3": "4 luk toprak klemens",
+        "5": "5"
+      },
+      {
+        "3": "4 luk mavı klemens",
+        "5": "4"
+      },
+      {
+        "3": "4 luk grı klemens",
+        "5": "6"
+      },
+      {
+        "3": "10lu 2.5 luk kopru",
+        "5": "2"
+      },
+      {
+        "3": "10 lu 4 luk kopru",
+        "5": "1"
+      },
+      {
+        "1": "168",
+        "3": "2.5 luk yuzuk",
+        "5": "50"
+      },
+      {
+        "3": "0.75 yuzuk",
+        "5": "100"
+      },
+      {
+        "3": "1.5 luk yuzuk",
+        "5": "50"
+      },
+      {
+        "3": "2.5luk kırmızı kablo",
+        "4": "BOY:7 MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 luk sıyah kablo",
+        "4": "BOY:8MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 luk toprak kablo",
+        "4": "BOY:2.5MT",
+        "5": "1"
+      },
+      {
+        "3": "2.5 mavi kablo",
+        "4": "BOY:2.5MT",
+        "5": "1"
+      },
+      {
+        "3": "1 lık sıyah kablo",
+        "4": "BOY:2MT",
+        "5": "1"
+      },
+      {
+        "3": "0.75 mavi kablo",
+        "4": "BOY:2MT",
+        "5": "1"
+      },
+      {
+        "3": "0.75 kırmızı kablo",
+        "4": "BOY:2MT",
+        "5": "1"
+      },
+      {
+        "3": "emı filtre",
+        "5": "1"
+      },
+      {
+        "3": "u yüzük emı filtre için",
+        "5": "10"
+      },
+      {
+        "3": "stoper klemens",
+        "5": "10"
+      },
+      {
+        "3": "forklıf etiketi",
+        "5": "1"
+      },
+      {
+        "3": "el sıkışma etiketi",
+        "5": "3"
+      },
+      {
+        "1": "114",
+        "3": "elektrik etiketi",
+        "5": "1"
+      },
+      {
+        "3": "pano anahtarı",
+        "5": "1"
+      },
+      {
+        "3": "KAÇAK AKIM SİGORTA SİEMENS 40A 30MA",
+        "5": "1"
+      },
+      {
+        "2": "YASKAWA GRUBU"
+      },
+      {
+        "3": "015-CEFPR01",
+        "5": "1"
+      },
+      {
+        "1": "123",
+        "3": "022-1BF00",
+        "5": "3"
+      },
+      {
+        "3": "021-1BF00",
+        "5": "1"
+      },
+      {
+        "3": "SGD7S-5R5AC0A",
+        "5": "1"
+      },
+      {
+        "3": "SGM7J-08AFA61",
+        "5": "1"
+      },
+      {
+        "3": "SGD7S-2R8AC0A",
+        "5": "1"
+      },
+      {
+        "3": "SGM7J-04AFA61",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CSM22-05-E-G5",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CSM23-05-E-G5",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CSP21-05-E-G5",
+        "5": "1"
+      },
+      {
+        "1": "132",
+        "3": "JZSP-CSP21-05-E-G5",
+        "5": "2"
+      },
+      {
+        "3": "955-0000000",
+        "5": "1"
+      },
+      {
+        "1": "141"
+      },
+      {
+        "1": "150"
+      },
+      {
+        "1": "159"
+      },
+      {
+        "1": "168"
+      },
+      {
+        "1": "114"
+      },
+      {
+        "1": "123"
+      },
+      {
+        "1": "132"
+      },
+      {
+        "1": "141"
+      }
+    ]
+  },
+  {
+    "name": "QSBOX TALAŞLI İMALAT",
+    "rows": [
+      {
+        "2": "FREZE GRUBU"
+      },
+      {
+        "2": "E-1162",
+        "3": "Soğuk Çekme",
+        "4": "15 x 15 x 115",
+        "5": "2"
+      },
+      {
+        "2": "E-1184",
+        "3": "Soğuk Çekme",
+        "4": "15 x 15 x 505",
+        "5": "8"
+      },
+      {
+        "2": "E-1401",
+        "3": "Soğuk Çekme",
+        "4": "50 x 20 x 50",
+        "5": "14"
+      },
+      {
+        "2": "E-1437",
+        "3": "Soğuk Çekme",
+        "4": "60 x 20 x 85",
+        "5": "4"
+      },
+      {
+        "2": "E-1442",
+        "3": "Soğuk Çekme",
+        "4": "50 x 20 x 120",
+        "5": "2"
+      },
+      {
+        "2": "E-1451",
+        "3": "Aluminyum",
+        "4": "60 x 40 x 235",
+        "5": "1"
+      },
+      {
+        "2": "E-1455",
+        "3": "Aluminyum",
+        "4": "50 x 20 x 65",
+        "5": "2"
+      },
+      {
+        "2": "E-1458",
+        "3": "Soğuk Çekme",
+        "4": "50 x 20 x 60",
+        "5": "2"
+      },
+      {
+        "2": "E-1463",
+        "3": "Soğuk Çekme",
+        "4": "50 x 40 x 70",
+        "5": "7"
+      },
+      {
+        "2": "E-1464",
+        "3": "Soğuk Çekme",
+        "4": "50 x 40 x 85",
+        "5": "7"
+      },
+      {
+        "2": "E-1481",
+        "3": "Soğuk Çekme",
+        "4": "90 x 40 x 85",
+        "5": "14"
+      },
+      {
+        "2": "E-1756",
+        "3": "Soğuk Çekme",
+        "4": "30 x 15 x 65",
+        "5": "4"
+      },
+      {
+        "2": "E-1757",
+        "3": "Soğuk Çekme",
+        "4": "20 x 20 x 115",
+        "5": "2"
+      },
+      {
+        "2": "E-2701",
+        "3": "Soğuk Çekme",
+        "4": "80 x 30 x 95",
+        "5": "1"
+      },
+      {
+        "2": "E-2702",
+        "3": "Soğuk Çekme",
+        "4": "80 x 15 x 95",
+        "5": "1"
+      },
+      {
+        "2": "E-2715",
+        "3": "Soğuk Çekme",
+        "4": "80 x 20 x 110",
+        "5": "1"
+      },
+      {
+        "2": "TORNA GRUBU"
+      },
+      {
+        "1": "NO",
+        "2": "MALZEME\nKODU",
+        "3": "ÇAP",
+        "4": "UZUNLUK x MALZEME x ADET",
+        "10": "TERMİN\nTARİHİ",
+        "11": "TESLİM\nTARİHİ",
+        "14": "TESLİMAT\nDURUMU"
+      },
+      {
+        "2": "E-1368",
+        "3": "105",
+        "4": "80 x Derlin x 2"
+      },
+      {
+        "2": "E-1369",
+        "3": "16",
+        "4": "220 x Transmisyon mili x 1"
+      },
+      {
+        "2": "E-1436",
+        "3": "20",
+        "4": "300 x Transmisyon mili x 1"
+      },
+      {
+        "2": "E-1468",
+        "3": "40",
+        "4": "400 x Derlin x 1"
+      },
+      {
+        "2": "E-1469",
+        "3": "AA10",
+        "4": "450 x Altıgen x 1"
+      },
+      {
+        "2": "E-1482",
+        "3": "55",
+        "4": "45 x İmalat Çeliği x 7"
+      },
+      {
+        "2": "E-1483",
+        "3": "70",
+        "4": "45 x İmalat Çeliği x 7"
+      },
+      {
+        "2": "E-1484",
+        "3": "70",
+        "4": "80 x İmalat Çeliği x 1"
+      },
+      {
+        "2": "E-1492",
+        "3": "100",
+        "4": "20 x Aluminyum x 6"
+      },
+      {
+        "2": "E-1520_E-1521_E-1522",
+        "3": "35",
+        "4": "400 x Derlin x 1"
+      },
+      {
+        "2": "E-1603",
+        "3": "AA32",
+        "4": "170 x Altıgen x 1"
+      },
+      {
+        "2": "E-1604",
+        "3": "25",
+        "4": "2590 x Transmisyon mili x 1"
+      },
+      {
+        "2": "E-1605",
+        "3": "AA24",
+        "4": "170 x Altıgen x 1"
+      },
+      {
+        "2": "E-1709",
+        "3": "65",
+        "4": "45 x İmalat Çeliği x 2"
+      },
+      {
+        "2": "E-2712",
+        "3": "25",
+        "4": "240 x İmalat Çeliği x 1"
+      },
+      {
+        "2": "E-2713",
+        "3": "45",
+        "4": "130 x İmalat Çeliği x 1"
+      },
+      {
+        "2": "E-2714",
+        "3": "65",
+        "4": "45 x İmalat Çeliği x 1"
+      },
+      {
+        "2": "E-2716",
+        "3": "12",
+        "4": "275 x İndüksiyonlu Mil x 2"
+      },
+      {
+        "2": "E-2731",
+        "3": "AA27",
+        "4": "400 x Altıgen x 1"
+      },
+      {
+        "2": "E-2751",
+        "3": "125",
+        "4": "25 x Aluminyum x 1"
+      },
+      {
+        "2": "E-4004",
+        "3": "25",
+        "4": "220 x Kromlu Mil x 1"
+      }
+    ]
+  },
+  {
+    "name": "QBOX Malzeme Sipariş Listesi",
+    "rows": [
+      {
+        "2": "SİGMA-T KANAL GRUBU"
+      },
+      {
+        "3": "45*90 KANAL 10 NORMAL ŞART",
+        "4": "BOY:2910MM (KESİM TABLASI)",
+        "5": "4"
+      },
+      {
+        "3": "40*80 AĞIR ŞART KANAL 8",
+        "4": "BOY:2910MM(KÖPRÜLER)",
+        "5": "4"
+      },
+      {
+        "3": "45*90 KANAL 10 NORMAL ŞART",
+        "4": "BOY:2610MM",
+        "5": "2"
+      },
+      {
+        "3": "45*90 KANAL 10 NORMAL ŞART",
+        "4": "BOY:1500MM",
+        "5": "2"
+      },
+      {
+        "3": "45*45 KANAL 10",
+        "4": "BOY:620MM (GİRİŞ SPER)",
+        "5": "2"
+      },
+      {
+        "3": "40*40 KANAL 10",
+        "4": "BOY:2746MM(KAPAK)",
+        "5": "4"
+      },
+      {
+        "3": "40*40 KANAL 10",
+        "4": "BOY:440MM KAPAK",
+        "5": "4"
+      },
+      {
+        "3": "KANAL 10 M6",
+        "5": "50"
+      },
+      {
+        "3": "KANAL 10 M8",
+        "5": "150"
+      },
+      {
+        "3": "KANAL 10 M5",
+        "5": "28"
+      },
+      {
+        "3": "Q76 TAMBUR PROFİLİ",
+        "4": "BOY:2570MM",
+        "5": "2"
+      },
+      {
+        "3": "Q76 TAMBUR PROFİLİ KAPAĞI",
+        "5": "4"
+      },
+      {
+        "3": "45*90 SİGMA KAPAĞI",
+        "5": "2"
+      },
+      {
+        "3": "45*45 SİGMA KAPAĞI",
+        "5": "2"
+      },
+      {
+        "3": "90*90 KÖŞE BAĞLANTI",
+        "5": "4"
+      },
+      {
+        "3": "40*40 KÖŞE BAĞLANTI",
+        "5": "8"
+      },
+      {
+        "3": "KANAL 8 M4",
+        "5": "180"
+      },
+      {
+        "3": "KANAL 8 M5",
+        "5": "110"
+      },
+      {
+        "3": "KANAL 8 M6",
+        "5": "20"
+      },
+      {
+        "3": "KANAL 8 M8",
+        "5": "2"
+      },
+      {
+        "2": "RAY-ARABA-RULMAN GRUBU"
+      },
+      {
+        "3": "20LİK LİNEAR RAY",
+        "4": "BOY : 2736mm",
+        "5": "1"
+      },
+      {
+        "3": "20LİK LİNEAR RAY",
+        "4": "BOY : 174mm",
+        "5": "1"
+      },
+      {
+        "3": "20LİK LİNEAR RAY",
+        "4": "BOY : 3040mm",
+        "5": "1"
+      },
+      {
+        "3": "25LİK LİNEAR RAY",
+        "4": "BOY : 2595mm",
+        "5": "1"
+      },
+      {
+        "3": "15LİK LİNEAR RAY",
+        "4": "BOY : 2700mm",
+        "5": "4"
+      },
+      {
+        "3": "20LİK LİNEAR ARABA (DAR KISA)",
+        "5": "3"
+      },
+      {
+        "3": "25LİK LİNEAR ARABA (DAR)",
+        "5": "4"
+      },
+      {
+        "3": "15LİK LİNEAR ARABA",
+        "5": "16"
+      },
+      {
+        "3": "RAY KAPAKLARI",
+        "5": "1"
+      },
+      {
+        "3": "SK 20 MİL TUTUCU",
+        "5": "12"
+      },
+      {
+        "3": "SCE20UU",
+        "5": "8"
+      },
+      {
+        "3": "KM8 SOMUN",
+        "5": "4"
+      },
+      {
+        "3": "UCF 206 RULMAN",
+        "5": "8"
+      },
+      {
+        "3": "6004 RULMAN",
+        "5": "16"
+      },
+      {
+        "3": "6901 RULMAN",
+        "5": "32"
+      },
+      {
+        "3": "PUB BURÇ 12*20",
+        "5": "4"
+      },
+      {
+        "3": "PUB BURÇ 20*30",
+        "5": "1"
+      },
+      {
+        "3": "15LİK DIŞ SEGMAN",
+        "5": "5"
+      },
+      {
+        "3": "12'lik Layner Pul 0,5mm Kalınlık",
+        "5": "130"
+      },
+      {
+        "3": "20LİK DIŞ SEGMAN",
+        "5": "12"
+      },
+      {
+        "3": "25LİK DIŞ SEGMAN",
+        "5": "2"
+      },
+      {
+        "3": "10*40 KAMA",
+        "5": "4"
+      },
+      {
+        "3": "8*40 KAMA",
+        "5": "2"
+      },
+      {
+        "3": "8*70 KAMA",
+        "5": "1"
+      },
+      {
+        "3": "08B2 ZİNCİR",
+        "4": "BOY : 3500mm",
+        "5": "1"
+      },
+      {
+        "2": "AKTARMA GRUBU"
+      },
+      {
+        "3": "8M30*30 KASNAK",
+        "4": "AVARE",
+        "5": "1"
+      },
+      {
+        "3": "8M30*30 KASNAK",
+        "4": "MOTOR",
+        "5": "1"
+      },
+      {
+        "3": "AVARE DİŞLİ",
+        "5": "5"
+      },
+      {
+        "3": "TAMBUR DİŞLİ",
+        "5": "3"
+      },
+      {
+        "3": "MOTOR DİŞLİ",
+        "5": "1"
+      },
+      {
+        "3": "120 TAMBUR DİŞLİSİ",
+        "5": "1"
+      },
+      {
+        "3": "8M 30 KAYIŞ",
+        "4": "BOY : 6500mm",
+        "5": "1"
+      },
+      {
+        "3": "8M 30 KAYIŞ",
+        "4": "BOY : 3200mm",
+        "5": "1"
+      },
+      {
+        "2": "TAMBUR GRUBU"
+      },
+      {
+        "3": "80-KAUÇUK TAMBUR MİL",
+        "5": "3"
+      },
+      {
+        "3": "120-KAUÇUK TAMBUR MİL",
+        "5": "1"
+      },
+      {
+        "2": "BIÇAK GRUBU"
+      },
+      {
+        "3": "DİKEY TESTERE BIÇAK 120'LİK",
+        "5": "8"
+      },
+      {
+        "3": "YATAY TESTERE BIÇAK",
+        "5": "1"
+      },
+      {
+        "3": "KULP PUNCH BIÇAĞI (OLURSA)",
+        "5": "1"
+      },
+      {
+        "2": "REDÜKTÖR GRUBU"
+      },
+      {
+        "3": "ZİNCİR GERGİ YAYI",
+        "5": "1"
+      },
+      {
+        "3": "BR063-P90 i:10",
+        "5": "1"
+      },
+      {
+        "3": "REDÜKTÖR FLANŞI",
+        "5": "1"
+      },
+      {
+        "3": "REDÜKTÖR KAMA",
+        "5": "1"
+      },
+      {
+        "3": "REDÜKTÖR BURCU",
+        "5": "1"
+      },
+      {
+        "3": "NEUGART REDÜKTÖR",
+        "5": "1"
+      },
+      {
+        "2": "KABLO KANALI GRUBU"
+      },
+      {
+        "3": "CK15F20 R25",
+        "4": "BOY:1500MM",
+        "5": "8"
+      },
+      {
+        "3": "CK15 P30",
+        "5": "16"
+      },
+      {
+        "3": "CK20 F 025 R040",
+        "4": "BOY:2000MM",
+        "5": "1"
+      },
+      {
+        "3": "CK20 P25",
+        "5": "2"
+      },
+      {
+        "2": "NALBUR GRUBU"
+      },
+      {
+        "3": "M20 MAKİNA AYAK",
+        "5": "4"
+      },
+      {
+        "3": "M8*30 YILDIZ TUTAMAÇ",
+        "5": "4"
+      },
+      {
+        "3": "M8*50 YILDIZ TUTAMAÇ",
+        "5": "4"
+      },
+      {
+        "3": "PUNCH ALTI SÜNGER",
+        "4": "BOY:3000MM-EN:210MM",
+        "5": "1"
+      },
+      {
+        "3": "FREN TAKOZU M6 BOY 10mm",
+        "5": "2"
+      },
+      {
+        "3": "MERKEZLİ KİLİT (İSPANYOLET)",
+        "5": "2"
+      },
+      {
+        "3": "NORMAL KİLİT ELEKTRİK PANO",
+        "5": "2"
+      },
+      {
+        "3": "KAPAK MENTEŞESİ",
+        "5": "14"
+      },
+      {
+        "3": "PLEKSİ",
+        "5": "2"
+      },
+      {
+        "3": "ŞİLTE",
+        "4": "BOY:10MT",
+        "5": "1"
+      },
+      {
+        "3": "NAYLON",
+        "4": "BOY:10MT",
+        "5": "1"
+      },
+      {
+        "2": "PNÖMATİK GRUBU"
+      },
+      {
+        "3": "5Lİ DAĞITICI KOLLEKTÖR",
+        "5": "1"
+      },
+      {
+        "3": "6LI DAĞITICI KOLLEKTÖR",
+        "5": "2"
+      },
+      {
+        "3": "RİLL BIÇAK PİSTONU",
+        "5": "16"
+      },
+      {
+        "3": "FREN PİSTONU",
+        "5": "8"
+      },
+      {
+        "2": "ELEKTRONİK GRUBU"
+      },
+      {
+        "3": "EKRAN",
+        "5": "1"
+      },
+      {
+        "3": "KLAVYE MOUSE",
+        "5": "1"
+      },
+      {
+        "3": "MOUSE PAD",
+        "5": "1"
+      },
+      {
+        "3": "AYDINLATMA LAMBA VE APARATLARI",
+        "4": "BOY:2500MM",
+        "5": "1"
+      },
+      {
+        "3": "BİLGİSAYAR",
+        "5": "1"
+      },
+      {
+        "3": "ETHERNET ÇOĞALTICI (ENDÜSTRİYEL)",
+        "5": "1"
+      },
+      {
+        "2": "ELEKTRİK GRUBU"
+      },
+      {
+        "3": "3'LÜ OTOMAT 32A",
+        "5": "1"
+      },
+      {
+        "3": "TEKLİ OTOMAT 16A",
+        "5": "1"
+      },
+      {
+        "3": "OMRON 24V PSU",
+        "5": "1"
+      },
+      {
+        "3": "SLİM ROLE",
+        "5": "1"
+      },
+      {
+        "3": "EMI FİLTRE",
+        "5": "1"
+      },
+      {
+        "3": "PANO PRİZİ",
+        "5": "1"
+      },
+      {
+        "3": "OTOMAT RAYI",
+        "4": "BOY:2400 MM",
+        "5": "1"
+      },
+      {
+        "3": "KABLO KANALI 40X60",
+        "4": "BOY:6000MM",
+        "5": "1"
+      },
+      {
+        "3": "0,5 YÜZÜK",
+        "5": "130"
+      },
+      {
+        "3": "2,5 KÖPRÜ",
+        "5": "KIRMIZI VE MAVİ 2 ADET"
+      },
+      {
+        "3": "2,5 GRİ KLEMENS",
+        "5": "7"
+      },
+      {
+        "3": "2,5 KIRMIZI KLEMENS",
+        "5": "10"
+      },
+      {
+        "3": "2,5 MAVİ KLEMENS",
+        "5": "10"
+      },
+      {
+        "3": "4LUK TOPRAK KLEMENS",
+        "5": "4"
+      },
+      {
+        "3": "4 LUK MAVİ KLEMENS",
+        "5": "4"
+      },
+      {
+        "1": "114",
+        "3": "4 LUK GRI KLEMENS",
+        "5": "6"
+      },
+      {
+        "3": "2,5 YÜZÜK",
+        "5": "50"
+      },
+      {
+        "3": "4 YÜZÜK",
+        "5": "10"
+      },
+      {
+        "3": "0,5 KABLO SİYAH",
+        "4": "BOY:4 MT",
+        "5": "1"
+      },
+      {
+        "3": "1,5 KABLO SİYAH",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "1,5 KABLO SARI YEŞİL",
+        "4": "BOY:4 MT",
+        "5": "1"
+      },
+      {
+        "3": "1,5 KABLO MAVİ",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "1,5 KABLO KIRMIZI",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "2,5 KABLO SİYAH",
+        "4": "BOY:12 MT",
+        "5": "1"
+      },
+      {
+        "1": "123",
+        "3": "2,5 KABLO KIRMIZI",
+        "4": "BOY:8 MT",
+        "5": "1"
+      },
+      {
+        "3": "2,5 KABLO MAVİ",
+        "4": "BOY:2.5MT",
+        "5": "1"
+      },
+      {
+        "3": "4X0.5 KABLO GRİ",
+        "4": "BOY:50 MT",
+        "5": "1"
+      },
+      {
+        "3": "2X0.5 KABLO",
+        "4": "BOY:8 MT",
+        "5": "1"
+      },
+      {
+        "3": "ACİL STOP YAZISI",
+        "5": "2"
+      },
+      {
+        "3": "PAKO ŞALTER",
+        "5": "1"
+      },
+      {
+        "3": "ACİL STOP BUTONU VE YAZISI",
+        "5": "2"
+      },
+      {
+        "3": "KABLO SARMA SPİRALİ ŞEFFAF",
+        "5": "2"
+      },
+      {
+        "3": "P612",
+        "5": "1"
+      },
+      {
+        "1": "132",
+        "3": "P616",
+        "5": "2"
+      },
+      {
+        "3": "KLİPS",
+        "5": "1"
+      },
+      {
+        "3": "HAVŞALI(M5 VİDALI)ÖPÜCÜK",
+        "5": "100"
+      },
+      {
+        "3": "YAPIŞKANLI ÖPÜCÜK",
+        "5": "50"
+      },
+      {
+        "3": "STOPER KLEMENS",
+        "5": "4"
+      },
+      {
+        "3": "LAMBA",
+        "5": "1"
+      },
+      {
+        "3": "4*0.50 HAREKETLİ KABLO",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "EL SIKIŞTIRMA ETİKETİ",
+        "5": "3"
+      },
+      {
+        "3": "ELEKTRİK PANO ETİKETİ",
+        "5": "2"
+      },
+      {
+        "1": "141",
+        "3": "KONTROL EDİLDİ ETİKETİ",
+        "5": "1"
+      },
+      {
+        "3": "PG11 REKOR",
+        "5": "1"
+      },
+      {
+        "3": "PG 16 REKOR",
+        "5": "2"
+      },
+      {
+        "3": "İÇ ÇAP 10 SİYAH SPREL",
+        "4": "BOY:5 MT",
+        "5": "1"
+      },
+      {
+        "3": "PANO ANAHTARI",
+        "5": "1"
+      },
+      {
+        "3": "KARTON GÖRDÜ SENSÖRÜ M12",
+        "5": "2"
+      },
+      {
+        "3": "M12 4 PİNLİ DÜZ KABLO PVC",
+        "4": "BOY:10MT",
+        "5": "1"
+      },
+      {
+        "3": "M12 4 PİNLİ DÜZ KABLO PVC",
+        "4": "BOY:5 MT",
+        "5": "1"
+      },
+      {
+        "3": "M8 3 PİNLİ PNP NO 4 MM ALGILAMA KISA SENSÖR",
+        "5": "2"
+      },
+      {
+        "1": "150",
+        "3": "M8 HAREKETLİ DİRSEKLİ 3 PİNLİ KABLO PUR",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "NUVE",
+        "5": "1"
+      },
+      {
+        "3": "LAMBA",
+        "5": "1"
+      },
+      {
+        "3": "ETHERNET KABLO",
+        "4": "BOY:0.60 CM",
+        "5": "1"
+      },
+      {
+        "3": "ETHERNET KABLO",
+        "4": "BOY:1MT",
+        "5": "1"
+      },
+      {
+        "3": "M8 PVC DİRSEKLİ 3 PİNLİ KABLO",
+        "4": "BOY:10 MT",
+        "5": "1"
+      },
+      {
+        "3": "KAÇAK AKIM SİGORTA SİEMENS 40A 30MA",
+        "5": "1"
+      },
+      {
+        "2": "YASKAWA GRUBU"
+      },
+      {
+        "3": "PMC-U-MP33104",
+        "5": "1"
+      },
+      {
+        "3": "JEPMC-BU3304-E",
+        "5": "1"
+      },
+      {
+        "3": "JEPMC-OP3301-E",
+        "5": "1"
+      },
+      {
+        "3": "SGM7J-08AFA61",
+        "5": "1"
+      },
+      {
+        "3": "SGD7S-5R5A30A",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CSM23-05-E-G5",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CSP21-05-E-G5",
+        "5": "1"
+      },
+      {
+        "3": "SGD7S-5R4D30B000F64",
+        "5": "1"
+      },
+      {
+        "1": "168",
+        "3": "SGM7G-13DFFKF",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-C7M144-05-E-G6",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-C7PI2N-05-E-G6",
+        "5": "1"
+      },
+      {
+        "3": "JZSP-CM3RRM0-00P5-E",
+        "5": "3"
+      },
+      {
+        "3": "053-1IP01",
+        "5": "1"
+      },
+      {
+        "3": "021-1BF00",
+        "5": "4"
+      },
+      {
+        "3": "022-1BF00",
+        "5": "4"
+      },
+      {
+        "2": "SMC GRUBU"
+      },
+      {
+        "2": "PT 1/4",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "5"
+      },
+      {
+        "2": "KORTAPA ORINGLI 3/8",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "3"
+      },
+      {
+        "2": "KQ2H10-03AS",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "3"
+      },
+      {
+        "2": "KQ2R06-10A",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "1"
+      },
+      {
+        "2": "KQ2U10-00A",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "4"
+      },
+      {
+        "2": "KQ2L10-00A",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "2"
+      },
+      {
+        "2": "KQ2H04-06A",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "2"
+      },
+      {
+        "2": "KQ2T06-02AS",
+        "3": "DAĞITICI MANİFOLD",
+        "5": "11"
+      },
+      {
+        "2": "KQ2S04-M5A",
+        "3": "KESME-FREN SİLİNDİRLERİ",
+        "5": "44"
+      },
+      {
+        "2": "KQ2L04-M5A",
+        "3": "KESME-FREN SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "TU0425B-20",
+        "3": "HORTUM GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "TU0604B-100",
+        "3": "HORTUM GRUBU",
+        "5": "1"
+      },
+      {
+        "1": "114",
+        "2": "TU0604B-20",
+        "3": "HORTUM GRUBU",
+        "5": "2"
+      },
+      {
+        "2": "TU1065B-20",
+        "3": "HORTUM GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "VQZ1121B-5LJ1-M5-Q",
+        "3": "KASET VALFLERİ",
+        "5": "24"
+      },
+      {
+        "2": "SY100-30-4A-6",
+        "3": "KASET VALFLERİ",
+        "5": "24"
+      },
+      {
+        "2": "KQ2V06-M5A",
+        "3": "KASET VALFLERİ",
+        "5": "24"
+      },
+      {
+        "2": "KQ2S04-M5A",
+        "3": "KASET VALFLERİ",
+        "5": "48"
+      },
+      {
+        "2": "AR20K-F02BE-Y-D",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "3"
+      },
+      {
+        "2": "KQ2L06-02AS",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "6"
+      },
+      {
+        "2": "AW40-F04-D",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "1": "123",
+        "2": "Y400T-D",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "VHS40-F04-D",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "ISE30A-01-P-G",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "VHS44P-190AS",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "KQ2L10-04AS",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "IR2020-F02BG-A",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "2"
+      },
+      {
+        "2": "KQ2L10-02AS",
+        "3": "HAVA HAZIRLAYICI GRUBU",
+        "5": "4"
+      },
+      {
+        "2": "SS5Y5-41-04-01F-Q",
+        "3": "VALF ADASI",
+        "5": "1"
+      },
+      {
+        "2": "SY5140-5LOU-Q",
+        "3": "VALF ADASI",
+        "5": "4"
+      },
+      {
+        "1": "132",
+        "2": "AN20-02",
+        "3": "VALF ADASI",
+        "5": "4"
+      },
+      {
+        "2": "SY100-30-4A-50",
+        "3": "VALF ADASI",
+        "5": "4"
+      },
+      {
+        "2": "KQ2S06-01AS",
+        "3": "VALF ADASI",
+        "5": "8"
+      },
+      {
+        "2": "KQ2H10-02AS",
+        "3": "VALF ADASI",
+        "5": "1"
+      },
+      {
+        "2": "CD85N25-450C-B-X2018",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "AS2201F-01-06SA",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "ASP330F-01-06S",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "BM5-025",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "2"
+      },
+      {
+        "2": "C85C25",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "1": "141",
+        "2": "D-M9BZ",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "2"
+      },
+      {
+        "2": "KJ10D",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "KQ2U06-00A",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "10"
+      },
+      {
+        "2": "KQ2L06-M5A",
+        "3": "KAPAK SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "CD55B63-30M",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "C5063-A",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "KJ12D",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "2": "D-M9BZ",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "2"
+      },
+      {
+        "2": "KQ2U06-00A",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "4"
+      },
+      {
+        "1": "150",
+        "2": "KQ2L06-01AS",
+        "3": "ÜST BASKI SİLİNDİRLERİ",
+        "5": "8"
+      },
+      {
+        "2": "CDQ2A25-25DZ",
+        "3": "KOMPAKT SİLİNDİR GRUBU",
+        "5": "4"
+      },
+      {
+        "2": "D-M9BZ",
+        "3": "KOMPAKT SİLİNDİR GRUBU",
+        "5": "1"
+      },
+      {
+        "2": "KQ2L04-M5A",
+        "3": "KOMPAKT SİLİNDİR GRUBU",
+        "5": "8"
+      },
+      {
+        "2": "KQ2UD04-06A",
+        "3": "KOMPAKT SİLİNDİR GRUBU",
+        "5": "2"
+      },
+      {
+        "1": "159"
+      },
+      {
+        "1": "168"
+      },
+      {
+        "1": "114"
+      },
+      {
+        "1": "123"
+      },
+      {
+        "1": "132"
+      },
+      {
+        "1": "141"
+      },
+      {
+        "1": "150"
+      },
+      {
+        "1": "159"
+      },
+      {
+        "1": "168"
+      },
+      {
+        "1": "114"
+      },
+      {
+        "1": "123"
+      },
+      {
+        "1": "132"
+      },
+      {
+        "1": "141"
+      },
+      {
+        "1": "150"
+      },
+      {
+        "1": "159"
+      },
+      {
+        "1": "168"
+      }
+    ]
+  },
+  {
+    "name": "QBOX TALAŞLI İMALAT",
+    "rows": [
+      {
+        "2": "FREZE GRUBU"
+      },
+      {
+        "2": "1092",
+        "3": "Soğuk Çekme",
+        "4": "15 x 15 x 505",
+        "5": "8"
+      },
+      {
+        "2": "1201",
+        "3": "Soğuk Çekme",
+        "4": "60 x 20 x 95",
+        "5": "8"
+      },
+      {
+        "2": "1602",
+        "3": "Soğuk Çekme",
+        "4": "60 x 20 x 155",
+        "5": "2"
+      },
+      {
+        "2": "1801",
+        "3": "Soğuk Çekme",
+        "4": "60 x 30 x 210",
+        "5": "2"
+      },
+      {
+        "2": "1901",
+        "3": "Alüminyum",
+        "4": "195 x 20 x 320",
+        "5": "1"
+      },
+      {
+        "2": "1902-1903",
+        "3": "Alüminyum",
+        "4": "60 x 20 x 80",
+        "5": "2"
+      },
+      {
+        "2": "1908",
+        "3": "Alüminyum",
+        "4": "25 x 25 x 195",
+        "5": "1"
+      },
+      {
+        "2": "1909",
+        "3": "Alüminyum",
+        "4": "25 x 25 x 105",
+        "5": "1"
+      },
+      {
+        "2": "2001",
+        "3": "Soğuk Çekme",
+        "4": "80 x 20 x 225",
+        "5": "2"
+      },
+      {
+        "2": "2006-2007",
+        "3": "Soğuk Çekme",
+        "4": "100 x 20 x 225",
+        "5": "2"
+      },
+      {
+        "2": "2102-4001",
+        "3": "Alüminyum",
+        "4": "25 x 25 x 265",
+        "5": "24"
+      },
+      {
+        "2": "2105",
+        "3": "Soğuk Çekme",
+        "4": "30 x 15 x 60",
+        "5": "8"
+      },
+      {
+        "2": "2106",
+        "3": "Soğuk Çekme",
+        "4": "20 x 20 x 55",
+        "5": "8"
+      },
+      {
+        "2": "2142",
+        "3": "Alüminyum",
+        "4": "60 x 20 x 70",
+        "5": "2"
+      },
+      {
+        "2": "2143",
+        "3": "Soğuk Çekme",
+        "4": "20 x 20 x 65",
+        "5": "2"
+      },
+      {
+        "2": "2701",
+        "3": "Soğuk Çekme",
+        "4": "80 x 30 x 95",
+        "5": "1"
+      },
+      {
+        "2": "2702",
+        "3": "Soğuk Çekme",
+        "4": "80 x 15 x 95",
+        "5": "1"
+      },
+      {
+        "2": "2715",
+        "3": "Soğuk Çekme",
+        "4": "80 x 20 x 110",
+        "5": "1"
+      },
+      {
+        "2": "4002",
+        "3": "Alüminyum",
+        "4": "50 x 25 x 335",
+        "5": "8"
+      },
+      {
+        "2": "4003",
+        "3": "Alüminyum",
+        "4": "40 x 25 x 335",
+        "5": "8"
+      },
+      {
+        "2": "4004",
+        "3": "Alüminyum",
+        "4": "15 x 15 x 270",
+        "5": "8"
+      },
+      {
+        "2": "4011",
+        "3": "Soğuk Çekme",
+        "4": "60 x 20 x 210",
+        "5": "2"
+      },
+      {
+        "2": "4031",
+        "3": "Soğuk Çekme",
+        "4": "30 x 20 x 470",
+        "5": "2"
+      },
+      {
+        "2": "4032",
+        "3": "Soğuk Çekme",
+        "4": "20 x 20 x 75",
+        "5": "2"
+      },
+      {
+        "2": "4033",
+        "3": "Soğuk Çekme",
+        "4": "30 x 20 x 275",
+        "5": "2"
+      },
+      {
+        "2": "4035",
+        "3": "Soğuk Çekme",
+        "4": "30 x 10 x 35",
+        "5": "4"
+      },
+      {
+        "2": "TORNA GRUBU"
+      },
+      {
+        "1": "NO",
+        "2": "MALZEME\nKODU",
+        "3": "ÇAP",
+        "4": "UZUNLUK x MALZEME x ADET",
+        "10": "TERMİN\nTARİHİ",
+        "11": "TESLİM\nTARİHİ",
+        "14": "TESLİMAT\nDURUMU"
+      },
+      {
+        "2": "1303",
+        "3": "AA17",
+        "4": "135 x Altıgen Mil x 2 ADET"
+      },
+      {
+        "2": "1604",
+        "3": "40",
+        "4": "160 x Delrin x 1 ADET"
+      },
+      {
+        "2": "1701",
+        "3": "AA32",
+        "4": "105 x Atıgen Mil x 4 ADET"
+      },
+      {
+        "2": "1702",
+        "3": "AA24",
+        "4": "105 x Altıgen Mil x 4 ADET"
+      },
+      {
+        "2": "1703",
+        "3": "25",
+        "4": "2740 x Transmisyon  x 2 ADET"
+      },
+      {
+        "2": "2002",
+        "3": "20",
+        "4": "100 x Transmisyon  x 3 ADET"
+      },
+      {
+        "2": "2005",
+        "3": "65",
+        "4": "45 x Alüminyum x 2 ADET"
+      },
+      {
+        "2": "2154",
+        "3": "105",
+        "4": "26 x Alüminyum x 8 ADET"
+      },
+      {
+        "2": "2163",
+        "3": "20",
+        "4": "400 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "2164-2165",
+        "3": "60",
+        "4": "24 x İmalat Çeliği x 16 ADET"
+      },
+      {
+        "2": "2302-2312",
+        "3": "35",
+        "4": "400 x Delrin x 4 ADET"
+      },
+      {
+        "2": "2310",
+        "3": "105",
+        "4": "80 x Delrin x 5 ADET"
+      },
+      {
+        "2": "2311",
+        "3": "16",
+        "4": "100 x Transmisyon  x 4 ADET"
+      },
+      {
+        "2": "2712",
+        "3": "25",
+        "4": "240 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "2713",
+        "3": "45",
+        "4": "130 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "2714",
+        "3": "65",
+        "4": "45 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "2716",
+        "3": "12",
+        "4": "275 x Kromlu Mil x 2 ADET"
+      },
+      {
+        "2": "2731",
+        "3": "AA27",
+        "4": "400 x Altıgen Mil x 1 ADET"
+      },
+      {
+        "2": "2975",
+        "3": "65",
+        "4": "45 x İmalat Çeliği x 2 ADET"
+      },
+      {
+        "2": "4000",
+        "3": "25",
+        "4": "220 x Kromlu Mil x 1 ADET"
+      },
+      {
+        "2": "4013",
+        "3": "12",
+        "4": "1000 x Kromlu Mil x 1 ADET"
+      },
+      {
+        "2": "4014",
+        "3": "25",
+        "4": "100 x İmalat Çeliği x 1 ADET"
+      },
+      {
+        "2": "4015",
+        "3": "20",
+        "4": "1080 x İndiksiyonlu Mil x 4 ADET"
+      }
+    ]
+  }
+];
+
+const HEADERS = ['NO','MALZEME KODU','MALZEME ADI','ÖLÇÜLER','ADET','MAKİNE SAYISI','GEREKEN ADET','YETKİLİ ONAYI','SİPARİŞ TARİHİ','TERMİN TARİHİ','TESLİM TARİHİ','GELEN ADET','GELİŞ ONAYI','TESLİMAT DURUMU','İŞLEMLER'];
+
+const API_URL = "https://script.google.com/macros/s/AKfycbxaAud4dw5C69JQFp3N85T05eZ1DHMRyAhXRd4p0vr6hYXch-xbim5hEipekqYJZMAyAw/exec";let SHEETS = [];
+let state = {};
+let activeSheet = 0;
+let isOnline = false;
+
+// ── KURULUM ──
+function saveApiUrl() {
+  const url = document.getElementById('apiUrlInput').value.trim();
+  if (!url || !url.includes('script.google.com')) {
+    alert('Geçerli bir Google Apps Script URL girin!');
+    return;
+  }
+  API_URL = url;
+  localStorage.setItem('orimak_api_url', url);
+  document.getElementById('setupBanner').style.display = 'none';
+  loadData();
+}
+
+
+function showScript() {
+  document.getElementById('scriptArea').value = APPS_SCRIPT_CODE;
+  document.getElementById('scriptModal').classList.add('open');
+  return false;
+}
+function copyScript() {
+  navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(()=>alert('Kopyalandı!'));
+}
+
+// ── VERİ YÜKLEMESİ ──
+async function loadData() {
+  if (!API_URL) {
+    if (localStorage.getItem('orimak_api_url')) {
+      API_URL = localStorage.getItem('orimak_api_url');
+    } else {
+      // Kaydedilmiş URL yok, offline kullan
+      useOffline();
+      return;
+    }
+  }
+  setSyncStatus('⟳ YÜKLENIYOR', 'loading');
+  showLoading();
+  try {
+    const res = await fetch(API_URL + '?action=getData', {mode:'cors'});
+    const json = await res.json();
+    if (json.sheets && json.sheets.length > 0) {
+      SHEETS = json.sheets;
+      isOnline = true;
+      document.getElementById('setupBanner').style.display = 'none';
+      buildUI();
+      setSyncStatus('✓ CANLI', 'ok');
+    } else {
+      throw new Error('Veri yok');
+    }
+  } catch(e) {
+    console.warn('API hatası, offline veri kullanılıyor:', e);
+    SHEETS = OFFLINE_DATA;
+    isOnline = false;
+    document.getElementById('setupBanner').style.display = 'none';
+    buildUI();
+    setSyncStatus('ÇEVRIMDIŞI', 'err');
+  }
+}
+
+function showLoading() {
+  document.getElementById('sheetsContainer').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div><div class="loading-text">VERİLER YÜKLENİYOR...</div></div>';
+}
+
+function setSyncStatus(text, type) {
+  const el = document.getElementById('syncStatus');
+  el.textContent = text;
+  el.className = 'sync-status sync-' + type;
+}
+
+function isGroupRow(row) {
+  const keys = Object.keys(row).filter(k => row[k] && String(row[k]).trim() && k !== '_id');
+  return keys.length === 1 && keys[0] === '2' && !row['3'];
+}
+
+function getGroups(si) {
+  return state[si].rows.filter(r => r._group).map(r => r['2']);
+}
+
+// ── UI KURULUMU ──
+function buildState() {
+  state = {};
+  SHEETS.forEach((sheet, si) => {
+    state[si] = { rows: [], name: sheet.name };
+    let no = 0;
+    sheet.rows.forEach(row => {
+      const g = isGroupRow(row);
+      if (!g && (row['3'] || row['2'])) no++;
+      state[si].rows.push({
+        ...row,
+        _group: g,
+        _rowNo: g ? null : (row['1'] || no),
+        _yetkili: row.yetkili || '',
+        _gelis: row.gelis || '',
+        _gelenAdet: row.gelenAdet || '',
+        _makine: row.makine || ''
+      });
+    });
+  });
+}
+
+function buildUI() {
+  buildState();
+  buildTabs();
+  buildSheets();
+  ['tabsWrap','statsBar','toolBar','legendBar'].forEach(id => {
+    document.getElementById(id).style.display = '';
+  });
+  updateStats(0);
+  document.getElementById('searchInput').addEventListener('input', e => filterTable(e.target.value));
+}
+
+function buildTabs() {
+  const wrap = document.getElementById('tabsWrap');
+  wrap.innerHTML = '';
+  SHEETS.forEach((sheet, i) => {
+    const cnt = state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length;
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
+    btn.onclick = () => switchTab(i);
+    wrap.appendChild(btn);
+  });
+}
+
+function switchTab(idx) {
+  activeSheet = idx;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.sheet-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.getElementById('searchInput').value = '';
+  filterTable('');
+  updateStats(idx);
+}
+
+function getRowClass(row) {
+  const g = parseFloat(row._gelenAdet), a = parseFloat(row['5']), m = parseFloat(row._makine);
+  const ger = (!isNaN(a) && !isNaN(m)) ? a * m : null;
+  if (!isNaN(g) && ger !== null && !isNaN(ger) && g !== ger) return 'status-eksik';
+  if (row._gelis === 'Onaylandı') return 'status-gelis';
+  if (row._yetkili === 'Onaylandı') return 'status-onay';
+  if (row._yetkili === 'Beklemede') return 'status-bekle';
+  return '';
+}
+
+function buildSheets() {
+  const container = document.getElementById('sheetsContainer');
+  container.innerHTML = '';
+  SHEETS.forEach((sheet, si) => {
+    const panel = document.createElement('div');
+    panel.className = 'sheet-panel' + (si === 0 ? ' active' : '');
+    panel.id = 'panel-' + si;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    const table = document.createElement('table');
+    table.id = 'table-' + si;
+    const thead = document.createElement('thead');
+    const hrow = document.createElement('tr');
+    HEADERS.forEach(h => { const th = document.createElement('th'); th.textContent = h; hrow.appendChild(th); });
+    thead.appendChild(hrow);
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    tbody.id = 'tbody-' + si;
+    state[si].rows.forEach((row, ri) => tbody.appendChild(makeRow(si, ri, row)));
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    panel.appendChild(wrap);
+    container.appendChild(panel);
+  });
+}
+
+function makeRow(si, ri, row) {
+  const tr = document.createElement('tr');
+  tr.dataset.ri = ri; tr.dataset.si = si;
+  if (row._group) {
+    tr.className = 'group-row';
+    const td = document.createElement('td');
+    td.colSpan = HEADERS.length;
+    td.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+    const span = document.createElement('span');
+    span.textContent = row['2'];
+    const pdfBtn = document.createElement('button');
+    pdfBtn.innerHTML = '📄 PDF';
+    pdfBtn.style.cssText = 'background:rgba(227,100,0,.2);border:1px solid rgba(227,100,0,.4);color:#e36400;border-radius:4px;padding:3px 10px;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-left:8px;';
+    pdfBtn.onclick = (e) => { e.stopPropagation(); grupPDFIndir(si, ri, row['2']); };
+    td.appendChild(span);
+    td.appendChild(pdfBtn);
+    tr.appendChild(td);
+  } else {
+    tr.className = 'data-row ' + getRowClass(row);
+    tr.id = 'row-' + si + '-' + ri;
+    const a = parseFloat(row['5']), m = parseFloat(row._makine);
+    const ger = (!isNaN(a) && !isNaN(m)) ? a * m : '';
+    const cols = [
+      { type:'text', cls:'col-no', val: row._rowNo || '' },
+      { type:'text', cls:'col-code', val: row['2'] || '' },
+      { type:'text', val: row['3'] || '' },
+      { type:'text', val: row['4'] || '' },
+      { type:'text', val: row['5'] || '' },
+      { type:'makine' },
+      { type:'gereken', val: ger },
+      { type:'yetkili' },
+      { type:'date', field:'sipTarihi', col:8 },
+      { type:'date', field:'terminTarihi', col:9 },
+      { type:'date', field:'teslimTarihi', col:10 },
+      { type:'gelen' },
+      { type:'gelis' },
+      { type:'teslimat' },
+      { type:'actions' },
+    ];
+    cols.forEach((c, ci) => {
+      const td = document.createElement('td');
+      if (c.cls) td.className = c.cls;
+      if (c.type === 'makine') {
+        const inp = mkInput('number', row._makine, v => {
+          state[si].rows[ri]._makine = v;
+          refreshRow(si, ri); updateStats(si);
+          if (isOnline) apiUpdate(si, ri, 6, v);
+        });
+        td.appendChild(inp);
+      } else if (c.type === 'gelen') {
+        const inp = mkInput('number', row._gelenAdet, v => {
+          state[si].rows[ri]._gelenAdet = v;
+          refreshRow(si, ri); updateStats(si);
+          if (isOnline) apiUpdate(si, ri, 11, v);
+        });
+        td.appendChild(inp);
+      } else if (c.type === 'yetkili') {
+        td.appendChild(mkSelect(['', 'Onaylandı', 'Beklemede'], row._yetkili, v => {
+          state[si].rows[ri]._yetkili = v;
+          refreshRow(si, ri); updateStats(si);
+          if (isOnline) apiUpdate(si, ri, 7, v);
+        }));
+      } else if (c.type === 'gelis') {
+        td.appendChild(mkSelect(['', 'Onaylandı', 'Onay Bekleniyor'], row._gelis, v => {
+          state[si].rows[ri]._gelis = v;
+          refreshRow(si, ri); updateStats(si);
+          if (isOnline) apiUpdate(si, ri, 12, v);
+        }));
+      } else if (c.type === 'date') {
+        const inp = document.createElement('input');
+        inp.type = 'date'; inp.className = 'date-input';
+        // Tarihi ISO formatına çevir (gelen veri DD.MM.YYYY veya YYYY-MM-DD olabilir)
+        const rawVal = row[c.field] || '';
+        if (rawVal) {
+          // DD.MM.YYYY → YYYY-MM-DD
+          const m = rawVal.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+          inp.value = m ? m[3]+'-'+m[2]+'-'+m[1] : rawVal;
+        }
+        inp.onchange = () => {
+          // YYYY-MM-DD → DD.MM.YYYY olarak sakla
+          const parts = inp.value.split('-');
+          const displayVal = parts.length === 3 ? parts[2]+'.'+parts[1]+'.'+parts[0] : inp.value;
+          state[si].rows[ri][c.field] = displayVal;
+          if (isOnline) apiUpdate(si, ri, c.col, displayVal);
+        };
+        td.appendChild(inp);
+      } else if (c.type === 'teslimat') {
+        const g = parseFloat(row._gelenAdet);
+        const a = parseFloat(row['5']);
+        const m2 = parseFloat(row._makine);
+        const gereken = (!isNaN(a) && !isNaN(m2)) ? a * m2 : (!isNaN(a) ? a : NaN);
+        let span = document.createElement('span');
+        if (!isNaN(g) && !isNaN(gereken)) {
+          if (g === gereken) { span.className = 'teslimat-ok'; span.textContent = '✓ Teslim Edildi'; }
+          else if (g < gereken) { span.className = 'teslimat-eksik'; span.textContent = '⚠ Eksik Teslim Edildi'; }
+          else { span.className = 'teslimat-fazla'; span.textContent = '↑ Fazla Teslim Edildi'; }
+        }
+        td.appendChild(span);
+        td.dataset.teslimat = '1';
+      } else if (c.type === 'gereken') {
+        td.textContent = c.val; td.dataset.gereken = '1';
+      } else if (c.type === 'actions') {
+        const div = document.createElement('div');
+        div.className = 'row-actions';
+        const del = document.createElement('button');
+        del.className = 'btn-del'; del.title = 'Satırı Sil'; del.textContent = '✕';
+        del.onclick = () => deleteRow(si, ri);
+        // Viewer ve operator satır silemez
+        if (window._currentRole === 'viewer' || window._currentRole === 'operator') {
+          del.style.display = 'none';
+        }
+        div.appendChild(del);
+        td.appendChild(div);
+      } else {
+        td.textContent = c.val !== undefined ? c.val : '';
+      }
+      tr.appendChild(td);
+    });
+  }
+  return tr;
+}
+
+function mkInput(type, val, onChange) {
+  const inp = document.createElement('input');
+  inp.type = type; inp.min = '0'; inp.className = 'cell-input';
+  inp.value = val || ''; inp.placeholder = '—';
+  inp.onchange = () => onChange(inp.value);
+  return inp;
+}
+function mkSelect(options, value, onChange) {
+  const sel = document.createElement('select');
+  sel.className = 'onay-select';
+  options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt; o.textContent = opt || '—';
+    if (opt === value) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.onchange = () => onChange(sel.value);
+  return sel;
+}
+
+function refreshRow(si, ri) {
+  const row = state[si].rows[ri];
+  const tr = document.getElementById('row-' + si + '-' + ri);
+  if (!tr) return;
+  const a = parseFloat(row['5']), m = parseFloat(row._makine);
+  const ger = (!isNaN(a) && !isNaN(m)) ? a * m : '';
+  const gt = tr.querySelector('[data-gereken]');
+  if (gt) gt.textContent = ger;
+  tr.className = 'data-row ' + getRowClass(row);
+  // Teslimat durumu hücresini güncelle
+  const teslCell = tr.querySelector('[data-teslimat]');
+  if (teslCell) {
+    const g = parseFloat(row._gelenAdet);
+    const gereken2 = (!isNaN(a) && !isNaN(m)) ? a * m : (!isNaN(a) ? a : NaN);
+    teslCell.className = ''; teslCell.textContent = '';
+    if (!isNaN(g) && !isNaN(gereken2)) {
+      if (g === gereken2) { teslCell.className = 'teslimat-ok'; teslCell.textContent = '✓ Teslim Edildi'; }
+      else if (g < gereken2) { teslCell.className = 'teslimat-eksik'; teslCell.textContent = '⚠ Eksik Teslim Edildi'; }
+      else { teslCell.className = 'teslimat-fazla'; teslCell.textContent = '↑ Fazla Teslim Edildi'; }
+    }
+  }
+}
+
+function deleteRow(si, ri) {
+  if (!confirm('Bu satırı silmek istediğinizden emin misiniz?')) return;
+  state[si].rows.splice(ri, 1);
+  rebuildTable(si);
+  updateStats(si);
+  if (isOnline) apiUpdate(si, ri, 0, ''); // Firebase'e kaydet
+}
+
+function rebuildTable(si) {
+  const tbody = document.getElementById('tbody-' + si);
+  tbody.innerHTML = '';
+  state[si].rows.forEach((row, ri) => tbody.appendChild(makeRow(si, ri, row)));
+  updateTabCount(si);
+}
+
+function updateTabCount(si) {
+  const cnt = state[si].rows.filter(r => !r._group && (r['3'] || r['2'])).length;
+  const tabs = document.querySelectorAll('.tab-btn');
+  if (tabs[si]) { const sp = tabs[si].querySelector('.tab-count'); if (sp) sp.textContent = cnt; }
+}
+
+function updateStats(si) {
+  const rows = state[si].rows.filter(r => !r._group && (r['3'] || r['2']));
+  document.getElementById('statTotal').textContent = rows.length;
+  document.getElementById('statOnay').textContent = rows.filter(r => r._yetkili === 'Onaylandı').length;
+  document.getElementById('statBekle').textContent = rows.filter(r => r._yetkili === 'Beklemede').length;
+  document.getElementById('statGelis').textContent = rows.filter(r => r._gelis === 'Onaylandı').length;
+  document.getElementById('statEksik').textContent = rows.filter(r => {
+    const g = parseFloat(r._gelenAdet), a = parseFloat(r['5']), m = parseFloat(r._makine);
+    return !isNaN(g) && !isNaN(a) && !isNaN(m) && g !== a * m;
+  }).length;
+  document.getElementById('visibleCount').textContent = rows.length;
+}
+
+function filterTable(q) {
+  const panel = document.querySelector('.sheet-panel.active');
+  if (!panel) return;
+  const lower = q.toLowerCase();
+  let vis = 0;
+  panel.querySelectorAll('tr.data-row').forEach(tr => {
+    const txt = Array.from(tr.cells).map(c => c.textContent).join(' ').toLowerCase();
+    const show = !lower || txt.includes(lower);
+    tr.style.display = show ? '' : 'none';
+    if (show) vis++;
+  });
+  panel.querySelectorAll('tr.group-row').forEach(grp => {
+    let next = grp.nextElementSibling; let hasVis = false;
+    while (next && next.classList.contains('data-row')) {
+      if (next.style.display !== 'none') { hasVis = true; break; }
+      next = next.nextElementSibling;
+    }
+    grp.style.display = hasVis ? '' : 'none';
+  });
+  document.getElementById('visibleCount').textContent = vis;
+}
+
+// ── FİREBASE ENTEGRASYONU ──
+// (Firebase window._ üzerinden erişiliyor, login script'te yüklendi)
+
+const firebaseConfig = null; // login script'te tanımlı
+
+// ── FİRESTORE KAYDET ──
+async function fbSaveAll() {
+  if (!window._db) return;
+  try {
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), { data: JSON.stringify(SHEETS), updatedAt: Date.now() });
+  } catch(e) { console.warn('Firebase kayıt hatası:', e); }
+}
+
+// ── FİRESTORE'DAN YÜKLEMESİ ──
+async function loadData() {
+  setSyncStatus('⟳ BAĞLANIYOR', 'loading');
+  // Firebase hazır olana kadar bekle (max 3 saniye)
+  let waited = 0;
+  while (!window._db && waited < 30) { await new Promise(r => setTimeout(r, 100)); waited++; }
+  if (!window._db) {
+    setSyncStatus('ÇEVRIMDIŞI', 'err'); return;
+  }
+  try {
+    const snap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'));
+    if (snap.exists() && snap.data().data) {
+      const freshSheets = JSON.parse(snap.data().data);
+      SHEETS = freshSheets;
+      isOnline = true;
+      buildState();
+      rebuildTable(activeSheet);
+      updateStats(activeSheet);
+      setSyncStatus('✓ CANLI', 'ok');
+    } else {
+      // Firebase boş — mevcut offline veriyi kaydet
+      isOnline = true;
+      await fbSaveAll();
+      setSyncStatus('✓ CANLI', 'ok');
+    }
+    // Gerçek zamanlı dinle — başka kullanıcıların değişikliklerini al
+    let isLocalUpdate = false;
+    const origFbSaveAll = fbSaveAll;
+    window.fbSaveAll = async function() {
+      isLocalUpdate = true;
+      await origFbSaveAll();
+      setTimeout(() => { isLocalUpdate = false; }, 2000);
+    };
+    window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
+      if (isLocalUpdate) return;
+      if (d.exists() && d.data().data) {
+        SHEETS = JSON.parse(d.data().data);
+        buildState();
+        rebuildTable(activeSheet);
+        updateStats(activeSheet);
+        setSyncStatus('✓ CANLI', 'ok');
+      }
+    });
+  } catch(e) {
+    console.warn('Firebase hatası:', e);
+    isOnline = false;
+    setSyncStatus('ÇEVRIMDIŞI', 'err');
+  }
+}
+
+// ── API ÇAĞRILARI (artık Firebase'e yazar) ──
+async function apiCall(data) {
+  await fbSaveAll();
+}
+
+async function apiUpdate(si, rowId, col, val) {
+  // state → SHEETS senkronizasyonu — tüm alanları yaz (boş olanlar dahil)
+  SHEETS[si].rows = state[si].rows.map(r => {
+    const clean = {};
+    Object.keys(r).forEach(k => {
+      if (!k.startsWith('_')) clean[k] = r[k];
+    });
+    clean.yetkili    = r._yetkili    !== undefined ? r._yetkili    : (r.yetkili    || '');
+    clean.gelis      = r._gelis      !== undefined ? r._gelis      : (r.gelis      || '');
+    clean.gelenAdet  = r._gelenAdet  !== undefined ? r._gelenAdet  : (r.gelenAdet  || '');
+    clean.makine     = r._makine     !== undefined ? r._makine     : (r.makine     || '');
+    clean.sipTarihi  = r._sipTarihi  !== undefined ? r._sipTarihi  : (r.sipTarihi  || '');
+    clean.terminTarihi = r._terminTarihi !== undefined ? r._terminTarihi : (r.terminTarihi || '');
+    clean.teslimTarihi = r._teslimTarihi !== undefined ? r._teslimTarihi : (r.teslimTarihi || '');
+    return clean;
+  });
+  await fbSaveAll();
+}
+
+// ── BAŞLAT ──
+isOnline = false;
+loadData();
+// Escape dinleyici login script'inde birleştirildi
+
+function openModal() {
+  const fSheet = document.getElementById('fSheet');
+  fSheet.innerHTML = '';
+  SHEETS.forEach((s, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = s.name;
+    if (i === activeSheet) o.selected = true;
+    fSheet.appendChild(o);
+  });
+  populateGroups(activeSheet);
+  fSheet.onchange = () => populateGroups(parseInt(fSheet.value));
+  ['fCode', 'fName', 'fOlcu', 'fAdet'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('fName').focus();
+}
+
+function populateGroups(si) {
+  const sel = document.getElementById('fGroup');
+  sel.innerHTML = '<option value="__end__">— Sayfanın En Sonuna —</option>';
+  getGroups(si).forEach(g => {
+    const o = document.createElement('option');
+    o.value = g; o.textContent = '▸ ' + g + ' grubunun sonuna';
+    sel.appendChild(o);
+  });
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+async function addRow() {
+  const si = parseInt(document.getElementById('fSheet').value);
+  const group = document.getElementById('fGroup').value;
+  const name = document.getElementById('fName').value.trim();
+  const code = document.getElementById('fCode').value.trim();
+  const olcu = document.getElementById('fOlcu').value.trim();
+  const adet = document.getElementById('fAdet').value.trim();
+
+  if (!name) { alert('Malzeme adı zorunludur!'); document.getElementById('fName').focus(); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.textContent = '⟳ Ekleniyor...'; btn.disabled = true;
+
+  const newRow = { '2': code || '', '3': name, '4': olcu || '', '5': adet || '',
+    _group: false, _rowNo: null, _yetkili: '', _gelis: '', _gelenAdet: '', _makine: '' };
+
+  // Firebase'e kaydet
+  if (isOnline) {
+    const rows = state[si].rows;
+    if (group === '__end__') {
+      rows.push(newRow);
+    } else {
+      let insertIdx = rows.length;
+      let inGroup = false;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i]._group && rows[i]['2'] === group) { inGroup = true; continue; }
+        if (inGroup) {
+          if (rows[i]._group) { insertIdx = i; break; }
+          insertIdx = i + 1;
+        }
+      }
+      rows.splice(insertIdx, 0, newRow);
+    }
+    let no = 0;
+    state[si].rows.forEach(r => { if (!r._group && (r['3'] || r['2'])) { no++; if (!r['1']) r._rowNo = no; } });
+    // SHEETS'i state'den güncelle
+    SHEETS[si].rows = state[si].rows.map(r => {
+      const { _group, _rowNo, _yetkili, _gelis, _gelenAdet, _makine, ...rest } = r;
+      return { ...rest, yetkili: r._yetkili, gelis: r._gelis, gelenAdet: r._gelenAdet, makine: r._makine };
+    });
+    await fbSaveAll();
+    rebuildTable(si);
+  } else {
+    // Offline - sadece local ekle
+    const rows = state[si].rows;
+    if (group === '__end__') {
+      rows.push(newRow);
+    } else {
+      let insertIdx = rows.length;
+      let inGroup = false;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i]._group && rows[i]['2'] === group) { inGroup = true; continue; }
+        if (inGroup) {
+          if (rows[i]._group) { insertIdx = i; break; }
+          insertIdx = i + 1;
+        }
+      }
+      rows.splice(insertIdx, 0, newRow);
+    }
+    let no = 0;
+    state[si].rows.forEach(r => { if (!r._group && (r['3'] || r['2'])) { no++; if (!r['1']) r._rowNo = no; } });
+    rebuildTable(si);
+  }
+
+  if (si === activeSheet) updateStats(si); else switchTab(si);
+  btn.textContent = '✓ Ekle'; btn.disabled = false;
+  closeModal();
+}
+
+// ── BAŞLAT ──
+// Önce offline veriyle hızlı başlat
+isOnline = false;
+SHEETS = OFFLINE_DATA;
+buildUI();
+setSyncStatus('⟳ BAĞLANIYOR', 'loading');
+
+// Firebase hazır olunca veriyi yükle
+window.loadData = loadData;
+setTimeout(() => { loadData(); }, 300);
+
+// Escape dinleyici login script'inde birleştirildi
+</script>
+</body>
+</html>
