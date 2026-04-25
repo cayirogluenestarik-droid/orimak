@@ -1752,7 +1752,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.5</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.6</span>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
       🔔
@@ -5800,40 +5800,6 @@ function copyScript() {
 }
 
 // ── VERİ YÜKLEMESİ ──
-async function loadData() {
-  if (!API_URL) {
-    if (localStorage.getItem('orimak_api_url')) {
-      API_URL = localStorage.getItem('orimak_api_url');
-    } else {
-      // Kaydedilmiş URL yok, offline kullan
-      useOffline();
-      return;
-    }
-  }
-  setSyncStatus('⟳ YÜKLENIYOR', 'loading');
-  showLoading();
-  try {
-    const res = await fetch(API_URL + '?action=getData', {mode:'cors'});
-    const json = await res.json();
-    if (json.sheets && json.sheets.length > 0) {
-      SHEETS = json.sheets;
-      isOnline = true;
-      document.getElementById('setupBanner').style.display = 'none';
-      buildUI();
-      setSyncStatus('✓ CANLI', 'ok');
-    } else {
-      throw new Error('Veri yok');
-    }
-  } catch(e) {
-    console.warn('API hatası, offline veri kullanılıyor:', e);
-    SHEETS = OFFLINE_DATA;
-    isOnline = false;
-    document.getElementById('setupBanner').style.display = 'none';
-    buildUI();
-    setSyncStatus('ÇEVRIMDIŞI', 'err');
-  }
-}
-
 function showLoading() {
   document.getElementById('sheetsContainer').innerHTML =
     '<div class="loading-wrap"><div class="spinner"></div><div class="loading-text">VERİLER YÜKLENİYOR...</div></div>';
@@ -6246,7 +6212,6 @@ async function fbSaveAll() {
 // ── FİRESTORE'DAN YÜKLEMESİ ──
 async function loadData() {
   setSyncStatus('⟳ BAĞLANIYOR', 'loading');
-  // Firebase hazır olana kadar bekle (max 3 saniye)
   let waited = 0;
   while (!window._db && waited < 30) { await new Promise(r => setTimeout(r, 100)); waited++; }
   if (!window._db) {
@@ -6256,19 +6221,25 @@ async function loadData() {
     const snap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'));
     if (snap.exists() && snap.data().data) {
       const freshSheets = JSON.parse(snap.data().data);
+      // Eksik özel sayfaları OFFLINE_DATA'dan ekle
+      ['siparis','teslim'].forEach(tip => {
+        if (!freshSheets.find(s => s.type === tip)) {
+          const template = OFFLINE_DATA.find(s => s.type === tip);
+          if (template) freshSheets.push(JSON.parse(JSON.stringify(template)));
+        }
+      });
       SHEETS = freshSheets;
       isOnline = true;
-      buildState();
-      rebuildTable(activeSheet);
-      updateStats(activeSheet);
+      buildUI();
       setSyncStatus('✓ CANLI', 'ok');
     } else {
-      // Firebase boş — mevcut offline veriyi kaydet
+      SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
       isOnline = true;
       await fbSaveAll();
+      buildUI();
       setSyncStatus('✓ CANLI', 'ok');
     }
-    // Gerçek zamanlı dinle — başka kullanıcıların değişikliklerini al
+    // Gerçek zamanlı dinle
     let isLocalUpdate = false;
     const origFbSaveAll = fbSaveAll;
     window.fbSaveAll = async function() {
@@ -6279,16 +6250,27 @@ async function loadData() {
     window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
       if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
-        SHEETS = JSON.parse(d.data().data);
+        const updated = JSON.parse(d.data().data);
+        ['siparis','teslim'].forEach(tip => {
+          if (!updated.find(s => s.type === tip)) {
+            const existing = SHEETS.find(s => s.type === tip);
+            if (existing) updated.push(existing);
+          }
+        });
+        SHEETS = updated;
         buildState();
         rebuildTable(activeSheet);
         updateStats(activeSheet);
+        renderSiparisRows();
+        renderTeslimRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
     });
   } catch(e) {
     console.warn('Firebase hatası:', e);
+    SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
     isOnline = false;
+    buildUI();
     setSyncStatus('ÇEVRIMDIŞI', 'err');
   }
 }
