@@ -1752,7 +1752,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.6</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.7</span>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
       🔔
@@ -6299,9 +6299,6 @@ async function apiUpdate(si, rowId, col, val) {
   await fbSaveAll();
 }
 
-// ── BAŞLAT ──
-isOnline = false;
-loadData();
 // Escape dinleyici login script'inde birleştirildi
 
 function openModal() {
