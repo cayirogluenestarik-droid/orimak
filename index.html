@@ -504,6 +504,9 @@ function onLoggedIn(u) {
   if (u.sayfalar && u.sayfalar.length > 0) {
     setTimeout(() => applySayfaKisitlama(u.sayfalar), 100);
   }
+
+  // Firebase'den güncel veriyi yükle
+  if (window.loadData) setTimeout(() => window.loadData(), 200);
 }
 
 function applySayfaKisitlama(sayfalar) {
@@ -1752,7 +1755,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.7</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.8</span>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
       🔔
@@ -2060,8 +2063,6 @@ function showAdminMsg(text, type) {
 
 <script>
 document.getElementById('headerDate').textContent = new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric'});
-
-const APPS_SCRIPT_CODE = "\n// =====================================================\n// ORIMAK MALZEME L\u0130STES\u0130 - Google Apps Script\n// Bu kodu Google Apps Script'e yap\u0131\u015ft\u0131r ve Deploy et\n// =====================================================\n\nfunction doGet(e) {\n  const action = e.parameter.action || 'getData';\n  \n  if (action === 'getData') {\n    return getData();\n  }\n  \n  return ContentService.createTextOutput(JSON.stringify({error: 'Unknown action'}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doPost(e) {\n  const data = JSON.parse(e.postData.contents);\n  const action = data.action;\n  \n  if (action === 'addRow') return addRow(data);\n  if (action === 'updateRow') return updateRow(data);\n  if (action === 'deleteRow') return deleteRow(data);\n  \n  return ContentService.createTextOutput(JSON.stringify({error: 'Unknown action'}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction getData() {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheets = ss.getSheets();\n  const result = [];\n  \n  sheets.forEach(sheet => {\n    const name = sheet.getName();\n    if (name.startsWith('_')) return; // _ ile ba\u015flayanlar\u0131 atla\n    \n    const data = sheet.getDataRange().getValues();\n    const rows = [];\n    \n    data.forEach((row, i) => {\n      if (i === 0) return; // ba\u015fl\u0131k sat\u0131r\u0131n\u0131 atla\n      \n      const obj = {};\n      if (row[0]) obj['1'] = String(row[0]);\n      if (row[1]) obj['2'] = String(row[1]);\n      if (row[2]) obj['3'] = String(row[2]);\n      if (row[3]) obj['4'] = String(row[3]);\n      if (row[4]) obj['5'] = String(row[4]);\n      if (row[5]) obj['makine'] = String(row[5]);\n      if (row[6]) obj['yetkili'] = String(row[6]);\n      if (row[7]) obj['sipTarihi'] = String(row[7]);\n      if (row[8]) obj['terminTarihi'] = String(row[8]);\n      if (row[9]) obj['teslimTarihi'] = String(row[9]);\n      if (row[10]) obj['gelenAdet'] = String(row[10]);\n      if (row[11]) obj['gelis'] = String(row[11]);\n      if (row[12]) obj['14'] = String(row[12]);\n      obj['_id'] = i + 1; // sat\u0131r numaras\u0131 (1-indexed, ba\u015fl\u0131k hari\u00e7)\n      \n      rows.push(obj);\n    });\n    \n    result.push({ name, rows });\n  });\n  \n  const output = ContentService.createTextOutput(JSON.stringify({sheets: result}))\n    .setMimeType(ContentService.MimeType.JSON);\n  return output;\n}\n\nfunction addRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  const row = [\n    data.rowNo || '',\n    data.code || '',\n    data.name || '',\n    data.olcu || '',\n    data.adet || '',\n    '', // makine\n    '', // yetkili\n    '', // sipTarihi\n    '', // terminTarihi\n    '', // teslimTarihi\n    '', // gelenAdet\n    '', // gelis\n    data.teslimatDurumu || ''\n  ];\n  \n  // Grubun sonunu bul\n  if (data.group && data.group !== '__end__') {\n    const vals = sheet.getDataRange().getValues();\n    let insertRow = vals.length + 1;\n    let inGroup = false;\n    \n    for (let i = 1; i < vals.length; i++) {\n      const isGroupRow = vals[i][1] && !vals[i][2];\n      if (isGroupRow && vals[i][1] === data.group) { inGroup = true; continue; }\n      if (inGroup && isGroupRow) { insertRow = i + 1; break; }\n      if (inGroup) insertRow = i + 2;\n    }\n    \n    sheet.insertRowBefore(insertRow);\n    sheet.getRange(insertRow, 1, 1, row.length).setValues([row]);\n  } else {\n    sheet.appendRow(row);\n  }\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction updateRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  const rowNum = data.rowNum; // 1-indexed, ba\u015fl\u0131k hari\u00e7 -> ger\u00e7ek sat\u0131r = rowNum + 1\n  const col = data.col;\n  const val = data.value;\n  \n  sheet.getRange(rowNum + 1, col).setValue(val);\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction deleteRow(data) {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  const sheet = ss.getSheetByName(data.sheet);\n  if (!sheet) return err('Sheet bulunamad\u0131');\n  \n  sheet.deleteRow(data.rowNum + 1);\n  \n  return ContentService.createTextOutput(JSON.stringify({ok: true}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction err(msg) {\n  return ContentService.createTextOutput(JSON.stringify({error: msg}))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n";
 
 const OFFLINE_DATA = [
   {
@@ -5771,33 +5772,10 @@ const OFFLINE_DATA = [
 
 const HEADERS = ['NO','MALZEME KODU','MALZEME ADI','ÖLÇÜLER','ADET','MAKİNE SAYISI','GEREKEN ADET','YETKİLİ ONAYI','SİPARİŞ TARİHİ','TERMİN TARİHİ','TESLİM TARİHİ','GELEN ADET','GELİŞ ONAYI','TESLİMAT DURUMU','İŞLEMLER'];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxaAud4dw5C69JQFp3N85T05eZ1DHMRyAhXRd4p0vr6hYXch-xbim5hEipekqYJZMAyAw/exec";let SHEETS = [];
+let SHEETS = [];
 let state = {};
 let activeSheet = 0;
 let isOnline = false;
-
-// ── KURULUM ──
-function saveApiUrl() {
-  const url = document.getElementById('apiUrlInput').value.trim();
-  if (!url || !url.includes('script.google.com')) {
-    alert('Geçerli bir Google Apps Script URL girin!');
-    return;
-  }
-  API_URL = url;
-  localStorage.setItem('orimak_api_url', url);
-  document.getElementById('setupBanner').style.display = 'none';
-  loadData();
-}
-
-
-function showScript() {
-  document.getElementById('scriptArea').value = APPS_SCRIPT_CODE;
-  document.getElementById('scriptModal').classList.add('open');
-  return false;
-}
-function copyScript() {
-  navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(()=>alert('Kopyalandı!'));
-}
 
 // ── VERİ YÜKLEMESİ ──
 function showLoading() {
@@ -6402,13 +6380,21 @@ async function addRow() {
 // ── BAŞLAT ──
 // Önce offline veriyle hızlı başlat
 isOnline = false;
-SHEETS = OFFLINE_DATA;
+SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
 buildUI();
 setSyncStatus('⟳ BAĞLANIYOR', 'loading');
 
-// Firebase hazır olunca veriyi yükle
+// Firebase hazır olunca veriyi yükle (giriş yapılınca da tekrar çağrılır)
 window.loadData = loadData;
-setTimeout(() => { loadData(); }, 300);
+// Oturum varsa hemen yükle, yoksa giriş sonrası yüklenecek
+(function() {
+  const sess = localStorage.getItem('orimak_auth');
+  if (sess) {
+    setTimeout(() => { loadData(); }, 300);
+  } else {
+    setSyncStatus('', 'ok'); // giriş bekleniyor, loading gösterme
+  }
+})();
 
 // Escape dinleyici login script'inde birleştirildi
 </script>
