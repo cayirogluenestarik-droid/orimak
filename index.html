@@ -1131,27 +1131,53 @@ function renderSiparisRows() {
 
     const tr = document.createElement('tr');
     tr.className = 'data-row';
-    tr.innerHTML = `
-      <td class="col-no">${i+1}</td>
-      <td style="font-family:'Barlow Condensed',sans-serif;font-weight:600;">${r.urunKodu||''}</td>
-      <td>${r.urunAdi||''}</td>
-      <td style="text-align:center;">${r.sipAdet||''}</td>
-      <td>${r.olusturan||''}</td>
-      <td>${mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => { rows[i].yetkiliOnay=v; saveSiparisRows(); renderSiparisRows(); })}</td>
-      <td style="font-size:11px;color:#888;">${r.olusturmaTarihi||''}</td>
-      <td style="font-size:11px;${isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':''}">${r.terminTarihi||''}</td>
-      <td style="font-size:11px;color:#888;">${gelisTarihi}</td>
-      <td>${mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })}</td>
-      <td style="text-align:center;">${gelisAdet}</td>
-      <td><span class="sp-durum ${durumClass}">${durum}</span></td>
-      <td style="font-size:11px;color:#888;">${r.notlar||''}</td>
-      <td style="font-size:11px;color:#888;">${teslimAlan}</td>
-      <td>
-        <div class="row-actions">
-          ${window._currentRole !== 'viewer' ? `<button class="btn-edit-row" onclick="editSiparis(${i})" title="Düzenle">✏️</button>` : ''}
-          ${(window._currentRole === 'admin' || window._currentRole === 'manager') ? `<button class="btn-del" onclick="deleteSiparis(${i})">✕</button>` : ''}
-        </div>
-      </td>`;
+
+    function mkTd(html, style) {
+      const td = document.createElement('td');
+      if (style) td.style.cssText = style;
+      td.innerHTML = html;
+      return td;
+    }
+    function mkTdEl(el, style) {
+      const td = document.createElement('td');
+      if (style) td.style.cssText = style;
+      td.appendChild(el);
+      return td;
+    }
+
+    tr.appendChild(mkTd(String(i+1), 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
+    tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
+    tr.appendChild(mkTd(r.urunAdi||''));
+    tr.appendChild(mkTd(r.sipAdet||'', 'text-align:center;'));
+    tr.appendChild(mkTd(r.olusturan||''));
+    tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => { rows[i].yetkiliOnay=v; saveSiparisRows(); renderSiparisRows(); })));
+    tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(r.terminTarihi||'', 'font-size:11px;' + (isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':'')));
+    tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })));
+    tr.appendChild(mkTd(String(gelisAdet||''), 'text-align:center;'));
+    tr.appendChild(mkTd(`<span class="sp-durum ${durumClass}">${durum}</span>`));
+    tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#888;'));
+
+    const tdAct = document.createElement('td');
+    const actDiv = document.createElement('div');
+    actDiv.className = 'row-actions';
+    if (window._currentRole !== 'viewer') {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'btn-edit-row'; editBtn.title = 'Düzenle'; editBtn.textContent = '✏️';
+      editBtn.onclick = () => editSiparis(i);
+      actDiv.appendChild(editBtn);
+    }
+    if (window._currentRole === 'admin' || window._currentRole === 'manager') {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-del'; delBtn.textContent = '✕';
+      delBtn.onclick = () => deleteSiparis(i);
+      actDiv.appendChild(delBtn);
+    }
+    tdAct.appendChild(actDiv);
+    tr.appendChild(tdAct);
+
     tbody.appendChild(tr);
   });
 }
