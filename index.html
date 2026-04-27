@@ -7008,10 +7008,10 @@ function ypCollectData() {
 
 function ypRestoreData(data) {
   if (!data) return;
-  if (data.machineName !== undefined) document.getElementById('ypMachineName').value = data.machineName;
-  if (data.docNo !== undefined) document.getElementById('ypDocNo').value = data.docNo;
-  if (data.dateField !== undefined) document.getElementById('ypDateField').value = data.dateField;
-  if (data.preparedBy !== undefined) document.getElementById('ypPreparedBy').value = data.preparedBy;
+  if (data.machineName !== undefined) document.getElementById('ypMachineName').value = data.machineName || '';
+  if (data.docNo !== undefined) document.getElementById('ypDocNo').value = data.docNo || '';
+  if (data.dateField !== undefined) document.getElementById('ypDateField').value = data.dateField || '';
+  if (data.preparedBy !== undefined) document.getElementById('ypPreparedBy').value = data.preparedBy || '';
   if (data.fs) { ypFs = data.fs; document.getElementById('ypFsVal').textContent = ypFs; }
   if (data.color) document.getElementById('ypColorPicker').value = data.color;
   if (data.logo) {
@@ -7021,7 +7021,14 @@ function ypRestoreData(data) {
   }
   document.getElementById('ypTbody').innerHTML = ''; ypRowCount = 0;
   var rows = (data.rows && data.rows.length > 0) ? data.rows : Array(5).fill(null);
-  rows.forEach(function(r){ ypAddRowAtEnd(r); });
+  rows.forEach(function(r){
+    // Firebase'den gelen satırlarda photo alanı olmayabilir (boyut limiti nedeniyle kaldırıldı)
+    ypAddRowAtEnd(r || null);
+  });
+  // Firebase'den yüklendiyse ve fotoğraf yoksa uyar
+  if (data._type === 'yedekparca' && data.rows && data.rows.some(function(r){ return r && r.hasPhoto; })) {
+    ypShowHint('Not: Fotoğraflar buluta kaydedilmez — JSON İndir ile yedekleyin.');
+  }
 }
 
 // ── Kaydetme (Firebase) ──
@@ -7035,17 +7042,38 @@ async function ypAutoSave() {
 
 async function ypFirebaseSave(recordId, customName, silent) {
   if (!window._db || !window._fsDoc || !window._fsSetDoc) {
-    ypShowBadge('⚠ Firebase bağlantısı yok', 'error'); return;
+    ypShowBadge('⚠ Firebase bağlantısı yok', 'error'); return false;
   }
   if (!silent) ypShowBadge('Kaydediliyor...', 'saving');
   try {
     var data = ypCollectData();
     if (customName) data.name = customName;
-    data._type = 'yedekparca'; // koleksiyon içinde ayırt etmek için
+    data._type = 'yedekparca';
+
+    // Firestore 1MB limiti: fotoğrafları (base64) çıkar, sadece metin sakla
+    // Fotoğraflar JSON indirme ile korunur
+    var rowsForFirestore = data.rows.map(function(r) {
+      return {
+        height: r.height || 100,
+        name: r.name || '',
+        num: r.num || '',
+        hasPhoto: !!(r.photo)   // fotoğraf var mı işareti
+        // photo: base64 verisi kaydedilmiyor (boyut limiti)
+      };
+    });
+    data.rows = rowsForFirestore;
+    // logo da base64 — kaldır
+    delete data.logo;
+
+    // undefined temizle (Firestore reddeder)
+    data = JSON.parse(JSON.stringify(data, function(k, v) {
+      return v === undefined ? null : v;
+    }));
+
     var docRef = window._fsDoc(window._db, YP_FS_COL, recordId);
     await window._fsSetDoc(docRef, data);
     ypCurrentRecordId = recordId;
-    if (!silent) ypShowBadge('✓ Kaydedildi', '');
+    if (!silent) ypShowBadge('✓ Kaydedildi (fotoğraflar hariç)', '');
     return true;
   } catch(e) {
     if (!silent) ypShowBadge('⚠ ' + e.message, 'error');
