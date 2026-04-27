@@ -496,8 +496,8 @@ window._fsOnSnapshot = onSnapshot;
 window._fsGetDocs = getDocs;
 window._fsCollection = collection;
 window._fsDeleteDoc = deleteDoc;
-// Firebase hazır — ana scripte haber ver
-window.dispatchEvent(new Event('firebaseReady'));
+// Firebase hazır — ana scripte haber ver (setTimeout ile async, listener'ın kayıt olmasına fırsat ver)
+setTimeout(function() { window.dispatchEvent(new Event('firebaseReady')); }, 0);
 </script>
 
 <script>
@@ -6779,25 +6779,27 @@ async function addRow() {
 isOnline = false;
 SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
 buildUI();
-setSyncStatus('⟳ BAĞLANIYOR', 'loading');
 
-// loadData artık tanımlı, window'a kaydet
 window.loadData = loadData;
 
-// Firebase hazır olunca yükle
-window.addEventListener('firebaseReady', function() {
-  var sess = localStorage.getItem('orimak_auth');
-  if (sess) {
-    loadData();
-  } else {
-    setSyncStatus('', 'ok');
-  }
-}, { once: true });
-
-// Eğer Firebase zaten hazırsa (script sırası nedeniyle event kaçırıldıysa)
-if (window._db) {
-  var sess2 = localStorage.getItem('orimak_auth');
-  if (sess2) { loadData(); } else { setSyncStatus('', 'ok'); }
+// Oturum yoksa loading gösterme
+var _initSess = localStorage.getItem('orimak_auth');
+if (!_initSess) {
+  setSyncStatus('', 'ok');
+} else {
+  setSyncStatus('⟳ BAĞLANIYOR', 'loading');
+  // Firebase hazır olana kadar poll et (module script async yüklendiğinden event güvenilir değil)
+  var _fbPollCount = 0;
+  var _fbPoll = setInterval(function() {
+    _fbPollCount++;
+    if (window._db) {
+      clearInterval(_fbPoll);
+      if (!isOnline) loadData();
+    } else if (_fbPollCount > 50) { // 5 saniye
+      clearInterval(_fbPoll);
+      setSyncStatus('ÇEVRIMDIŞI', 'err');
+    }
+  }, 100);
 }
 
 // Escape dinleyici login script'inde birleştirildi
