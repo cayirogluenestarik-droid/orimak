@@ -492,7 +492,7 @@ function onLoggedIn(u) {
   avatar.textContent = u.user[0].toUpperCase();
   name.textContent = u.user;
 
-  const role = u.role;
+  const role = u.role || u.rol || 'viewer';  // eski session uyumluluğu
   window._currentRole = role;
   window._currentSayfalar = u.sayfalar || [];
 
@@ -1758,8 +1758,7 @@ function showAdminMsg(text, type) {
   setTimeout(() => { el.className = 'admin-msg'; }, 3500);
 }
 
-// Firebase hazır olunca yükle
-
+// Firebase hazır olunca yükle — loadData ana scriptte tanımlı, oradan çağrılıyor
 
 </script>
 
@@ -1776,7 +1775,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v4.4</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v4.5</span>
       <button onclick="doLogout()" title="Çıkış Yap" style="background:rgba(192,0,0,.15);border:1px solid rgba(192,0,0,.3);color:#ff7777;border-radius:5px;padding:2px 8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;margin-left:6px;letter-spacing:1px;">ÇIKIŞ</button>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
