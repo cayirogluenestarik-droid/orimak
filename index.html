@@ -7355,7 +7355,7 @@ var _origBuildSheets = window.buildSheets || null;
 var _origSwitchTab = window.switchTab || null;
 var _ypTabIdx = -1; // yedek parça tab index'i (her zaman sonda)
 
-function ypAddTab() {
+window.ypAddTab = function ypAddTab() {
   var wrap = document.getElementById('tabsWrap');
   _ypTabIdx = document.querySelectorAll('.tab-btn').length; // mevcut tab sayısı
   var btn = document.createElement('button');
@@ -7379,7 +7379,7 @@ window.ypSwitchTo = function() {
   });
 };
 
-function ypSwitchAway() {
+window.ypSwitchAway = function ypSwitchAway() {
   document.getElementById('ypanel').style.display = 'none';
   ['statsBar','toolBar','legendBar'].forEach(function(id){
     var el = document.getElementById(id);
@@ -7389,14 +7389,6 @@ function ypSwitchAway() {
 
 // buildUI zaten çalıştı — direkt çalıştır
 ypCreatePanel();
-ypAddTab();
-
-// switchTab patch
-var _origST = window.switchTab;
-window.switchTab = function(idx) {
-  if (_origST) _origST.apply(this, arguments);
-  ypSwitchAway();
-};
 
 })(); // IIFE sonu
 </script>
@@ -7784,7 +7776,7 @@ window.snSaveNew = function() {
 };
 
 // ── Tab entegrasyonu ──
-function snAddTab() {
+window.snAddTab = function snAddTab() {
   var wrap = document.getElementById('tabsWrap');
   if (!wrap) return;
   var btn = document.createElement('button');
@@ -7811,39 +7803,49 @@ window.snSwitchTo = function() {
   if (yp) yp.style.display = 'none';
 };
 
-function snSwitchAway() {
+window.snSwitchAway = function snSwitchAway() {
   document.getElementById('snPanel').style.display = 'none';
 }
 
 // buildUI zaten çalıştı — direkt çalıştır
 snCreatePanel();
-snAddTab();
-
-// switchTab patch: diğer sekmelere geçince sn panelini gizle
-var _origST2 = window.switchTab;
-window.switchTab = function(idx) {
-  if (_origST2) _origST2.apply(this, arguments);
-  snSwitchAway();
-};
-
-// YP sayfasına geçişte sn panelini gizle
-var _origYpSwitchTo = window.ypSwitchTo;
-window.ypSwitchTo = function() {
-  snSwitchAway();
-  if (_origYpSwitchTo) _origYpSwitchTo.apply(this, arguments);
-};
-
-// buildUI tekrar çağrılırsa (Firebase sonrası reload) da çalışsın
-var _origBuildUI2 = window.buildUI;
-window.buildUI = function() {
-  if (_origBuildUI2) _origBuildUI2.apply(this, arguments);
-  // Paneli yeniden oluşturma, sadece tab yoksa ekle
-  if (!document.getElementById('tabBtn-sn')) {
-    snAddTab();
-  }
-};
 
 })(); // IIFE sonu
+
+<!-- ═══ BİRLEŞİK PATCH: buildTabs & switchTab ═══ -->
+<script>
+(function() {
+  // buildTabs her çağrıldığında (sayfa yükü + Firebase reload) her iki tabı da koru
+  var _origBT = window.buildTabs;
+  window.buildTabs = function() {
+    if (_origBT) _origBT.apply(this, arguments);
+    if (!document.getElementById('tabBtn-yp') && window.ypAddTab) window.ypAddTab();
+    if (!document.getElementById('tabBtn-sn') && window.snAddTab) window.snAddTab();
+  };
+
+  // switchTab: normal sekmelere geçince her iki paneli gizle
+  var _origST = window.switchTab;
+  window.switchTab = function(idx) {
+    if (_origST) _origST.apply(this, arguments);
+    if (window.ypSwitchAway) window.ypSwitchAway();
+    if (window.snSwitchAway) window.snSwitchAway();
+  };
+
+  // ypSwitchTo: YP'ye geçince SN panelini gizle
+  var _origYP = window.ypSwitchTo;
+  window.ypSwitchTo = function() {
+    if (window.snSwitchAway) window.snSwitchAway();
+    if (_origYP) _origYP.apply(this, arguments);
+  };
+
+  // snSwitchTo: SN'ye geçince YP panelini gizle
+  var _origSN = window.snSwitchTo;
+  window.snSwitchTo = function() {
+    if (window.ypSwitchAway) window.ypSwitchAway();
+    if (_origSN) _origSN.apply(this, arguments);
+  };
+})();
+</script>
 </script>
 
 </body>
