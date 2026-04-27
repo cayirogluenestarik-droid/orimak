@@ -520,6 +520,53 @@ function onLoggedIn(u) {
   if (window.loadData) setTimeout(() => window.loadData(), 200);
 }
 
+// buildUI() çağrısından sonra buton/kısıtlama durumunu yeniden uygular
+function reapplySession() {
+  const sess = localStorage.getItem(SESSION_KEY);
+  if (!sess) return;
+  try {
+    const u = JSON.parse(sess);
+    const role = u.role || u.rol || 'viewer';
+    window._currentRole = role;
+    window._currentSayfalar = u.sayfalar || [];
+
+    // Kullanıcı chip
+    const chip = document.getElementById('userChip');
+    const avatar = document.getElementById('chipAvatar');
+    const name = document.getElementById('chipName');
+    if (chip) chip.style.display = 'flex';
+    if (avatar) avatar.textContent = u.user[0].toUpperCase();
+    if (name) name.textContent = u.user;
+
+    // Rol bazlı butonlar
+    const syBtn  = document.getElementById('siteYonetimBtn');
+    const pBtn   = document.getElementById('partiBtn');
+    const aBtn   = document.getElementById('arsivBtn');
+    const vBadge = document.getElementById('versionBadge');
+    const addBtn = document.getElementById('addRowBtn');
+
+    if (role === 'admin') {
+      if (syBtn)  syBtn.style.display  = 'inline-flex';
+      if (pBtn)   pBtn.style.display   = 'inline-flex';
+      if (aBtn)   aBtn.style.display   = 'inline-flex';
+      if (vBadge) vBadge.style.display = 'inline';
+    } else if (role === 'manager') {
+      if (pBtn) pBtn.style.display = 'inline-flex';
+      if (aBtn) aBtn.style.display = 'inline-flex';
+    }
+
+    if (role === 'viewer' || role === 'operator') {
+      if (addBtn) addBtn.style.display = 'none';
+    }
+
+    // Sayfa kısıtlaması
+    if (u.sayfalar && u.sayfalar.length > 0) {
+      applySayfaKisitlama(u.sayfalar);
+    }
+  } catch(e) {}
+}
+window.reapplySession = reapplySession;
+
 function applySayfaKisitlama(sayfalar) {
   if (!sayfalar || sayfalar.length === 0) return;
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -6235,12 +6282,14 @@ async function loadData() {
       SHEETS = freshSheets;
       isOnline = true;
       buildUI();
+      reapplySession();
       setSyncStatus('✓ CANLI', 'ok');
     } else {
       SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
       isOnline = true;
       await fbSaveAll();
       buildUI();
+      reapplySession();
       setSyncStatus('✓ CANLI', 'ok');
     }
     // Gerçek zamanlı dinle
@@ -6275,6 +6324,7 @@ async function loadData() {
     SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
     isOnline = false;
     buildUI();
+    reapplySession();
     setSyncStatus('ÇEVRIMDIŞI', 'err');
   }
 }
