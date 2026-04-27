@@ -7387,18 +7387,15 @@ function ypSwitchAway() {
   });
 }
 
-// buildUI tamamlandıktan sonra tab ekle
-var _origBuildUI = window.buildUI;
-window.buildUI = function() {
-  _origBuildUI.apply(this, arguments);
-  ypCreatePanel();
-  ypAddTab();
-  // switchTab'ı patch et: yedek parça dışındaki sekme geçişlerinde paneli gizle
-  var _origST = window.switchTab;
-  window.switchTab = function(idx) {
-    _origST.apply(this, arguments);
-    ypSwitchAway();
-  };
+// buildUI zaten çalıştı — direkt çalıştır
+ypCreatePanel();
+ypAddTab();
+
+// switchTab patch
+var _origST = window.switchTab;
+window.switchTab = function(idx) {
+  if (_origST) _origST.apply(this, arguments);
+  ypSwitchAway();
 };
 
 })(); // IIFE sonu
@@ -7818,18 +7815,15 @@ function snSwitchAway() {
   document.getElementById('snPanel').style.display = 'none';
 }
 
-// buildUI tamamlandıktan sonra tab ekle
-var _origBuildUI2 = window.buildUI;
-window.buildUI = function() {
-  _origBuildUI2.apply(this, arguments);
-  snCreatePanel();
-  snAddTab();
-  // switchTab patch
-  var _origST2 = window.switchTab;
-  window.switchTab = function(idx) {
-    _origST2.apply(this, arguments);
-    snSwitchAway();
-  };
+// buildUI zaten çalıştı — direkt çalıştır
+snCreatePanel();
+snAddTab();
+
+// switchTab patch: diğer sekmelere geçince sn panelini gizle
+var _origST2 = window.switchTab;
+window.switchTab = function(idx) {
+  if (_origST2) _origST2.apply(this, arguments);
+  snSwitchAway();
 };
 
 // YP sayfasına geçişte sn panelini gizle
@@ -7837,6 +7831,16 @@ var _origYpSwitchTo = window.ypSwitchTo;
 window.ypSwitchTo = function() {
   snSwitchAway();
   if (_origYpSwitchTo) _origYpSwitchTo.apply(this, arguments);
+};
+
+// buildUI tekrar çağrılırsa (Firebase sonrası reload) da çalışsın
+var _origBuildUI2 = window.buildUI;
+window.buildUI = function() {
+  if (_origBuildUI2) _origBuildUI2.apply(this, arguments);
+  // Paneli yeniden oluşturma, sadece tab yoksa ekle
+  if (!document.getElementById('tabBtn-sn')) {
+    snAddTab();
+  }
 };
 
 })(); // IIFE sonu
