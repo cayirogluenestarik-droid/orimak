@@ -223,6 +223,7 @@ tr.group-hidden{display:none !important;}
 .btn-edit-row:hover{background:rgba(90,160,255,.25);}
 .onay-select{width:100%;min-width:110px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.5);font-family:'Barlow',sans-serif;font-size:11.5px;font-weight:500;cursor:pointer;outline:none;color:inherit;padding:5px 4px;border-radius:4px;}
 .onay-select:focus{background:white;}.onay-select option{color:#1a1a1a;background:white;}
+.onaylayan-kisi{font-size:10px;color:#888;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
 
 .row-actions{display:flex;gap:4px;justify-content:center;}
 .btn-del{background:rgba(192,0,0,.12);border:1px solid rgba(192,0,0,.3);color:#c00;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
@@ -494,6 +495,7 @@ function onLoggedIn(u) {
 
   const role = u.role || u.rol || 'viewer';  // eski session uyumluluğu
   window._currentRole = role;
+  window._currentUser = u.user || '';
   window._currentSayfalar = u.sayfalar || [];
 
   if (role === 'admin') {
@@ -528,6 +530,7 @@ function reapplySession() {
     const u = JSON.parse(sess);
     const role = u.role || u.rol || 'viewer';
     window._currentRole = role;
+    window._currentUser = u.user || '';
     window._currentSayfalar = u.sayfalar || [];
 
     // Kullanıcı chip
@@ -1150,7 +1153,27 @@ function renderSiparisRows() {
     tr.appendChild(mkTd(r.urunAdi||''));
     tr.appendChild(mkTd(r.sipAdet||'', 'text-align:center;'));
     tr.appendChild(mkTd(r.olusturan||''));
-    tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => { rows[i].yetkiliOnay=v; saveSiparisRows(); renderSiparisRows(); })));
+    const yetkiliTd = document.createElement('td');
+    const yetkiliDiv = document.createElement('div');
+    yetkiliDiv.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
+    const yetkiliSipSel = mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => {
+      rows[i].yetkiliOnay = v;
+      if (v === 'Onaylandı') {
+        const kisi = window._currentUser || '?';
+        const tarih = new Date().toLocaleDateString('tr-TR');
+        rows[i].yetkiliOnayKisi = kisi + ' · ' + tarih;
+      } else {
+        rows[i].yetkiliOnayKisi = '';
+      }
+      saveSiparisRows(); renderSiparisRows();
+    }, true);
+    yetkiliDiv.appendChild(yetkiliSipSel);
+    const yetkiliKisiSip = document.createElement('div');
+    yetkiliKisiSip.className = 'onaylayan-kisi';
+    yetkiliKisiSip.textContent = r.yetkiliOnayKisi || '';
+    yetkiliDiv.appendChild(yetkiliKisiSip);
+    yetkiliTd.appendChild(yetkiliDiv);
+    tr.appendChild(yetkiliTd);
     tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#888;'));
     tr.appendChild(mkTd(r.terminTarihi||'', 'font-size:11px;' + (isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':'')));
     tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
@@ -1182,10 +1205,15 @@ function renderSiparisRows() {
   });
 }
 
-function mkSiparisSelect(opts, val, onChange) {
+function mkSiparisSelect(opts, val, onChange, isYetkili = false) {
   const sel = document.createElement('select');
   sel.className = 'onay-select';
-  if (window._currentRole === 'viewer') sel.disabled = true;
+  const role = window._currentRole || 'viewer';
+  if (isYetkili && role !== 'admin' && role !== 'manager') {
+    sel.disabled = true;
+  } else if (!isYetkili && role === 'viewer') {
+    sel.disabled = true;
+  }
   opts.forEach(o => {
     const opt = document.createElement('option');
     opt.value = o; opt.textContent = o || '—';
@@ -1261,6 +1289,7 @@ async function saveSiparis(editIdx) {
     terminTarihi: document.getElementById('sp_termin').value.trim(),
     notlar: document.getElementById('sp_notlar').value.trim(),
     yetkiliOnay: editIdx >= 0 ? (rows[editIdx].yetkiliOnay||'') : '',
+    yetkiliOnayKisi: editIdx >= 0 ? (rows[editIdx].yetkiliOnayKisi||'') : '',
     gelisOnay: editIdx >= 0 ? (rows[editIdx].gelisOnay||'') : '',
   };
   if (editIdx >= 0) rows[editIdx] = yeni;
@@ -1705,7 +1734,20 @@ function openRowEdit(si, ri) {
   document.getElementById('re_olcu').value    = r['4'] || '';
   document.getElementById('re_adet').value    = r['5'] || '';
   document.getElementById('re_makine').value  = r._makine || r.makine || '';
-  document.getElementById('re_yetkili').value = r._yetkili || r.yetkili || '';
+  const reYetkili = document.getElementById('re_yetkili');
+  reYetkili.value = r._yetkili || r.yetkili || '';
+  const roleCheck = window._currentRole || 'viewer';
+  reYetkili.disabled = (roleCheck !== 'admin' && roleCheck !== 'manager');
+  // Onaylayan kişiyi modal içinde göster
+  let reYetkiliKisiEl = document.getElementById('re_yetkiliKisi');
+  if (!reYetkiliKisiEl) {
+    reYetkiliKisiEl = document.createElement('div');
+    reYetkiliKisiEl.id = 're_yetkiliKisi';
+    reYetkiliKisiEl.className = 'onaylayan-kisi';
+    reYetkiliKisiEl.style.marginTop = '4px';
+    reYetkili.parentNode.appendChild(reYetkiliKisiEl);
+  }
+  reYetkiliKisiEl.textContent = r._yetkiliKisi || r.yetkiliKisi || '';
   document.getElementById('re_gelis').value   = r._gelis || r.gelis || '';
   document.getElementById('re_gelen').value   = r._gelenAdet || r.gelenAdet || '';
   document.getElementById('re_sip').value     = toISODate(r._sipTarihi || r.sipTarihi || '');
@@ -1735,7 +1777,15 @@ async function saveRowEdit() {
   r['4']           = document.getElementById('re_olcu').value.trim();
   r['5']           = document.getElementById('re_adet').value.trim();
   r._makine        = document.getElementById('re_makine').value;
+  const prevYetkili = r._yetkili;
   r._yetkili       = document.getElementById('re_yetkili').value;
+  if (r._yetkili === 'Onaylandı' && prevYetkili !== 'Onaylandı') {
+    const kisi = window._currentUser || '?';
+    const tarih = new Date().toLocaleDateString('tr-TR');
+    r._yetkiliKisi = kisi + ' · ' + tarih;
+  } else if (r._yetkili !== 'Onaylandı') {
+    r._yetkiliKisi = '';
+  }
   r._gelis         = document.getElementById('re_gelis').value;
   r._gelenAdet     = document.getElementById('re_gelen').value;
   r._sipTarihi     = fromISODate(document.getElementById('re_sip').value);
@@ -5927,6 +5977,7 @@ function buildState() {
         _group: g,
         _rowNo: g ? null : (row['1'] || no),
         _yetkili: row.yetkili || '',
+        _yetkiliKisi: row.yetkiliKisi || '',
         _gelis: row.gelis || '',
         _gelenAdet: row.gelenAdet || '',
         _makine: row.makine || ''
@@ -6107,11 +6158,27 @@ function makeRow(si, ri, row) {
         });
         td.appendChild(inp);
       } else if (c.type === 'yetkili') {
-        td.appendChild(mkSelect(['', 'Onaylandı', 'Beklemede'], row._yetkili, v => {
+        const yetkiliWrap = document.createElement('div');
+        yetkiliWrap.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
+        const yetkiliSel = mkSelect(['', 'Onaylandı', 'Beklemede'], row._yetkili, v => {
           state[si].rows[ri]._yetkili = v;
+          if (v === 'Onaylandı') {
+            const kisi = window._currentUser || '?';
+            const tarih = new Date().toLocaleDateString('tr-TR');
+            state[si].rows[ri]._yetkiliKisi = kisi + ' · ' + tarih;
+          } else {
+            state[si].rows[ri]._yetkiliKisi = '';
+          }
           refreshRow(si, ri); updateStats(si);
           if (isOnline) apiUpdate(si, ri, 7, v);
-        }));
+        }, true);
+        yetkiliWrap.appendChild(yetkiliSel);
+        const yetkiliKisiEl = document.createElement('div');
+        yetkiliKisiEl.className = 'onaylayan-kisi';
+        yetkiliKisiEl.dataset.yetkiliKisi = '1';
+        yetkiliKisiEl.textContent = row._yetkiliKisi || '';
+        yetkiliWrap.appendChild(yetkiliKisiEl);
+        td.appendChild(yetkiliWrap);
       } else if (c.type === 'gelis') {
         td.appendChild(mkSelect(['', 'Onaylandı', 'Onay Bekleniyor'], row._gelis, v => {
           state[si].rows[ri]._gelis = v;
@@ -6201,9 +6268,14 @@ function mkInput(type, val, onChange) {
   inp.onchange = () => onChange(inp.value);
   return inp;
 }
-function mkSelect(options, value, onChange) {
+function mkSelect(options, value, onChange, isYetkili = false) {
   const sel = document.createElement('select');
   sel.className = 'onay-select';
+  // Yetkili onayı: sadece admin ve manager değiştirebilir
+  const role = window._currentRole || 'viewer';
+  if (isYetkili && role !== 'admin' && role !== 'manager') {
+    sel.disabled = true;
+  }
   options.forEach(opt => {
     const o = document.createElement('option');
     o.value = opt; o.textContent = opt || '—';
@@ -6223,6 +6295,9 @@ function refreshRow(si, ri) {
   const gt = tr.querySelector('[data-gereken]');
   if (gt) gt.textContent = ger;
   tr.className = 'data-row ' + getRowClass(row);
+  // Onaylayan kişiyi güncelle
+  const yetkiliKisiEl = tr.querySelector('[data-yetkili-kisi]');
+  if (yetkiliKisiEl) yetkiliKisiEl.textContent = row._yetkiliKisi || '';
   // Teslimat durumu hücresini güncelle
   const teslCell = tr.querySelector('[data-teslimat]');
   if (teslCell) {
@@ -6394,6 +6469,7 @@ async function apiUpdate(si, rowId, col, val) {
       if (!k.startsWith('_')) clean[k] = r[k];
     });
     clean.yetkili    = r._yetkili    !== undefined ? r._yetkili    : (r.yetkili    || '');
+    clean.yetkiliKisi = r._yetkiliKisi !== undefined ? r._yetkiliKisi : (r.yetkiliKisi || '');
     clean.gelis      = r._gelis      !== undefined ? r._gelis      : (r.gelis      || '');
     clean.gelenAdet  = r._gelenAdet  !== undefined ? r._gelenAdet  : (r.gelenAdet  || '');
     clean.makine     = r._makine     !== undefined ? r._makine     : (r.makine     || '');
@@ -6463,7 +6539,7 @@ async function addRow() {
   try {
 
   const newRow = { '2': code || '', '3': name, '4': olcu || '', '5': adet || '',
-    _group: false, _rowNo: null, _yetkili: '', _gelis: '', _gelenAdet: '', _makine: '' };
+    _group: false, _rowNo: null, _yetkili: '', _yetkiliKisi: '', _gelis: '', _gelenAdet: '', _makine: '' };
 
   // Firebase'e kaydet
   if (isOnline) {
@@ -6487,7 +6563,7 @@ async function addRow() {
     // SHEETS'i state'den güncelle
     SHEETS[si].rows = state[si].rows.map(r => {
       const { _group, _rowNo, _yetkili, _gelis, _gelenAdet, _makine, ...rest } = r;
-      return { ...rest, yetkili: r._yetkili, gelis: r._gelis, gelenAdet: r._gelenAdet, makine: r._makine };
+      return { ...rest, yetkili: r._yetkili, yetkiliKisi: r._yetkiliKisi || '', gelis: r._gelis, gelenAdet: r._gelenAdet, makine: r._makine };
     });
     await fbSaveAll();
     rebuildTable(si);
