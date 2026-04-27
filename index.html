@@ -481,6 +481,8 @@ function doLogout() {
   location.reload();
 }
 window.doLogout = doLogout;
+
+function onLoggedIn(u) {
   const chip = document.getElementById('userChip');
   const avatar = document.getElementById('chipAvatar');
   const name = document.getElementById('chipName');
@@ -1762,7 +1764,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v3.9</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v4.0</span>
       <button onclick="doLogout()" title="Çıkış Yap" style="background:rgba(192,0,0,.15);border:1px solid rgba(192,0,0,.3);color:#ff7777;border-radius:5px;padding:2px 8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;margin-left:6px;letter-spacing:1px;">ÇIKIŞ</button>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
@@ -5845,12 +5847,14 @@ function buildTabs() {
   const wrap = document.getElementById('tabsWrap');
   wrap.innerHTML = '';
   SHEETS.forEach((sheet, i) => {
-    const cnt = state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length;
+    const cnt = (sheet.type === 'siparis' || sheet.type === 'teslim')
+      ? (sheet.rows || []).length
+      : (state[i] ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.id = 'tabBtn-' + i;
     btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
     btn.onclick = () => switchTab(i);
-    // Admin/manager çift tıklayınca isim değiştirme
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
       btn.ondblclick = (e) => {
@@ -5860,7 +5864,6 @@ function buildTabs() {
           SHEETS[i].name = yeniAd.trim();
           if (isOnline) fbSaveAll();
           buildTabs();
-          // Kısıtlamaları yeniden uygula
           if (window._currentSayfalar && window._currentSayfalar.length > 0) {
             applySayfaKisitlama(window._currentSayfalar);
           }
@@ -5870,7 +5873,10 @@ function buildTabs() {
     wrap.appendChild(btn);
   });
 }
-
+    // Admin/manager çift tıklayınca isim değiştirme
+    if (window._currentRole === 'admin' || window._currentRole === 'manager') {
+      btn.title = 'Çift tıkla: isim değiştir';
+      btn.ondblclick = (e) => {
 function switchTab(idx) {
   activeSheet = idx;
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
