@@ -1572,13 +1572,35 @@ function getTerminUrunler(gunSinir = 7) {
   const sonuclar = [];
 
   SHEETS.forEach((sheet, si) => {
+    // Sipariş formu sayfası — SHEETS üzerinden oku
+    if (sheet.type === 'siparis') {
+      (sheet.rows || []).forEach((r, ri) => {
+        const termin = parseTerminDate(r.terminTarihi || '');
+        if (!termin) return;
+        // Teslim alındıysa atla
+        const teslimRows = getTeslimRows ? getTeslimRows() : [];
+        const teslim = teslimRows.find(t => t.urunKodu === r.urunKodu);
+        if (teslim) return;
+        if (r.gelisOnay === 'Onaylandı') return;
+        if (termin >= bugun && termin <= sinir) {
+          const kalan = Math.round((termin - bugun) / (1000*60*60*24));
+          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan });
+        }
+        if (termin < bugun) {
+          const gecen = Math.round((bugun - termin) / (1000*60*60*24));
+          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan: -gecen, gecikti: true });
+        }
+      });
+      return;
+    }
+
+    // Normal malzeme sayfaları — state üzerinden oku
     if (!state[si]) return;
     let grupAdi = '';
     state[si].rows.forEach((r, ri) => {
       if (r._group) { grupAdi = r['2'] || ''; return; }
       const termin = parseTerminDate(r._terminTarihi || r.terminTarihi || '');
       if (!termin) return;
-      // Teslim edilmişse atla — geliş onayi VE adet eşleşmesi gerekli
       const gelis = r._gelis || r.gelis || '';
       const gelenAdet = parseFloat(r._gelenAdet || r.gelenAdet);
       const adet = parseFloat(r['5']);
@@ -1586,12 +1608,10 @@ function getTerminUrunler(gunSinir = 7) {
       const gereken = (!isNaN(adet) && !isNaN(mak)) ? adet * mak : adet;
       const tamTeslim = gelis === 'Onaylandı' && !isNaN(gelenAdet) && !isNaN(gereken) && gelenAdet >= gereken;
       if (tamTeslim) return;
-      // Termin bugün veya 7 gün içinde
       if (termin >= bugun && termin <= sinir) {
         const kalan = Math.round((termin - bugun) / (1000*60*60*24));
         sonuclar.push({ si, ri, ad: r['3'] || r['2'] || '?', sayfa: sheet.name, grup: grupAdi, termin, kalan });
       }
-      // Geçmiş termin (gecikmiş)
       if (termin < bugun) {
         const gecen = Math.round((bugun - termin) / (1000*60*60*24));
         sonuclar.push({ si, ri, ad: r['3'] || r['2'] || '?', sayfa: sheet.name, grup: grupAdi, termin, kalan: -gecen, gecikti: true });
