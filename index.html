@@ -7403,5 +7403,444 @@ window.buildUI = function() {
 
 })(); // IIFE sonu
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SERİ NO SAYFASI — Orimak Makine Takip
+// ═══════════════════════════════════════════════════════════
+(function() {
+
+var MACHINE_DATA = {"BC410 PRO": [{"seriNo": "210102", "firmaAdi": "FERRERE", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "POLONYA", "il": "", "aciklama": ""}, {"seriNo": "220021", "firmaAdi": "FERRERE", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "POLONYA", "il": "", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "FERRERE", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "POLONYA", "il": "", "aciklama": "0"}, {"seriNo": "210105", "firmaAdi": "FLY MUTFAK", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BURSA", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "DEKORİSTER MOBİLYA", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "ÇANAKKALE BİGA", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "DEKORTİE MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ÇANAKKALE BİGA", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "DEKORATİCA MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ÇANAKKALE BİGA", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "ARNO-ŞEMSİOĞLU MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "YURU DESİGN", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "CAPLOONBA-ORPAK MOBİLYA", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "220024", "firmaAdi": "BOFİGO MOBİLA", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "220021", "firmaAdi": "SARDEMO MOBİLYA- UMUT SARI", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR BUCA", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "MOBİLİQUE-ANM KÖKSAL ORMAN ÜRÜNLERİ", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR TİRE", "aciklama": "0"}, {"seriNo": "220025", "firmaAdi": "AKAR MOBİLYA", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "BURSA KARACABEY", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "ORKA BANYO", "makine": "BC 410 PRO", "yon": "", "ulke": "", "il": "DÜZCE", "aciklama": "0"}, {"seriNo": "230028", "firmaAdi": "WELTEW MOBİLYA", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BURSA İNEGÖL", "aciklama": "0"}, {"seriNo": "210114", "firmaAdi": "EZZA MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BURSA İNEGÖL", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "GÜNDOĞDU MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BURSA İNEGÖL", "aciklama": "0"}, {"seriNo": "210101", "firmaAdi": "EKOWOOD MOBİLYA", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "210110", "firmaAdi": "KOLARADO FURNİTURE", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "220022", "firmaAdi": "ERGÜL MOBİLYA", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}, {"seriNo": "210108", "firmaAdi": "OTTO MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ESKİŞEHİR", "aciklama": "0"}, {"seriNo": "210109", "firmaAdi": "KORKMAZ MOBİLYA", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "ESKİŞEHİR", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "VENETTİ- OĞUZ MOBİLYA", "makine": "BC 410", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ESKİŞEHİR", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "PLUS AKSESUAR -JANGLE ORMAN ÜRÜNLERİ", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "BURDUR", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "SELVİ MOBİLYA", "makine": "BC 410", "yon": "SOL MAKİNE", "ulke": "", "il": "İSTANBUL GAZİOSMANPAŞA", "aciklama": "0"}, {"seriNo": "230027", "firmaAdi": "VENETTİ- OĞUZ MOBİLYA", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ESKİŞEHİR", "aciklama": "0"}, {"seriNo": "230029", "firmaAdi": "FERRERE", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "POLONYA", "il": "", "aciklama": "0"}, {"seriNo": "230030", "firmaAdi": "AKYOL MOBİLYA", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "230026", "firmaAdi": "CEREMİKAL MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "ESKİŞEHİR", "aciklama": "0"}, {"seriNo": "230031", "firmaAdi": "AYMOBSAN MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "AYDIN", "aciklama": "0"}, {"seriNo": "230032", "firmaAdi": "MİNAR MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BİGA", "aciklama": "0"}, {"seriNo": "230033", "firmaAdi": "SIMURG MOBİLYA", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İSTANBUL GEBZE", "aciklama": "0"}, {"seriNo": "230034", "firmaAdi": "BOFİGOMOBİLYA", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "230035", "firmaAdi": "ALPİNO MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KÜTAHYA GEDİZ", "aciklama": "0"}, {"seriNo": "230036", "firmaAdi": "İDOL MOBİLYA", "makine": "BC 410 PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "230037", "firmaAdi": "REMAKS MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "230038", "firmaAdi": "PRATİCO MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İZMİR TORBALI", "aciklama": "0"}, {"seriNo": "230040", "firmaAdi": "KAMER MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}, {"seriNo": "230043", "firmaAdi": "MELTEM MOBİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR", "aciklama": "0"}, {"seriNo": "230041", "firmaAdi": "VİVALDİ MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "230042", "firmaAdi": "GENTAŞ MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "BOLU", "aciklama": "0"}, {"seriNo": "230046", "firmaAdi": "DSM DİZAYN", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İSTANBUL", "aciklama": ""}, {"seriNo": "230045", "firmaAdi": "SARPROFİL", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}, {"seriNo": "230044", "firmaAdi": "SANAT MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "230043", "firmaAdi": "GÜNEYSUN MOBİLYA", "makine": "BC 410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KONYA", "aciklama": "0"}, {"seriNo": "230047", "firmaAdi": "BREZİLYA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "BREZİLYA", "il": "", "aciklama": "0"}, {"seriNo": "230048", "firmaAdi": "RABİ MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "KONYA", "aciklama": "0"}, {"seriNo": "230049", "firmaAdi": "BİANOS MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ANKARA", "aciklama": "0"}, {"seriNo": "230050", "firmaAdi": "HİSAR MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "SAKARYA", "aciklama": "0"}, {"seriNo": "230051", "firmaAdi": "NOTT", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "240053", "firmaAdi": "RABİ MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "KONYA", "aciklama": "0"}, {"seriNo": "230052", "firmaAdi": "MESSER MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "EDİRNE", "aciklama": "0"}, {"seriNo": "240054", "firmaAdi": "AZERBAYCAN FORİELLA LLC", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "AZERBEYCAN", "il": "", "aciklama": "0"}, {"seriNo": "240055", "firmaAdi": "AKAR MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "KEMALPAŞA", "aciklama": "0"}, {"seriNo": "240056", "firmaAdi": "DOĞUŞ SEHPA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İZMİR", "aciklama": "0"}, {"seriNo": "240057", "firmaAdi": "BEBECCO", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240059", "firmaAdi": "CAPILON", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240058", "firmaAdi": "MİDOSER", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240060", "firmaAdi": "MOBİLİA", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240061", "firmaAdi": "MOONLİFE", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240062", "firmaAdi": "DİZAYNO", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KARAMAN", "aciklama": "0"}, {"seriNo": "240064", "firmaAdi": "DOVİ MOBİLYA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "", "firmaAdi": "65 SERİ NO ARIZALI OLDUGU İÇİN KULLANILMADI", "makine": "", "yon": "", "ulke": "", "il": "", "aciklama": "0"}, {"seriNo": "240066", "firmaAdi": "DEMOR MOB", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "KONYA", "aciklama": "0"}, {"seriNo": "250068", "firmaAdi": "VARİANT", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "BALIKESİR", "aciklama": "0"}, {"seriNo": "250067", "firmaAdi": "YONPAŞ", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}, {"seriNo": "240063", "firmaAdi": "MUBORAK", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "ÖZBEKİSTAN", "il": "", "aciklama": "0"}, {"seriNo": "250072", "firmaAdi": "KONFOR", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "MANİSA", "aciklama": "0"}, {"seriNo": "240062", "firmaAdi": "DİZAYNO", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KARAMAN", "aciklama": "0"}, {"seriNo": "250073", "firmaAdi": "ORKA BANYO", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "DÜZCE", "aciklama": "0"}, {"seriNo": "250074", "firmaAdi": "LİDER MASA", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "İSTANBUL", "aciklama": "0"}, {"seriNo": "250075", "firmaAdi": "FURMET", "makine": "BC410PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "ADANA", "aciklama": "0"}, {"seriNo": "250078", "firmaAdi": "ADORE", "makine": "BC410PRO", "yon": "SAĞ MAKİNE", "ulke": "", "il": "ANKARA", "aciklama": "0"}, {"seriNo": "250080", "firmaAdi": "TETEVAN", "makine": "BC410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}, {"seriNo": "260081", "firmaAdi": "NEVİ", "makine": "BC410 PRO", "yon": "SAĞMAKİNE", "ulke": "", "il": "ÇANKIRI", "aciklama": "0"}, {"seriNo": "260084", "firmaAdi": "ÇMS MOBİLYA", "makine": "BC410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "İNEGÖL", "aciklama": "0"}, {"seriNo": "260083", "firmaAdi": "LAJİVERT MOBİLYA", "makine": "BC410 PRO", "yon": "SOL MAKİNE", "ulke": "", "il": "KAYSERİ", "aciklama": "0"}], "H-CUT": [{"seriNo": "240001", "firmaAdi": "AYMOBSAN MOBİLYA", "makine": "H-CUT", "il": "AYDIN", "ulke": ""}, {"seriNo": "240002", "firmaAdi": "YURU DESİGN MOBİLYA", "makine": "H-CUT", "il": "İZMİR", "ulke": ""}, {"seriNo": "240003", "firmaAdi": "BOFİGO MOBİLYA", "makine": "H-CUT", "il": "İZMİR", "ulke": ""}, {"seriNo": "240004", "firmaAdi": "KAMER MOBİLYA", "makine": "H-CUT", "il": "KAYSERİ", "ulke": ""}, {"seriNo": "240005", "firmaAdi": "ORPAK MOBİLYA", "makine": "H-CUT", "il": "İZMİR", "ulke": ""}, {"seriNo": "240006", "firmaAdi": "BİANOS MOBİLYA", "makine": "H-CUT", "il": "ANKARA", "ulke": ""}, {"seriNo": "240007", "firmaAdi": "MESSER MOBİLYA", "makine": "H-CUT", "il": "EDİRNE", "ulke": ""}, {"seriNo": "240008", "firmaAdi": "ORİPAN", "makine": "H-CUT", "il": "İNEGÖL", "ulke": ""}, {"seriNo": "240011", "firmaAdi": "ORİPAN", "makine": "H-CUT", "il": "İNEGÖL", "ulke": ""}, {"seriNo": "240014", "firmaAdi": "MOONLİFE MOBİLYA", "makine": "H-CUT", "il": "MANİSA", "ulke": ""}, {"seriNo": "240013", "firmaAdi": "SARMOBİ MOBİLYA", "makine": "H-CUT", "il": "KAYSERİ", "ulke": ""}, {"seriNo": "240010", "firmaAdi": "AKYOL MOBİLYA", "makine": "H-CUT", "il": "İNEGÖL", "ulke": ""}, {"seriNo": "250012", "firmaAdi": "YONPAŞ", "makine": "H-CUT", "il": "KAYSERİ", "ulke": ""}, {"seriNo": "240011", "firmaAdi": "FESTİVAL", "makine": "H-CUT", "il": "ÇANAKKALE", "ulke": ""}, {"seriNo": "250008", "firmaAdi": "VELLEA HOME", "makine": "H-CUT", "il": "", "ulke": "BULGARİSTAN"}, {"seriNo": "250015", "firmaAdi": "TETAVEN", "makine": "H-CUT", "il": "KAYSERİ", "ulke": ""}, {"seriNo": "250016", "firmaAdi": "MİDOSER", "makine": "H-CUT", "il": "BURSA", "ulke": ""}, {"seriNo": "260009", "firmaAdi": "LAJİVERT", "makine": "H-CUT", "il": "KAYSERİ", "ulke": ""}], "Q-BOX": [{"firmaAdi": "IŞIKLAR MOBİLYA", "il": "BURSA", "seriNo": "210156", "model": "210156"}, {"firmaAdi": "LORENZİ MOBİLYA", "il": "İSTANBUL", "seriNo": "210157", "model": "210157"}, {"firmaAdi": "MANÇO MOBİLYA", "il": "KAYSERİ", "seriNo": "210170", "model": "210170"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210175", "model": "Q-BOX"}, {"firmaAdi": "LAZZONİ", "il": "ANKARA", "seriNo": "210176", "model": ""}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210177", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210178", "model": "Q-BOX"}, {"firmaAdi": "ORKA BANYO", "il": "DÜZCE", "seriNo": "210179", "model": ""}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210180", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210182", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210184", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "210185", "model": "Q-BOX"}, {"firmaAdi": "FULYA AHŞAP", "il": "", "seriNo": "210188", "model": ""}, {"firmaAdi": "ÜMİT GÜMÜŞ-BALIKESİR", "il": "ERZİNCAN-BALIKESİR", "seriNo": "210189", "model": ""}, {"firmaAdi": "KAYES", "il": "GAZİANTEP", "seriNo": "210190", "model": ""}, {"firmaAdi": "MARWOOD ÖZGÜR ÇELİK", "il": "GAZİANTEP", "seriNo": "210191", "model": "QBOX"}, {"firmaAdi": "BANLUX", "il": "", "seriNo": "210192", "model": ""}, {"firmaAdi": "LALE ORMAN ÜRÜNLERİ(SAR PROFİL)", "il": "KAYSERİ", "seriNo": "210198", "model": "QBOX"}, {"firmaAdi": "TRIPAL MM LTD", "il": "BULGARİSTAN", "seriNo": "220003", "model": "Q-BOX"}, {"firmaAdi": "SEHER MOBİLYA \nLÜKS YALÇINLAR", "il": "KAYSERİ", "seriNo": "220193", "model": "QBOX"}, {"firmaAdi": "ULUSLU ALÜMİNYUM", "il": "ANKARA", "seriNo": "220194", "model": "QBOX"}, {"firmaAdi": "EZZA HOME", "il": "İNEGÖL", "seriNo": "220195", "model": "Q-BOX"}, {"firmaAdi": "KELEBEK MOBİLYA", "il": "DÜZCE", "seriNo": "220196", "model": ""}, {"firmaAdi": "AYTAÇ AYDINLATMA", "il": "İSTANBUL", "seriNo": "220196", "model": "QBOX"}, {"firmaAdi": "HAS KUTU- KELEBEK", "il": "DÜZCE", "seriNo": "220197", "model": "QBOX"}, {"firmaAdi": "DOĞUŞ", "il": "SAMSUN", "seriNo": "220201", "model": "QBOX"}, {"firmaAdi": "4LİNE", "il": "AMASYA", "seriNo": "220202", "model": "QBOX"}, {"firmaAdi": "OTTİMO", "il": "İNEGÖL", "seriNo": "220204", "model": ""}, {"firmaAdi": "ÇETİNMAK MAKİNA", "il": "İZMİR", "seriNo": "220205", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220206", "model": "Q-BOX"}, {"firmaAdi": "NOTT MOBİLYA", "il": "İNEGÖL", "seriNo": "220207", "model": "Q BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220208", "model": "Q-BOX"}, {"firmaAdi": "UAB INTEDA", "il": "LİTVANYA", "seriNo": "220210", "model": "Q-BOX"}, {"firmaAdi": "FERRERE SP.Z.O.O", "il": "POLONYA", "seriNo": "220211", "model": "Q-BOX"}, {"firmaAdi": "DECOREL MOBİLYA ( OBEN )", "il": "İZMİR", "seriNo": "220212", "model": "QBOX"}, {"firmaAdi": "EDUMOB", "il": "BURSA", "seriNo": "220213", "model": ""}, {"firmaAdi": "BAŞTUĞ", "il": "OSMANİYE", "seriNo": "220214", "model": "QBOX"}, {"firmaAdi": "BY SEHPACI", "il": "İNEGÖL", "seriNo": "220215", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220216", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220218", "model": "Q-BOX"}, {"firmaAdi": "FERRERE SP.Z.O.O", "il": "POLONYA", "seriNo": "220219", "model": "Q-BOX"}, {"firmaAdi": "SEM MOBİLYA", "il": "BALIKESİR", "seriNo": "220220", "model": "QBOX"}, {"firmaAdi": "DECOHİLL", "il": "İNEGÖL", "seriNo": "220221", "model": "QBOX8BIÇAK"}, {"firmaAdi": "DOĞTAŞ BİGA", "il": "ÇANAKKALE", "seriNo": "220222", "model": "QBOX"}, {"firmaAdi": "SI-MACKOSOVO SH.P.K.", "il": "KOSOVA", "seriNo": "220223", "model": "Q-BOX"}, {"firmaAdi": "SI-MACKOSOVO SH.P.K.", "il": "KOSOVA", "seriNo": "220224", "model": "Q-BOX"}, {"firmaAdi": "TEKSAN", "il": "GEBZE", "seriNo": "220225", "model": ""}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220226", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220227", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220228", "model": "Q-BOX"}, {"firmaAdi": "BOCCHİ", "il": "DÜZCE", "seriNo": "220229", "model": "QBOX"}, {"firmaAdi": "MDCC \nINTERNATIONAL FZE", "il": "", "seriNo": "220230", "model": ""}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220231", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220232", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220233", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220234", "model": "Q-BOX"}, {"firmaAdi": "ORKA AHŞAP VE YAPI ÜRÜN.", "il": "DÜZCE", "seriNo": "220235", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220236", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220237", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220238", "model": "Q-BOX"}, {"firmaAdi": "TSUNDA LLC", "il": "GÜRCİSTAN", "seriNo": "220239", "model": "Q-BOX"}, {"firmaAdi": "KAYA TEKNİK MOBİLYA", "il": "BURSA", "seriNo": "220240", "model": "QBOX"}, {"firmaAdi": "ORKA", "il": "DÜZCE", "seriNo": "220241", "model": "QBOX"}, {"firmaAdi": "TOKO BÜRO MOBİLYALARI", "il": "ANKARA", "seriNo": "220242", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220243", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220244", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220245", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220246", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220247", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220248", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220249", "model": "Q-BOX"}, {"firmaAdi": "MEBELİ DİMOV OOD", "il": "BULGARİSTAN", "seriNo": "220252", "model": "Q-BOX"}, {"firmaAdi": "GENMAR MOBİLYA", "il": "BOLU", "seriNo": "220253", "model": "QBOX"}, {"firmaAdi": "MİNAR MOBİLYA", "il": "ÇANAKKALE", "seriNo": "220254", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220255", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220256", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "220257", "model": "Q-BOX"}, {"firmaAdi": "BEŞTEKNİK", "il": "BANDIRMA", "seriNo": "220258", "model": "QBOX"}, {"firmaAdi": "ELDEM MOBİLYA", "il": "KARAMAN", "seriNo": "220259", "model": ""}, {"firmaAdi": "SONOROUS", "il": "MANİSA", "seriNo": "220260", "model": "Q-BOX"}, {"firmaAdi": "HASESOĞLU", "il": "KAHRAMANMARAŞ", "seriNo": "220261", "model": "QBOX"}, {"firmaAdi": "AKAR MOBİLYA", "il": "BURSA", "seriNo": "220262", "model": "QBOX"}, {"firmaAdi": "ZİVELLO", "il": "ANKARA", "seriNo": "230014", "model": "QBOX"}, {"firmaAdi": "FERRERE SP.Z.O.O", "il": "POLONYA", "seriNo": "230029", "model": "Q-BOX"}, {"firmaAdi": "Indupel Ind. Móveis Ltda", "il": "BREZİLYA", "seriNo": "230047", "model": "Q-BOX"}, {"firmaAdi": "AKSAN -VETTORE ( YANDI İPTAL )", "il": "İSTANBUL", "seriNo": "230263", "model": "QBOX"}, {"firmaAdi": "ATÖLYEDEN", "il": "İSTANBUL", "seriNo": "230264", "model": "QBOX"}, {"firmaAdi": "PLATİN", "il": "İZMİR", "seriNo": "230265", "model": ""}, {"firmaAdi": "SEÇKİN BÜRO", "il": "GEBZE", "seriNo": "230266", "model": ""}, {"firmaAdi": "VIENA MUTFAK", "il": "BURSA", "seriNo": "230267", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230268", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230269", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230270", "model": "Q-BOX"}, {"firmaAdi": "WELTEW MOBİLYA", "il": "İNEGÖL", "seriNo": "230272", "model": ""}, {"firmaAdi": "CHANCOLYE MOBİLYA", "il": "İZMİR", "seriNo": "230273", "model": "QBOX"}, {"firmaAdi": "TÜRKMEN MOBİLYA", "il": "İNEGÖL", "seriNo": "230274", "model": ""}, {"firmaAdi": "EFECAM", "il": "İSTANBUL", "seriNo": "230275", "model": "QBOX8KASET"}, {"firmaAdi": "DOĞTAŞ MOBİLYA", "il": "ÇANAKKALE", "seriNo": "230276", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230277", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230278", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230279", "model": "Q-BOX"}, {"firmaAdi": "", "il": "KEMALPAŞA", "seriNo": "230280", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230281", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230282", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230283", "model": "Q-BOX"}, {"firmaAdi": "İDOL MOBİLYA", "il": "İNEGÖL", "seriNo": "230284", "model": "QBOX-8 BIÇAK"}, {"firmaAdi": "ORPAK", "il": "İZMİR", "seriNo": "230285", "model": "Q-BOX"}, {"firmaAdi": "", "il": "KAYSERİ", "seriNo": "230286", "model": "QBOX8KASET"}, {"firmaAdi": "BAĞLAR", "il": "MERSİN", "seriNo": "230287", "model": "QBOX"}, {"firmaAdi": "MONDİ", "il": "KAYSERİ", "seriNo": "230288", "model": "QBOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230289", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230290", "model": "Q-BOX"}, {"firmaAdi": "LIGA LLC", "il": "RUSYA", "seriNo": "230291", "model": "Q-BOX"}, {"firmaAdi": "SARL SAFMOB", "il": "CEZAYİR", "seriNo": "230292", "model": "Q-BOX"}, {"firmaAdi": "GÜR MOBİLYA", "il": "İNEGÖL", "seriNo": "230294", "model": "QBOX-8 BIÇAK"}, {"firmaAdi": "LAJİVERT", "il": "KAYSERİ", "seriNo": "230295", "model": "QBOX-8BIÇAK"}, {"firmaAdi": "ALPİNO MOBİLYA", "il": "GEDİZ", "seriNo": "230296", "model": "QBOX"}, {"firmaAdi": "CGS INDUSTRIA E COMER", "il": "BREZİLYA", "seriNo": "230297", "model": "Q-BOX"}, {"firmaAdi": "GENIALFLEX MÓVEIS LTDA", "il": "BREZİLYA", "seriNo": "230298", "model": "Q-BOX"}, {"firmaAdi": "VENETTİ", "il": "ESKİŞEHİR", "seriNo": "230300", "model": "Q-BOX"}, {"firmaAdi": "DALMOBİLE LTDA", "il": "BREZİLYA", "seriNo": "230301", "model": "Q-BOX"}, {"firmaAdi": "AYMOBSAN", "il": "AYDIN", "seriNo": "230302", "model": "QBOX"}, {"firmaAdi": "KONFOR MOBİLYA", "il": "KONYA", "seriNo": "230304", "model": "QBOX"}, {"firmaAdi": "KONYA", "il": "KONYA", "seriNo": "230305", "model": "Q-BOX"}, {"firmaAdi": "QUZMAR FOR TRADE &", "il": "İSRAİL", "seriNo": "230306", "model": "Q-BOX"}, {"firmaAdi": "KNB CABINETS LLC", "il": "AMERİKA- SAVANNAH", "seriNo": "230307", "model": "Q-BOX"}, {"firmaAdi": "MELTEM MOBİLYA", "il": "İZMİR", "seriNo": "230308", "model": "QBOX"}, {"firmaAdi": "MOVEIS DALLA COSTA LTDA", "il": "BREZİLYA", "seriNo": "230309", "model": "Q-BOX"}, {"firmaAdi": "MAQUİNARİA CANDEL SL", "il": "İSPANYA", "seriNo": "230310", "model": "Q-BOX"}, {"firmaAdi": "SDESİGN", "il": "YENİŞEHİR", "seriNo": "230311", "model": "QBOX"}, {"firmaAdi": "VİTA BİANCA", "il": "İZMİR", "seriNo": "230312", "model": "QBOX"}, {"firmaAdi": "MD MOVEIS LTDA", "il": "BREZİLYA", "seriNo": "230313", "model": "Q-BOX"}, {"firmaAdi": "DİMAX", "il": "İNEGÖL", "seriNo": "230315", "model": "QBOX"}, {"firmaAdi": "AYDOĞAN AHŞAP", "il": "ADANA", "seriNo": "230316", "model": "QBOX"}, {"firmaAdi": "MAQUİNARİA CANDEL S.L.", "il": "İSPANYA", "seriNo": "230317", "model": ""}, {"firmaAdi": "QUATTROR SERVIÇOS D", "il": "BREZİLYA", "seriNo": "230318", "model": "Q-BOX"}, {"firmaAdi": "MESSER MOBİLYA", "il": "EDİRNE", "seriNo": "230319", "model": "QBOX"}, {"firmaAdi": "SARKASAN AMBALAJ", "il": "İSTANBUL", "seriNo": "230320", "model": "QBOX"}, {"firmaAdi": "ITALIA MACCHINE COM.", "il": "BREZİLYA", "seriNo": "230321", "model": "Q-BOX"}, {"firmaAdi": "TALASCABİNETRY MOBİLYA A.Ş.", "il": "KAYSERİ", "seriNo": "230322", "model": "Q-BOX"}, {"firmaAdi": "RABİ MOBİLYA", "il": "KONYA", "seriNo": "230323", "model": "Q-BOX"}, {"firmaAdi": "TME İLETİŞİM", "il": "ANKARA", "seriNo": "230324", "model": "Q BOX"}, {"firmaAdi": "STANCOMPLECT LLC", "il": "UKRAYNA", "seriNo": "230325", "model": "Q-BOX"}, {"firmaAdi": "TRIANO RUSE LTD", "il": "BULGARİSTAN", "seriNo": "230326", "model": "Q-BOX"}, {"firmaAdi": "TELASUL INDÚSTRIA DE MÓVEIS S.A.", "il": "BREZİLYA", "seriNo": "230327", "model": ""}, {"firmaAdi": "BERKAN AMBALAJ", "il": "İSTANBUL", "seriNo": "230328", "model": "QBOX"}, {"firmaAdi": "POLITORNO MOVEIS LTDA", "il": "BREZİLYA", "seriNo": "230329", "model": ""}, {"firmaAdi": "S.R.L. MOBILDOR - LUX", "il": "MOLDOVA", "seriNo": "230330", "model": ""}, {"firmaAdi": "BUTKON", "il": "İNEGÖL", "seriNo": "230333", "model": "QBOX"}, {"firmaAdi": "ORKA BANYO", "il": "DÜZCE", "seriNo": "230336", "model": "QBOX"}, {"firmaAdi": "UBM BANYO", "il": "İSTANBUL", "seriNo": "230339", "model": "Q-BOX"}, {"firmaAdi": "FORIELLA LLC", "il": "AZERBAYCAN", "seriNo": "230340", "model": ""}, {"firmaAdi": "COMERCIAL MARTI MAQUİNARİA S.L.", "il": "İSPANYA", "seriNo": "230342", "model": ""}, {"firmaAdi": "PRIVATE COMPANY LIBERAL GROUP", "il": "ÖZBEKİSTAN", "seriNo": "230343", "model": ""}, {"firmaAdi": "MEKSİKA", "il": "MEKSİKA", "seriNo": "230344", "model": "Q-BOX"}, {"firmaAdi": "STEPGO LOJİSTİK", "il": "ANKARA", "seriNo": "230345", "model": "QBOX"}, {"firmaAdi": "ÖZBEKİSTAN", "il": "ÖZBEKİSTAN", "seriNo": "230346", "model": "Q-BOX"}, {"firmaAdi": "KOSOVA", "il": "KOSOVA", "seriNo": "230347", "model": "Q-BOX"}, {"firmaAdi": "LOJİMAX", "il": "İZMİR", "seriNo": "230348", "model": "Q-BOX"}, {"firmaAdi": "ECEM BANYO", "il": "İZMİR", "seriNo": "230349", "model": "Q-BOX"}, {"firmaAdi": "BREZİLYA", "il": "BREZİLYA", "seriNo": "230350", "model": "Q-BOX"}, {"firmaAdi": "AYYAT MOBİLYA", "il": "SAKARYA", "seriNo": "230351", "model": "Q-BOX"}, {"firmaAdi": "BREZİLYA", "il": "BREZİLYA", "seriNo": "230352", "model": "Q-BOX"}, {"firmaAdi": "İSPANYA", "il": "İSPANYA", "seriNo": "230353", "model": "Q-BOX"}, {"firmaAdi": "HERON", "il": "BULGARİSTAN", "seriNo": "230356", "model": "Q-BOX"}, {"firmaAdi": "KOSOVA", "il": "KOSOVA", "seriNo": "230357", "model": "Q-BOX"}, {"firmaAdi": "BELLE MABEL", "il": "NAHÇIVAN", "seriNo": "", "model": ""}, {"firmaAdi": "ÇELMO", "il": "İNEGÖL", "seriNo": "", "model": "QBOX 8KASET"}, {"firmaAdi": "PAPATYA", "il": "İSTANBUL", "seriNo": "", "model": ""}, {"firmaAdi": "MELTEM MOBİLYA", "il": "İNEGÖL", "seriNo": "", "model": ""}, {"firmaAdi": "MODALİN MOBİLYA", "il": "HATAY", "seriNo": "", "model": ""}, {"firmaAdi": "ÇELMO MOBİLYA", "il": "İNEGÖL", "seriNo": "", "model": ""}, {"firmaAdi": "ARSLAN EBATLAMA", "il": "İZMİR", "seriNo": "", "model": "QBOX"}, {"firmaAdi": "BLUECAPE", "il": "İZMİR", "seriNo": "", "model": ""}, {"firmaAdi": "BATI GRUP", "il": "İZMİR", "seriNo": "", "model": "Q-BOX"}, {"firmaAdi": "BİMOSSA", "il": "BURSA", "seriNo": "230280", "model": "Q-BOX"}, {"firmaAdi": "SENSA", "il": "İZMİR", "seriNo": "230335", "model": "Q-BOX"}, {"firmaAdi": "AYTAŞ HOME", "il": "SAKARYA", "seriNo": "230351", "model": "Q-BOX"}, {"firmaAdi": "DEMOR", "il": "KONYA", "seriNo": "230305", "model": "Q-BOX"}, {"firmaAdi": "BAGNOTTI", "il": "İZMİR", "seriNo": "250026", "model": "Q-BOX"}, {"firmaAdi": "ELİF MOBİLYA", "il": "KAYSERİ", "seriNo": "230334", "model": "Q-BOX"}, {"firmaAdi": "İSPANYA", "il": "İSPANYA", "seriNo": "250369", "model": "QBOX"}, {"firmaAdi": "İSPANYA", "il": "İSPANYA", "seriNo": "250370", "model": "QBOX"}, {"firmaAdi": "HOLLANDA", "il": "HOLLANDA", "seriNo": "260369", "model": "QBOX"}, {"firmaAdi": "REHAU", "il": "İSTANBUL", "seriNo": "260370", "model": "QBOX"}], "Qs-BOX": [{"firmaAdi": "CMK MOBİLYA", "il": "İZMİR", "seriNo": "230002", "model": "QsBOX", "tarih": "2023-11-07"}, {"firmaAdi": "HİMS MOBİLYA", "il": "İZMİR", "seriNo": "230004", "model": "QsBOX", "tarih": ""}, {"firmaAdi": "HYS MOBİLYA", "il": "İNEGÖL", "seriNo": "230005", "model": "QsBOX", "tarih": "2024-03-04"}, {"firmaAdi": "ERFA MOBİLYA", "il": "İNEGÖL", "seriNo": "230006", "model": "QsBOX", "tarih": "2024-04-16"}, {"firmaAdi": "EREN DEKORATİF", "il": "İSTANBUL", "seriNo": "230007", "model": "QsBOX", "tarih": ""}, {"firmaAdi": "ITALIA MACCHINE COM", "il": "BREZİLYA", "seriNo": "230009", "model": "", "tarih": "2024"}, {"firmaAdi": "DOĞUŞ SEHPA", "il": "İZMİR", "seriNo": "230010", "model": "QsBOX", "tarih": "2024-07-10"}, {"firmaAdi": "FERRERE SP.Z.O.O", "il": "POLONYA", "seriNo": "230011", "model": "", "tarih": "2024"}, {"firmaAdi": "POLONYA", "il": "POLONYA", "seriNo": "230011", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "LİSİ", "il": "KOSOVA", "seriNo": "230012", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "İNDEKS OFİS MOBİLYALARI", "il": "NİZİP", "seriNo": "230013", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "İNDESK", "il": "NİZİP", "seriNo": "230013", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "MEGAPAC", "il": "RUSYA", "seriNo": "230014", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "CAPİLLON", "il": "ANKARA", "seriNo": "230015", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "", "il": "", "seriNo": "230016", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "DENKO BANYO", "il": "ZONGULDAK", "seriNo": "230017", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "MOBİLGEN", "il": "İSTANBUL", "seriNo": "230018", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "MOBİLA", "il": "ZONGULDAK", "seriNo": "230019", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "EKİN BEBE", "il": "İNEGÖL", "seriNo": "230020", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "RİVAL METAL", "il": "ADANA", "seriNo": "230021", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "DEKOPRATİK", "il": "KAYSERİ", "seriNo": "230022", "model": "QS-BOX", "tarih": ""}, {"firmaAdi": "EKOL EV", "il": "İZMİR", "seriNo": "", "model": "QS-BOX", "tarih": "2023-09-14"}, {"firmaAdi": "BİKA MOBİLYA", "il": "KAYSERİ", "seriNo": "", "model": "QsBOX", "tarih": "2023-11-07"}, {"firmaAdi": "YONPAŞ", "il": "KAYSERİ", "seriNo": "230025", "model": "QS-BOX", "tarih": "2025-02-12"}, {"firmaAdi": "NEVİ MOBİLYA", "il": "ÇANKIRI", "seriNo": "250029", "model": "QS-BOX", "tarih": "2025-05-29"}, {"firmaAdi": "HEMA METAL", "il": "İNEGÖL", "seriNo": "250027", "model": "QS-BOX", "tarih": "2025-06-03"}, {"firmaAdi": "LİDER MASA", "il": "İSTANBUL", "seriNo": "250031", "model": "QS-BOX", "tarih": "2025-08-15"}, {"firmaAdi": "TETAVEN", "il": "KAYSERİ", "seriNo": "250032", "model": "QS-BOX", "tarih": "2025-10-01"}, {"firmaAdi": "YURU DESİGN", "il": "İZMİR", "seriNo": "250033", "model": "QS-BOX", "tarih": "2025-11-01"}, {"firmaAdi": "MİDOSER", "il": "BURSA", "seriNo": "250038", "model": "QS-BOX", "tarih": "2025-11-25"}, {"firmaAdi": "SKYRAY", "il": "DÜZCE", "seriNo": "250040", "model": "QS-BOX", "tarih": "2026"}, {"firmaAdi": "SARI BAŞLAR", "il": "ALANYA", "seriNo": "260041", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "EZALCO", "il": "KAYSERİ", "seriNo": "260042", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "KAMER", "il": "KAYSERİ", "seriNo": "260043", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "PRATİCO", "il": "İZMİR", "seriNo": "260044", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "CEZAYİR", "il": "CEZAYİR", "seriNo": "260045", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "HÜSNÜ GÜLCÜ", "il": "ISPARTA", "seriNo": "260046", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "MODECO METAL", "il": "DENİZLİ", "seriNo": "260047", "model": "QSBOX", "tarih": "2026"}, {"firmaAdi": "BOŞ", "il": "", "seriNo": "260048", "model": "QSBOX", "tarih": "2026-04-20"}, {"firmaAdi": "BOŞ", "il": "", "seriNo": "260049", "model": "QSBOX", "tarih": "2026-04-20"}, {"firmaAdi": "BOŞ", "il": "", "seriNo": "260050", "model": "QSBOX", "tarih": "2026-04-20"}, {"firmaAdi": "BOŞ", "il": "", "seriNo": "260051", "model": "QSBOX", "tarih": "2026-04-20"}], "ORİTEQ2": [{"seriNo": "190001", "firmaAdi": "BAYRAS GENÇ ODASI", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190002", "firmaAdi": "ALHAYAT DEĞİŞİM(TÜMEV)", "yetkili": "ORİMAK", "telefon": ""}, {"seriNo": "190003", "firmaAdi": "ARCHİ MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190003", "firmaAdi": "VIOLA OFİS MOBİLYALARI", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190004", "firmaAdi": "GÜREMEN - MİNAR", "yetkili": "BİGA", "telefon": ""}, {"seriNo": "190005", "firmaAdi": "SANAT MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190006", "firmaAdi": "DECORTİKA", "yetkili": "BİGA", "telefon": ""}, {"seriNo": "190007", "firmaAdi": "AREA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190008", "firmaAdi": "ARTYAKA MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190009", "firmaAdi": "MUZAFFER MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190010", "firmaAdi": "ŞEHZADE MOBİLYA - ORMEND", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190011", "firmaAdi": "ORPAK", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190012", "firmaAdi": "ALPİNO GEDİZ(YESS MOBİLYA)", "yetkili": "KÜTAHYA", "telefon": ""}, {"seriNo": "190013", "firmaAdi": "DEKORİSTER", "yetkili": "BİGA", "telefon": ""}, {"seriNo": "190014", "firmaAdi": "ROLL MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190015", "firmaAdi": "DEBEREN", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190016", "firmaAdi": "ALHAYAT (BİMOKS)", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190017", "firmaAdi": "MERZE - BİANİ", "yetkili": "BURSA", "telefon": ""}, {"seriNo": "190018", "firmaAdi": "AKYOL LİFE", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190019", "firmaAdi": "NEWLAND", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190020", "firmaAdi": "ROMESSA", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190021", "firmaAdi": "GÜNDOĞDU MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190022", "firmaAdi": "SALKIM ORMAN ÜRÜNLERİ", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190023", "firmaAdi": "ILGIN YAPI - LİNEART", "yetkili": "ZONGULDAK", "telefon": ""}, {"seriNo": "190024", "firmaAdi": "ÇMS MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190025", "firmaAdi": "KORKMAZ MOBİLYA", "yetkili": "ESKİŞEHİR", "telefon": ""}, {"seriNo": "190025", "firmaAdi": "OAK MOBİLYA AMBALAJ", "yetkili": "", "telefon": ""}, {"seriNo": "190026", "firmaAdi": "İNFAVORİ", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190027", "firmaAdi": "LİVELLO", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190028", "firmaAdi": "", "yetkili": "", "telefon": ""}, {"seriNo": "190029", "firmaAdi": "LİVS", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190030", "firmaAdi": "ALSARAY", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190031", "firmaAdi": "İNKUTSAN - AYKAÇ", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190032", "firmaAdi": "ORİX", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190033", "firmaAdi": "MAZZINI", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190034", "firmaAdi": "DEKOREX MOBİLYA", "yetkili": "", "telefon": ""}, {"seriNo": "190035", "firmaAdi": "ERSA MOBİLYA", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190036", "firmaAdi": "VİVALDİ", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190037", "firmaAdi": "AKTUNA AHŞAP", "yetkili": "ÇORLU", "telefon": ""}, {"seriNo": "190038", "firmaAdi": "BIONOS", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190039", "firmaAdi": "", "yetkili": "", "telefon": ""}, {"seriNo": "190040", "firmaAdi": "DECORTİE (RUTO TİCARET)", "yetkili": "BİGA", "telefon": ""}, {"seriNo": "190041", "firmaAdi": "ŞEMSİOĞLU (ARNO)", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190042", "firmaAdi": "YURU DESİGN", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190043", "firmaAdi": "MELTEM GENÇ ODASI", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190044", "firmaAdi": "RENDİ MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190045", "firmaAdi": "TİTİ GENÇ ODASI", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190046", "firmaAdi": "ARI MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190047", "firmaAdi": "EKSEN BÜRO", "yetkili": "GAZİANTEP", "telefon": ""}, {"seriNo": "190048", "firmaAdi": "LAKE", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190049", "firmaAdi": "ÖZARSLAN", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190050", "firmaAdi": "ÜMİT BİSİKLET", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190051", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190052", "firmaAdi": "HEDEF OLUKLU", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190053", "firmaAdi": "", "yetkili": "", "telefon": ""}, {"seriNo": "190054", "firmaAdi": "OMKAR KUTU", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190055", "firmaAdi": "RANİ MOBİLYA", "yetkili": "MUSTAFAKEMALPAŞA", "telefon": ""}, {"seriNo": "190056", "firmaAdi": "KELEBEK ( HAS KUTU )", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190056", "firmaAdi": "MELTEM MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190057", "firmaAdi": "VOİZ ADEMOĞLU", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190058", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190059", "firmaAdi": "ZEBRANO", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190060", "firmaAdi": "KUPA GENÇ ODASI", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190061", "firmaAdi": "HUKA METAL", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190062", "firmaAdi": "UKRUG LTD", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "190062", "firmaAdi": "UKRUG LTD", "yetkili": "", "telefon": ""}, {"seriNo": "190063", "firmaAdi": "ERTA GRUP", "yetkili": "TACİKİSTAN", "telefon": ""}, {"seriNo": "190064", "firmaAdi": "UKRUG LTD", "yetkili": "", "telefon": ""}, {"seriNo": "190065", "firmaAdi": "SARL NEW DESIGN", "yetkili": "CEZAYİR", "telefon": ""}, {"seriNo": "190066", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "190067", "firmaAdi": "LUCENTE", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190068", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "190069", "firmaAdi": "LTD KAZBEGI", "yetkili": "GÜRCİSTAN", "telefon": ""}, {"seriNo": "190070", "firmaAdi": "ESER CNC(TRİMAS)", "yetkili": "GAZİANTEP", "telefon": ""}, {"seriNo": "190071", "firmaAdi": "DEMONTE MOBİLYA(ROTA OLUKLU)", "yetkili": "OSMANİYE", "telefon": ""}, {"seriNo": "190072", "firmaAdi": "FLY MUTFAK VE BANYO", "yetkili": "BURSA", "telefon": ""}, {"seriNo": "190073", "firmaAdi": "IP ROZIEV ZAFAR \nAVAZOVICH", "yetkili": "", "telefon": ""}, {"seriNo": "190074", "firmaAdi": "312 DİZAYN MOBİLYA", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190075", "firmaAdi": "LİGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190075", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190076", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190077", "firmaAdi": "MTD OTOMOTİV", "yetkili": "MERSİN", "telefon": ""}, {"seriNo": "190078", "firmaAdi": "KOLİGO (MK AMBALAJ)", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190078", "firmaAdi": "BENİMODAM MOBİLYA", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190079", "firmaAdi": "KİLİM", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190080", "firmaAdi": "", "yetkili": "", "telefon": ""}, {"seriNo": "190081", "firmaAdi": "SİSTEM MOBİLYA", "yetkili": "ADANA", "telefon": ""}, {"seriNo": "190082", "firmaAdi": "DESEMO", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190083", "firmaAdi": "OAK", "yetkili": "ESKİŞEHİR", "telefon": ""}, {"seriNo": "190084", "firmaAdi": "PİKASAN", "yetkili": "CEZAYİR", "telefon": ""}, {"seriNo": "190085", "firmaAdi": "PİKASAN", "yetkili": "CEZAYİR", "telefon": ""}, {"seriNo": "190086", "firmaAdi": "PİKASAN", "yetkili": "CEZAYİR", "telefon": ""}, {"seriNo": "190087", "firmaAdi": "VARİANT", "yetkili": "BALIKESİR", "telefon": ""}, {"seriNo": "190088", "firmaAdi": "PANA DEKOR", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "190089", "firmaAdi": "MODELİN MOBİLYA", "yetkili": "HATAY", "telefon": ""}, {"seriNo": "190090", "firmaAdi": "TETRİ HOME", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190091", "firmaAdi": "TARIK KARACA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190092", "firmaAdi": "GÖZEL MOBİLYA", "yetkili": "HATAY", "telefon": ""}, {"seriNo": "190093", "firmaAdi": "SALONİ-LURCİ", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190094", "firmaAdi": "LİGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190094", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190095", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190096", "firmaAdi": "MOBİANT - HASELLER", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190097", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "190098", "firmaAdi": "MODALİFE MOBİLYA", "yetkili": "KIRIKKALE", "telefon": ""}, {"seriNo": "190099", "firmaAdi": "ADİL ÖZKAN MOBİLYA", "yetkili": "HATAY", "telefon": ""}, {"seriNo": "190100", "firmaAdi": "KUTSAL AMBALAJ", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190101", "firmaAdi": "ZEBRANO -2", "yetkili": "KIRIKKALE", "telefon": ""}, {"seriNo": "190102", "firmaAdi": "SEDEF MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190103", "firmaAdi": "RİVİSTA MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190104", "firmaAdi": "TOGOSTYLE (SEHPASAN)", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "190105", "firmaAdi": "SARDEMO(METRO)", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190106", "firmaAdi": "GÜRELER MOBİLYA", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "190107", "firmaAdi": "BELİSSA MOBİLYA- GEMİKAYA", "yetkili": "NAHÇİVAN", "telefon": ""}, {"seriNo": "190108", "firmaAdi": "FERRERE", "yetkili": "POLONYA", "telefon": ""}, {"seriNo": "190109", "firmaAdi": "KAR-AS YAY", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190110", "firmaAdi": "KALEDİBİ AMBALAJ", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190110", "firmaAdi": "FULYA AHŞAP", "yetkili": "", "telefon": ""}, {"seriNo": "190110", "firmaAdi": "EDUMOB", "yetkili": "", "telefon": ""}, {"seriNo": "190111", "firmaAdi": "ÇNG MOBİLYA", "yetkili": "ANTALYA", "telefon": ""}, {"seriNo": "190112", "firmaAdi": "CADI", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "190113", "firmaAdi": "ÜÇYILDIZ KUTU", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190114", "firmaAdi": "TAMADA MOBİLYA", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190115", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190116", "firmaAdi": "LİGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190116", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "190117", "firmaAdi": "CENGİZ GRUP", "yetkili": "ANTALYA", "telefon": ""}, {"seriNo": "190118", "firmaAdi": "VİZE MOBİLYA", "yetkili": "KIRKLARELİ", "telefon": ""}, {"seriNo": "190119", "firmaAdi": "DECOROTİKA", "yetkili": "ÇANAKKALE-BİGA", "telefon": ""}, {"seriNo": "190120", "firmaAdi": "İDOL MOBİLYA (KAMER)", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "190121", "firmaAdi": "YESİLBEL AMBALAJ", "yetkili": "KONYA", "telefon": ""}, {"seriNo": "190122", "firmaAdi": "KONFULL", "yetkili": "KONYA", "telefon": ""}, {"seriNo": "190123", "firmaAdi": "DİZAYNO", "yetkili": "KARAMAN", "telefon": ""}, {"seriNo": "210126", "firmaAdi": "ÇANKAYA MOBİLYA", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "210127", "firmaAdi": "GÜLDESTE MOBİLYA", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "210128", "firmaAdi": "AKYOL MOBİLYA", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "210130", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "210131", "firmaAdi": "DEMODÜL MOBİLYA", "yetkili": "ÇANAKKALE", "telefon": ""}, {"seriNo": "210132", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "210133", "firmaAdi": "ÇETİNMAK MAKİNA", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "210133", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "210134", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "210135", "firmaAdi": "RE DEKOR MOBİLYA", "yetkili": "", "telefon": ""}, {"seriNo": "210136", "firmaAdi": "PLUS AKSESUAR", "yetkili": "BURDUR", "telefon": ""}, {"seriNo": "210137", "firmaAdi": "UVİ MOBİLYA", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "210138", "firmaAdi": "SELENGA MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "210139", "firmaAdi": "AHMUR MOBİLYA", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "210140", "firmaAdi": "BAYMOB MOBİLYA", "yetkili": "BALIKESİR", "telefon": ""}, {"seriNo": "210141", "firmaAdi": "ENTİ", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "210142", "firmaAdi": "MİMARCA DEK.", "yetkili": "", "telefon": ""}, {"seriNo": "210144", "firmaAdi": "BİGA TASARIM", "yetkili": "ÇANAKKALE", "telefon": ""}, {"seriNo": "210145", "firmaAdi": "PARE MOBİLYA ( MAXİMO )", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "210146", "firmaAdi": "EVİSSA MOBİLYA", "yetkili": "DÜZCE", "telefon": ""}, {"seriNo": "210147", "firmaAdi": "CLASSİ SEDİR MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "210148", "firmaAdi": "FORMET ÇELİK KAPI (GÜNAYSUN)", "yetkili": "KONYA", "telefon": ""}, {"seriNo": "210149", "firmaAdi": "MOBİLART", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "210150", "firmaAdi": "MODERNO MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "210151", "firmaAdi": "R- DESİGN / RE- ALCAM", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "210152", "firmaAdi": "KAYA MOBİLYA", "yetkili": "İZMİR", "telefon": ""}, {"seriNo": "210153", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "210154", "firmaAdi": "KASAPOĞLU MASA", "yetkili": "KAYSERİ", "telefon": ""}, {"seriNo": "210155", "firmaAdi": "SELVİ MOBİLYA", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "166", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "167", "firmaAdi": "STANCOMPLEC LLC", "yetkili": "UKRAYNA", "telefon": ""}, {"seriNo": "", "firmaAdi": "KELEBEK MOBİLYA", "yetkili": "DÜZCE", "telefon": ""}, {"seriNo": "", "firmaAdi": "CAN KARTON", "yetkili": "TEKİRDAĞ", "telefon": ""}, {"seriNo": "", "firmaAdi": "LIGA LLC", "yetkili": "RUSYA", "telefon": ""}, {"seriNo": "", "firmaAdi": "BİANOS - TURGUTLAR", "yetkili": "ANKARA", "telefon": ""}, {"seriNo": "", "firmaAdi": "NEED MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "", "firmaAdi": "ANM KÖKSAL", "yetkili": "İZMİR-TİRE", "telefon": ""}, {"seriNo": "", "firmaAdi": "MAZZİNİ", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "", "firmaAdi": "DSM ONLİNE", "yetkili": "İSTANBUL", "telefon": ""}, {"seriNo": "", "firmaAdi": "TERAS MOBİLYA", "yetkili": "İNEGÖL", "telefon": ""}, {"seriNo": "", "firmaAdi": "GÜMÜŞBEBE", "yetkili": "İNEGÖL", "telefon": ""}]};
+
+var MACHINE_ICONS = {
+  'BC410 PRO': '⚙️',
+  'H-CUT': '✂️',
+  'Q-BOX': '📦',
+  'Qs-BOX': '📦',
+  'ORİTEQ2': '🤖'
+};
+
+var MACHINE_COLORS = {
+  'BC410 PRO': '#F5A623',
+  'H-CUT': '#92D050',
+  'Q-BOX': '#5ab8f5',
+  'Qs-BOX': '#c49ef5',
+  'ORİTEQ2': '#f58080'
+};
+
+// ── Panel oluştur ──
+function snCreatePanel() {
+  var panel = document.createElement('div');
+  panel.id = 'snPanel';
+  panel.style.cssText = 'display:none;';
+  
+  var machines = Object.keys(MACHINE_DATA);
+  var counts = {};
+  machines.forEach(function(m){ counts[m] = MACHINE_DATA[m].length; });
+  var totalCount = machines.reduce(function(a,m){ return a + counts[m]; }, 0);
+
+  panel.innerHTML = \`
+<style>
+#snPanel{padding:0;background:#111;min-height:calc(100vh - 72px);font-family:'Barlow',sans-serif;}
+.sn-toolbar{padding:12px 32px;background:#161616;border-bottom:1px solid #2e2e2e;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:72px;z-index:50;}
+.sn-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;color:#F5A623;text-transform:uppercase;white-space:nowrap;}
+.sn-search-wrap{position:relative;flex:1;max-width:380px;}
+.sn-search{width:100%;background:#222;border:1px solid #333;border-radius:6px;padding:9px 14px 9px 36px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.sn-search:focus{border-color:#F5A623;}
+.sn-search::placeholder{color:#555;}
+.sn-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#555;font-size:14px;}
+.sn-filter-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.sn-ftab{background:#222;border:1px solid #333;border-radius:20px;padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:#888;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.sn-ftab:hover{border-color:#555;color:#ccc;}
+.sn-ftab.active{color:#1a1a1a;border-color:transparent;}
+.sn-stats-bar{padding:8px 32px;background:#181818;border-bottom:1px solid #2e2e2e;display:flex;gap:0;flex-wrap:wrap;}
+.sn-stat{display:flex;align-items:center;gap:8px;font-size:12px;color:#777;padding:4px 20px;border-right:1px solid #2a2a2a;}
+.sn-stat:first-child{padding-left:0;}.sn-stat:last-child{border-right:none;}
+.sn-stat-num{font-weight:700;font-size:14px;color:#ddd;margin-left:2px;}
+.sn-content{padding:24px 32px;}
+.sn-machine-section{margin-bottom:32px;}
+.sn-machine-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #2e2e2e;}
+.sn-machine-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;}
+.sn-machine-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:1px;}
+.sn-add-btn{margin-left:auto;background:linear-gradient(135deg,#2a6e4a,#1d5236);color:#7fda9e;border:1px solid #2a6e4a;border-radius:6px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;}
+.sn-add-btn:hover{background:linear-gradient(135deg,#338a5c,#246440);}
+.sn-table-wrap{overflow-x:auto;border:1px solid #2e2e2e;border-radius:8px;}
+.sn-table{width:100%;border-collapse:collapse;min-width:600px;}
+.sn-table thead th{background:#1e1e1e;color:#888;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid #2e2e2e;white-space:nowrap;}
+.sn-table thead th:first-child{border-left:none;}
+.sn-table tbody tr{border-bottom:1px solid #1e1e1e;transition:background .15s;cursor:default;}
+.sn-table tbody tr:hover{background:rgba(255,255,255,.03);}
+.sn-table tbody tr:last-child{border-bottom:none;}
+.sn-table td{padding:10px 14px;font-size:13px;color:#ccc;vertical-align:middle;}
+.sn-seri-badge{display:inline-block;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:4px;padding:2px 8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#F5A623;letter-spacing:1px;}
+.sn-seri-badge.empty{color:#555;background:#1e1e1e;border-color:#2a2a2a;}
+.sn-firma{font-weight:600;color:#eee;}
+.sn-il{color:#aaa;font-size:12px;}
+.sn-ulke-badge{display:inline-block;background:rgba(90,184,245,.1);color:#5ab8f5;border:1px solid rgba(90,184,245,.2);border-radius:10px;padding:1px 8px;font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;}
+.sn-row-num{color:#555;font-size:11px;font-family:'Barlow Condensed',sans-serif;min-width:30px;}
+.sn-no-results{padding:40px;text-align:center;color:#555;font-size:13px;}
+/* Modal */
+#snModal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:20000;display:none;align-items:center;justify-content:center;}
+#snModal.open{display:flex;}
+.sn-modal-box{background:#1a1a1a;border:1px solid #2e2e2e;border-radius:12px;width:500px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.sn-modal-head{padding:20px 24px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.sn-modal-head h3{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;margin:0;}
+.sn-modal-close{background:none;border:none;color:#666;font-size:20px;cursor:pointer;padding:0;line-height:1;transition:color .2s;}
+.sn-modal-close:hover{color:#eee;}
+.sn-modal-body{padding:22px 24px;overflow-y:auto;}
+.sn-field{margin-bottom:14px;}
+.sn-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#777;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;}
+.sn-field input, .sn-field select, .sn-field textarea{width:100%;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.sn-field input:focus, .sn-field select:focus, .sn-field textarea:focus{border-color:#F5A623;}
+.sn-field select option{background:#222;}
+.sn-field textarea{min-height:60px;resize:vertical;}
+.sn-modal-footer{padding:14px 24px;border-top:1px solid #2a2a2a;display:flex;gap:10px;justify-content:flex-end;}
+.sn-modal-save{background:linear-gradient(135deg,#c47a10,#a8620c);color:#fff;border:none;border-radius:6px;padding:9px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;cursor:pointer;transition:opacity .2s;}
+.sn-modal-save:hover{opacity:.85;}
+.sn-modal-cancel{background:#2a2a2a;color:#aaa;border:1px solid #3a3a3a;border-radius:6px;padding:9px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;cursor:pointer;transition:opacity .2s;}
+.sn-modal-cancel:hover{opacity:.85;}
+.sn-msg{font-size:12px;padding:8px 12px;border-radius:5px;margin-top:8px;display:none;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;}
+.sn-msg.ok{display:block;background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);}
+.sn-msg.err{display:block;background:rgba(192,0,0,.15);color:#ff7777;border:1px solid rgba(192,0,0,.3);}
+.sn-highlight{background:rgba(245,166,35,.25)!important;transition:background .3s;}
+</style>
+
+<div class="sn-toolbar">
+  <span class="sn-title">🔩 Makine Seri Numaraları</span>
+  <div class="sn-search-wrap">
+    <span class="sn-search-icon">🔍</span>
+    <input type="text" class="sn-search" id="snSearchInput" placeholder="Firma adı veya seri no ara...">
+  </div>
+  <div class="sn-filter-tabs" id="snFilterTabs">
+    <button class="sn-ftab active" data-machine="ALL" style="background:#F5A623;color:#1a1a1a;" onclick="snSetFilter('ALL')">TÜM MAKİNELER</button>
+  </div>
+</div>
+
+<div class="sn-stats-bar" id="snStatsBar">
+</div>
+
+<div class="sn-content" id="snContent">
+</div>
+
+<!-- Modal -->
+<div id="snModal">
+  <div class="sn-modal-box">
+    <div class="sn-modal-head">
+      <h3 id="snModalTitle" style="color:#F5A623;">YENİ SERİ NO EKLE</h3>
+      <button class="sn-modal-close" onclick="snCloseModal()">✕</button>
+    </div>
+    <div class="sn-modal-body">
+      <div class="sn-field">
+        <label>Makine Tipi *</label>
+        <select id="snModalMachine">
+          <option value="BC410 PRO">BC410 PRO</option>
+          <option value="H-CUT">H-CUT</option>
+          <option value="Q-BOX">Q-BOX</option>
+          <option value="Qs-BOX">Qs-BOX</option>
+          <option value="ORİTEQ2">ORİTEQ2</option>
+        </select>
+      </div>
+      <div class="sn-field">
+        <label>Seri No</label>
+        <input type="text" id="snModalSeriNo" placeholder="örn. 260085">
+      </div>
+      <div class="sn-field">
+        <label>Firma Adı *</label>
+        <input type="text" id="snModalFirma" placeholder="Firma adını girin">
+      </div>
+      <div class="sn-field">
+        <label>İl / Şehir</label>
+        <input type="text" id="snModalIl" placeholder="örn. İNEGÖL">
+      </div>
+      <div class="sn-field">
+        <label>Ülke</label>
+        <input type="text" id="snModalUlke" placeholder="Yurt içi için boş bırakın">
+      </div>
+      <div class="sn-field">
+        <label>Makine Modeli / Yön (BC410 PRO için)</label>
+        <input type="text" id="snModalDetay" placeholder="örn. BC410PRO / SAĞ MAKİNE">
+      </div>
+      <div class="sn-field">
+        <label>Açıklama / Not</label>
+        <textarea id="snModalAciklama" placeholder="Opsiyonel..."></textarea>
+      </div>
+      <div id="snModalMsg" class="sn-msg"></div>
+    </div>
+    <div class="sn-modal-footer">
+      <button class="sn-modal-cancel" onclick="snCloseModal()">İPTAL</button>
+      <button class="sn-modal-save" onclick="snSaveNew()">✓ KAYDET</button>
+    </div>
+  </div>
+</div>
+\`;
+
+  // Append to body
+  document.body.appendChild(panel);
+  
+  // Build filter tabs
+  Object.keys(MACHINE_DATA).forEach(function(m) {
+    var col = MACHINE_COLORS[m] || '#F5A623';
+    var btn = document.createElement('button');
+    btn.className = 'sn-ftab';
+    btn.dataset.machine = m;
+    btn.style.cssText = 'border-color:' + col + '33;color:' + col + ';';
+    btn.textContent = (MACHINE_ICONS[m]||'') + ' ' + m;
+    btn.onclick = function(){ snSetFilter(m); };
+    document.getElementById('snFilterTabs').appendChild(btn);
+  });
+
+  snRenderStats();
+  snRenderContent('ALL', '');
+
+  // Search
+  document.getElementById('snSearchInput').addEventListener('input', function() {
+    snRenderContent(window._snCurrentFilter || 'ALL', this.value.trim());
+  });
+}
+
+function snRenderStats() {
+  var bar = document.getElementById('snStatsBar');
+  var total = 0;
+  var html = '';
+  Object.keys(MACHINE_DATA).forEach(function(m) {
+    var cnt = MACHINE_DATA[m].length;
+    total += cnt;
+    var col = MACHINE_COLORS[m] || '#F5A623';
+    html += '<div class="sn-stat"><span style="width:9px;height:9px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0;"></span> '+m+' <span class="sn-stat-num">'+cnt+'</span></div>';
+  });
+  html = '<div class="sn-stat"><span class="sn-stat-num" style="color:#F5A623;">'+total+'</span> toplam kayıt</div>' + html;
+  bar.innerHTML = html;
+}
+
+window._snCurrentFilter = 'ALL';
+
+window.snSetFilter = function(machine) {
+  window._snCurrentFilter = machine;
+  document.querySelectorAll('.sn-ftab').forEach(function(btn) {
+    var m = btn.dataset.machine;
+    var col = m === 'ALL' ? '#F5A623' : (MACHINE_COLORS[m] || '#F5A623');
+    if (m === machine) {
+      btn.classList.add('active');
+      btn.style.cssText = 'background:'+col+';color:#1a1a1a;border-color:'+col+';';
+    } else {
+      btn.classList.remove('active');
+      btn.style.cssText = 'border-color:'+col+'33;color:'+col+';background:;';
+    }
+  });
+  var q = document.getElementById('snSearchInput').value.trim();
+  snRenderContent(machine, q);
+};
+
+function snRenderContent(filter, query) {
+  var content = document.getElementById('snContent');
+  var machines = filter === 'ALL' ? Object.keys(MACHINE_DATA) : [filter];
+  var q = (query || '').toLowerCase();
+  var html = '';
+  var totalShown = 0;
+
+  machines.forEach(function(m) {
+    var rows = MACHINE_DATA[m];
+    if (q) {
+      rows = rows.filter(function(r) {
+        return (r.firmaAdi||'').toLowerCase().indexOf(q) !== -1 ||
+               (r.seriNo||'').toLowerCase().indexOf(q) !== -1 ||
+               (r.il||'').toLowerCase().indexOf(q) !== -1 ||
+               (r.ulke||'').toLowerCase().indexOf(q) !== -1 ||
+               (r.yetkili||'').toLowerCase().indexOf(q) !== -1;
+      });
+    }
+    totalShown += rows.length;
+    var col = MACHINE_COLORS[m] || '#F5A623';
+    var icon = MACHINE_ICONS[m] || '⚙️';
+
+    html += '<div class="sn-machine-section" id="snSection-' + m.replace(/[^a-zA-Z0-9]/g,'_') + '">';
+    html += '<div class="sn-machine-header">';
+    html += '<span style="font-size:22px;">' + icon + '</span>';
+    html += '<span class="sn-machine-title" style="color:'+col+';">' + m + '</span>';
+    html += '<span class="sn-machine-badge" style="background:'+col+'22;color:'+col+';border:1px solid '+col+'44;">' + rows.length + ' KAYIT</span>';
+    html += '<button class="sn-add-btn" onclick="snOpenModal(\''+m+'\')">+ YENİ SERİ NO</button>';
+    html += '</div>';
+
+    if (rows.length === 0) {
+      html += '<div class="sn-no-results">Bu filtrede kayıt bulunamadı</div>';
+    } else {
+      html += '<div class="sn-table-wrap"><table class="sn-table"><thead><tr>';
+      html += '<th>#</th><th>SERİ NO</th><th>FİRMA ADI</th>';
+      if (m === 'BC410 PRO') html += '<th>MAKİNE</th><th>YÖN</th>';
+      if (m === 'H-CUT') html += '<th>MODEL</th>';
+      if (m === 'Q-BOX' || m === 'Qs-BOX') html += '<th>MODEL</th>';
+      if (m === 'ORİTEQ2') html += '<th>YETKİLİ / ŞEHİR</th>';
+      html += '<th>İL / ÜLKE</th>';
+      if (m === 'Qs-BOX') html += '<th>TARİH</th>';
+      html += '</tr></thead><tbody>';
+
+      rows.forEach(function(r, idx) {
+        var seriClass = r.seriNo ? 'sn-seri-badge' : 'sn-seri-badge empty';
+        var seriText = r.seriNo || '—';
+        var ilUlke = r.ulke ? ('<span class="sn-ulke-badge">🌍 ' + r.ulke + '</span>') : (r.il || r.yetkili || '—');
+        
+        html += '<tr>';
+        html += '<td class="sn-row-num">' + (idx+1) + '</td>';
+        html += '<td><span class="' + seriClass + '">' + seriText + '</span></td>';
+        html += '<td class="sn-firma">' + (r.firmaAdi || '—') + '</td>';
+        if (m === 'BC410 PRO') {
+          html += '<td style="color:#aaa;font-size:12px;">' + (r.makine||'—') + '</td>';
+          html += '<td style="color:#aaa;font-size:12px;">' + (r.yon||'—') + '</td>';
+        }
+        if (m === 'H-CUT') html += '<td style="color:#aaa;font-size:12px;">' + (r.makine||'H-CUT') + '</td>';
+        if (m === 'Q-BOX' || m === 'Qs-BOX') html += '<td style="color:#aaa;font-size:12px;">' + (r.model||'—') + '</td>';
+        if (m === 'ORİTEQ2') html += '<td style="color:#aaa;font-size:12px;">' + (r.yetkili||'—') + '</td>';
+        html += '<td class="sn-il">' + ilUlke + '</td>';
+        if (m === 'Qs-BOX') html += '<td style="color:#888;font-size:12px;">' + (r.tarih||'—') + '</td>';
+        html += '</tr>';
+      });
+
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+  });
+
+  content.innerHTML = html || '<div class="sn-no-results" style="padding:60px;color:#555;">Sonuç bulunamadı</div>';
+}
+
+window.snOpenModal = function(machine) {
+  document.getElementById('snModal').classList.add('open');
+  document.getElementById('snModalMachine').value = machine || 'BC410 PRO';
+  document.getElementById('snModalSeriNo').value = '';
+  document.getElementById('snModalFirma').value = '';
+  document.getElementById('snModalIl').value = '';
+  document.getElementById('snModalUlke').value = '';
+  document.getElementById('snModalDetay').value = '';
+  document.getElementById('snModalAciklama').value = '';
+  document.getElementById('snModalMsg').className = 'sn-msg';
+  document.getElementById('snModalMsg').textContent = '';
+};
+
+window.snCloseModal = function() {
+  document.getElementById('snModal').classList.remove('open');
+};
+
+// Modal backdrop click
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('snModal');
+  if (modal && e.target === modal) snCloseModal();
+});
+
+window.snSaveNew = function() {
+  var machine = document.getElementById('snModalMachine').value;
+  var seriNo = document.getElementById('snModalSeriNo').value.trim();
+  var firma = document.getElementById('snModalFirma').value.trim();
+  var il = document.getElementById('snModalIl').value.trim().toUpperCase();
+  var ulke = document.getElementById('snModalUlke').value.trim().toUpperCase();
+  var detay = document.getElementById('snModalDetay').value.trim();
+  var aciklama = document.getElementById('snModalAciklama').value.trim();
+  var msg = document.getElementById('snModalMsg');
+
+  if (!firma) {
+    msg.className = 'sn-msg err';
+    msg.textContent = '⚠ Firma adı zorunludur!';
+    return;
+  }
+
+  var entry = { seriNo: seriNo, firmaAdi: firma, il: il, ulke: ulke };
+
+  if (machine === 'BC410 PRO') {
+    var parts = detay.split('/');
+    entry.makine = parts[0] ? parts[0].trim() : 'BC410PRO';
+    entry.yon = parts[1] ? parts[1].trim() : '';
+    entry.aciklama = aciklama;
+  } else if (machine === 'H-CUT') {
+    entry.makine = 'H-CUT';
+  } else if (machine === 'Q-BOX' || machine === 'Qs-BOX') {
+    entry.model = detay || machine;
+    if (machine === 'Qs-BOX') entry.tarih = '';
+  } else if (machine === 'ORİTEQ2') {
+    entry.yetkili = il;
+    entry.telefon = '';
+  }
+
+  MACHINE_DATA[machine].push(entry);
+
+  // Re-render
+  snRenderStats();
+  snRenderContent(window._snCurrentFilter || 'ALL', document.getElementById('snSearchInput').value.trim());
+
+  msg.className = 'sn-msg ok';
+  msg.textContent = '✓ Seri no başarıyla eklendi! (' + (seriNo||'Seri No Yok') + ' — ' + firma + ')';
+
+  // Highlight new row
+  setTimeout(function() {
+    var secId = 'snSection-' + machine.replace(/[^a-zA-Z0-9]/g,'_');
+    var sec = document.getElementById(secId);
+    if (sec) {
+      var rows = sec.querySelectorAll('tbody tr');
+      var lastRow = rows[rows.length-1];
+      if (lastRow) {
+        lastRow.classList.add('sn-highlight');
+        lastRow.scrollIntoView({behavior:'smooth', block:'center'});
+        setTimeout(function(){ lastRow.classList.remove('sn-highlight'); }, 2000);
+      }
+    }
+  }, 100);
+
+  setTimeout(function() { snCloseModal(); }, 1500);
+};
+
+// ── Tab entegrasyonu ──
+function snAddTab() {
+  var wrap = document.getElementById('tabsWrap');
+  if (!wrap) return;
+  var btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.id = 'tabBtn-sn';
+  var total = Object.keys(MACHINE_DATA).reduce(function(a,m){ return a + MACHINE_DATA[m].length; }, 0);
+  btn.innerHTML = '🔩 Seri Numaraları <span class="tab-count" id="snTabCount">' + total + '</span>';
+  btn.onclick = function() { snSwitchTo(); };
+  wrap.appendChild(btn);
+}
+
+window.snSwitchTo = function() {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabBtn-sn').classList.add('active');
+  document.getElementById('snPanel').style.display = '';
+  // Diğer barları gizle
+  ['statsBar','toolBar','legendBar'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Yedek parça panelini gizle
+  var yp = document.getElementById('ypanel');
+  if (yp) yp.style.display = 'none';
+};
+
+function snSwitchAway() {
+  document.getElementById('snPanel').style.display = 'none';
+}
+
+// buildUI tamamlandıktan sonra tab ekle
+var _origBuildUI2 = window.buildUI;
+window.buildUI = function() {
+  _origBuildUI2.apply(this, arguments);
+  snCreatePanel();
+  snAddTab();
+  // switchTab patch
+  var _origST2 = window.switchTab;
+  window.switchTab = function(idx) {
+    _origST2.apply(this, arguments);
+    snSwitchAway();
+  };
+};
+
+// YP sayfasına geçişte sn panelini gizle
+var _origYpSwitchTo = window.ypSwitchTo;
+window.ypSwitchTo = function() {
+  snSwitchAway();
+  if (_origYpSwitchTo) _origYpSwitchTo.apply(this, arguments);
+};
+
+})(); // IIFE sonu
+</script>
+
 </body>
 </html>
