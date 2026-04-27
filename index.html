@@ -398,7 +398,9 @@ window._fsSetDoc = setDoc;
 window._fsOnSnapshot = onSnapshot;
 // Firebase hazır — ana scripte haber ver
 window.dispatchEvent(new Event('firebaseReady'));
+</script>
 
+<script>
 // ═══════════════════════════════════════════════
 //  KULLANICI YÖNETİMİ — Supabase
 // ═══════════════════════════════════════════════
@@ -1024,9 +1026,12 @@ function closeArsiv() { document.getElementById('arsivOverlay').classList.remove
 window.closeArsiv = closeArsiv;
 
 // ── SİPARİŞ FORMU PANELİ ──
+window.getSiparisIdx = () => SHEETS.findIndex(s => s.type === 'siparis');
+window.getTeslimIdx = () => SHEETS.findIndex(s => s.type === 'teslim');
+window.getSiparisRows = () => { const si = getSiparisIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; };
+window.getTeslimRows = () => { const si = getTeslimIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; };
 function getSiparisIdx() { return SHEETS.findIndex(s => s.type === 'siparis'); }
 function getTeslimIdx() { return SHEETS.findIndex(s => s.type === 'teslim'); }
-
 function getSiparisRows() { const si = getSiparisIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; }
 function getTeslimRows() { const si = getTeslimIdx(); return SHEETS[si] ? (SHEETS[si].rows || []) : []; }
 
@@ -1229,6 +1234,10 @@ function buildTeslimPanel(si) {
   setTimeout(() => renderTeslimRows(), 0);
   return wrap;
 }
+window.buildSiparisPanel = buildSiparisPanel;
+window.buildTeslimPanel = buildTeslimPanel;
+window.renderSiparisRows = renderSiparisRows;
+window.renderTeslimRows = renderTeslimRows;
 
 function renderTeslimRows() {
   const tbody = document.getElementById('teslimBody');
@@ -1749,6 +1758,18 @@ function showAdminMsg(text, type) {
   setTimeout(() => { el.className = 'admin-msg'; }, 3500);
 }
 
+// Firebase hazır olunca yükle
+window.loadData = loadData;
+window.addEventListener('firebaseReady', () => {
+  const sess = localStorage.getItem('orimak_auth');
+  if (sess) {
+    setSyncStatus('⟳ BAĞLANIYOR', 'loading');
+    loadData();
+  } else {
+    setSyncStatus('', 'ok');
+  }
+}, { once: true });
+
 </script>
 
 <header class="page-header">
@@ -1764,7 +1785,7 @@ function showAdminMsg(text, type) {
     <div class="header-user-chip" id="userChip" style="display:none">
       <div class="chip-avatar" id="chipAvatar">?</div>
       <span class="chip-name" id="chipName">—</span>
-      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v4.0</span>
+      <span id="versionBadge" style="display:none;font-size:12px;font-weight:700;background:rgba(227,100,0,.2);color:var(--orange);border:1px solid rgba(227,100,0,.4);border-radius:10px;padding:3px 10px;margin-left:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;">v4.1</span>
       <button onclick="doLogout()" title="Çıkış Yap" style="background:rgba(192,0,0,.15);border:1px solid rgba(192,0,0,.3);color:#ff7777;border-radius:5px;padding:2px 8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;margin-left:6px;letter-spacing:1px;">ÇIKIŞ</button>
     </div>
     <button id="terminBtn" onclick="openTerminPanel()" style="position:relative;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;" title="Termin Yaklaşan Ürünler">
@@ -5782,10 +5803,10 @@ const OFFLINE_DATA = [
 
 const HEADERS = ['NO','MALZEME KODU','MALZEME ADI','ÖLÇÜLER','ADET','MAKİNE SAYISI','GEREKEN ADET','YETKİLİ ONAYI','SİPARİŞ TARİHİ','TERMİN TARİHİ','TESLİM TARİHİ','GELEN ADET','GELİŞ ONAYI','TESLİMAT DURUMU','İŞLEMLER'];
 
-let SHEETS = [];
-let state = {};
-let activeSheet = 0;
-let isOnline = false;
+var SHEETS = [];
+var state = {};
+var activeSheet = 0;
+var isOnline = false;
 
 // ── VERİ YÜKLEMESİ ──
 function showLoading() {
@@ -5906,12 +5927,12 @@ function buildSheets() {
 
     // Özel sayfa tipleri
     if (sheet.type === 'siparis') {
-      panel.appendChild(buildSiparisPanel(si));
+      if (window.buildSiparisPanel) panel.appendChild(window.buildSiparisPanel(si));
       container.appendChild(panel);
       return;
     }
     if (sheet.type === 'teslim') {
-      panel.appendChild(buildTeslimPanel(si));
+      if (window.buildTeslimPanel) panel.appendChild(window.buildTeslimPanel(si));
       container.appendChild(panel);
       return;
     }
@@ -5932,7 +5953,6 @@ function buildSheets() {
     wrap.appendChild(table);
     panel.appendChild(wrap);
     container.appendChild(panel);
-  });
   });
 }
 
@@ -6401,18 +6421,8 @@ isOnline = false;
 SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
 buildUI();
 
-window.loadData = loadData;
-
-// Firebase hazır olunca veya oturum yoksa yükle
-window.addEventListener('firebaseReady', () => {
-  const sess = localStorage.getItem('orimak_auth');
-  if (sess) {
-    setSyncStatus('⟳ BAĞLANIYOR', 'loading');
-    loadData();
-  } else {
-    setSyncStatus('', 'ok');
-  }
-}, { once: true });
+// Firebase hazır olunca module script loadData'yı çağıracak
+// (module script'te firebaseReady dinleniyor)
 
 // Escape dinleyici login script'inde birleştirildi
 </script>
