@@ -6384,13 +6384,20 @@ async function apiUpdate(si, rowId, col, val) {
 function openModal() {
   const fSheet = document.getElementById('fSheet');
   fSheet.innerHTML = '';
+  let firstIdx = -1;
   SHEETS.forEach((s, i) => {
+    if (s.type === 'siparis' || s.type === 'teslim') return;
     const o = document.createElement('option');
     o.value = i; o.textContent = s.name;
-    if (i === activeSheet) o.selected = true;
+    if (firstIdx === -1) firstIdx = i;
     fSheet.appendChild(o);
   });
-  populateGroups(activeSheet);
+  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim')
+    ? activeSheet : firstIdx;
+  if (defaultIdx >= 0) {
+    fSheet.value = defaultIdx;
+    populateGroups(defaultIdx);
+  }
   fSheet.onchange = () => populateGroups(parseInt(fSheet.value));
   ['fCode', 'fName', 'fOlcu', 'fAdet'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('modalOverlay').classList.add('open');
@@ -6412,6 +6419,11 @@ function closeModalOutside(e) { if (e.target === document.getElementById('modalO
 
 async function addRow() {
   const si = parseInt(document.getElementById('fSheet').value);
+  // Sipariş/teslim sayfasına ekleme yapılamaz
+  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim') {
+    alert('Bu sayfaya satır eklenemez. Lütfen malzeme listesi sayfalarından birini seçin.');
+    return;
+  }
   const group = document.getElementById('fGroup').value;
   const name = document.getElementById('fName').value.trim();
   const code = document.getElementById('fCode').value.trim();
@@ -6422,6 +6434,7 @@ async function addRow() {
 
   const btn = document.getElementById('addBtn');
   btn.textContent = '⟳ Ekleniyor...'; btn.disabled = true;
+  try {
 
   const newRow = { '2': code || '', '3': name, '4': olcu || '', '5': adet || '',
     _group: false, _rowNo: null, _yetkili: '', _gelis: '', _gelenAdet: '', _makine: '' };
@@ -6474,9 +6487,14 @@ async function addRow() {
     rebuildTable(si);
   }
 
-  if (si === activeSheet) updateStats(si); else switchTab(si);
-  btn.textContent = '✓ Ekle'; btn.disabled = false;
-  closeModal();
+    if (si === activeSheet) updateStats(si); else switchTab(si);
+    closeModal();
+  } catch(e) {
+    console.error('Satır eklenirken hata:', e);
+    alert('Ekleme sırasında bir hata oluştu: ' + e.message);
+  } finally {
+    btn.textContent = '✓ Ekle'; btn.disabled = false;
+  }
 }
 
 // ── BAŞLAT ──
