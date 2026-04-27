@@ -465,7 +465,7 @@ tr.group-hidden{display:none !important;}
 <script type="module">
 // ── FİREBASE İMPORT ──
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD65uIX3qwvyJfpgTUavOC2tjkgPasMEZ8",
@@ -481,6 +481,9 @@ window._fsDoc = doc;
 window._fsGetDoc = getDoc;
 window._fsSetDoc = setDoc;
 window._fsOnSnapshot = onSnapshot;
+window._fsGetDocs = getDocs;
+window._fsCollection = collection;
+window._fsDeleteDoc = deleteDoc;
 // Firebase hazır — ana scripte haber ver
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
@@ -6768,7 +6771,8 @@ if (window._db) {
 //  YEDEK PARÇA LİSTESİ — Firebase Entegreli
 // ════════════════════════════════════════════════
 (function(){
-var YP_FS_KEY = 'yedekparca';  // Firebase koleksiyon yolu: malzeme/yedekparca
+var YP_FS_COL = 'malzeme';   // Ana koleksiyon (mevcut izinlere uygun)
+var YP_FS_PREFIX = 'yp_';   // Doküman id prefix'i yedek parça kayıtları için
 var ypRowCount = 0, ypFs = 15, ypSaveTimer, ypHintTimer;
 var ypCurrentRecordId = null; // aktif Firebase kayıt id'si (null = yeni)
 
@@ -7037,13 +7041,15 @@ async function ypFirebaseSave(recordId, customName, silent) {
   try {
     var data = ypCollectData();
     if (customName) data.name = customName;
-    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
+    data._type = 'yedekparca'; // koleksiyon içinde ayırt etmek için
+    var docRef = window._fsDoc(window._db, YP_FS_COL, recordId);
     await window._fsSetDoc(docRef, data);
     ypCurrentRecordId = recordId;
     if (!silent) ypShowBadge('✓ Kaydedildi', '');
     return true;
   } catch(e) {
     if (!silent) ypShowBadge('⚠ ' + e.message, 'error');
+    console.error('YP Firebase kayıt hatası:', e);
     return false;
   }
 }
@@ -7063,45 +7069,48 @@ async function ypRenderRecordsList() {
   listEl.innerHTML = '<div style="color:#666;font-size:12px;padding:8px;">⟳ Yükleniyor...</div>';
   msgEl.style.display = 'none';
 
-  if (!window._db) {
-    listEl.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Firebase bağlantısı yok.</div>';
+  if (!window._db || !window._fsGetDocs || !window._fsCollection) {
+    listEl.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Firebase bağlantısı kurulamadı. Sayfayı yenileyin.</div>';
     return;
   }
   try {
-    // Firestore'dan tüm kayıtları çek
-    var { getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    var snapshot = await getDocs(collection(window._db, 'yedekparca'));
+    var snapshot = await window._fsGetDocs(window._fsCollection(window._db, YP_FS_COL));
     listEl.innerHTML = '';
-    if (snapshot.empty) {
-      listEl.innerHTML = '<div style="color:#555;font-size:12px;padding:8px;">Henüz kayıt yok. Aşağıdan kaydet.</div>';
-      return;
-    }
+    var found = 0;
     snapshot.forEach(function(docSnap){
       var d = docSnap.data();
+      // Sadece yedek parça kayıtlarını göster (prefix veya _type ile filtrele)
+      if (d._type !== 'yedekparca' && !docSnap.id.startsWith(YP_FS_PREFIX)) return;
+      found++;
       var savedDate = d.savedAt ? new Date(d.savedAt).toLocaleString('tr-TR') : '';
       var displayName = d.name || d.machineName || docSnap.id;
       var div = document.createElement('div');
       div.className = 'yp-record-item';
       var isActive = (docSnap.id === ypCurrentRecordId);
+      var safeId = docSnap.id.replace(/'/g, "\\'");
       div.innerHTML = '<div class="yp-record-info">' +
         '<div class="yp-record-name">' + (isActive ? '🟢 ' : '') + displayName + '</div>' +
         '<div class="yp-record-date">' + savedDate + '</div>' +
         '</div>' +
         '<div class="yp-record-btns">' +
-        '<button class="yp-rec-load" onclick="ypLoadRecord(\'' + docSnap.id + '\')">Yükle</button>' +
-        '<button class="yp-rec-del" onclick="ypDeleteRecord(\'' + docSnap.id + '\')">🗑</button>' +
+        '<button class="yp-rec-load" onclick="ypLoadRecord(\'' + safeId + '\')">Yükle</button>' +
+        '<button class="yp-rec-del" onclick="ypDeleteRecord(\'' + safeId + '\')">🗑</button>' +
         '</div>';
       listEl.appendChild(div);
     });
+    if (found === 0) {
+      listEl.innerHTML = '<div style="color:#555;font-size:12px;padding:8px;">Henüz yedek parça kaydı yok. Aşağıdan kaydet.</div>';
+    }
   } catch(e) {
     listEl.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Hata: ' + e.message + '</div>';
+    console.error('YP liste hatası:', e);
   }
 }
 
 window.ypLoadRecord = async function(recordId) {
   if (!window._db) return;
   try {
-    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
+    var docRef = window._fsDoc(window._db, YP_FS_COL, recordId);
     var snap = await window._fsGetDoc(docRef);
     if (!snap.exists()) { alert('Kayıt bulunamadı.'); return; }
     ypRestoreData(snap.data());
@@ -7111,15 +7120,15 @@ window.ypLoadRecord = async function(recordId) {
     ypCloseRecords();
   } catch(e) {
     alert('Yükleme hatası: ' + e.message);
+    console.error(e);
   }
 };
 
 window.ypDeleteRecord = async function(recordId) {
   if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
   try {
-    var { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
-    await deleteDoc(docRef);
+    var docRef = window._fsDoc(window._db, YP_FS_COL, recordId);
+    await window._fsDeleteDoc(docRef);
     if (ypCurrentRecordId === recordId) ypCurrentRecordId = null;
     await ypRenderRecordsList();
   } catch(e) {
