@@ -5965,6 +5965,12 @@ function switchTab(idx) {
   document.getElementById('searchInput').value = '';
   filterTable('');
   updateStats(idx);
+  // Sipariş/teslim sayfasında "Yeni Satır Ekle" butonunu gizle
+  const addRowBtn = document.getElementById('addRowBtn');
+  if (addRowBtn) {
+    const isSpecial = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
+    addRowBtn.style.display = isSpecial ? 'none' : '';
+  }
 }
 
 function getRowClass(row) {
