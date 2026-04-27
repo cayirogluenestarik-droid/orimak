@@ -1132,8 +1132,22 @@ function renderSiparisRows() {
     if (teslim || r.gelisOnay === 'Onaylandı') { durum = 'Teslim Alındı'; durumClass = 'sp-durum-teslim'; }
     else if (r.yetkiliOnay === 'Onaylandı') { durum = 'Onay Bekliyor'; durumClass = 'sp-durum-onay'; }
 
+    // Satır rengi — diğer sayfalarla aynı mantık
+    function getSiparisRowClass(r, teslim) {
+      if (teslim || r.gelisOnay === 'Onaylandı') return 'status-gelis';
+      // Termin geçmişse ve teslim yoksa kırmızı
+      const terminD = parseTerminDate(r.terminTarihi || '');
+      if (terminD) {
+        const bugun = new Date(); bugun.setHours(0,0,0,0);
+        if (terminD < bugun) return 'status-eksik';
+      }
+      if (r.yetkiliOnay === 'Onaylandı') return 'status-onay';
+      if (r.yetkiliOnay === 'Beklemede') return 'status-bekle';
+      return '';
+    }
+
     const tr = document.createElement('tr');
-    tr.className = 'data-row';
+    tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
 
     function mkTd(html, style) {
       const td = document.createElement('td');
