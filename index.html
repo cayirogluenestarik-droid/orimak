@@ -265,6 +265,90 @@ tr.group-hidden{display:none !important;}
 ::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:4px;}
 ::-webkit-scrollbar-thumb:hover{background:#555;}
 
+/* ── YEDEK PARÇA LİSTESİ PANEL ── */
+#ypanel{background:#2a2a2a;min-height:600px;padding:24px 32px 60px;}
+.yp-page{max-width:1000px;margin:0 auto;background:#fff;box-shadow:0 8px 40px rgba(0,0,0,0.4);}
+.yp-top-bar{height:7px;background:#F7A31C;}
+.yp-header{display:grid;grid-template-columns:210px 1fr 260px;background:#111;border-bottom:1px solid #333;}
+.yp-logo-zone{display:flex;align-items:center;justify-content:center;padding:14px 18px;border-right:1px solid #333;background:#fff;cursor:pointer;}
+.yp-title-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;background:#111;}
+.yp-title-zone h1{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;}
+.yp-title-zone h2{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:500;color:#F7A31C;letter-spacing:3px;text-transform:uppercase;}
+.yp-machine-zone{background:#F7A31C;display:flex;flex-direction:column;justify-content:center;padding:16px 18px;gap:5px;}
+.yp-machine-zone label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:rgba(0,0,0,0.5);letter-spacing:1.5px;text-transform:uppercase;}
+.yp-machine-zone input{border:none;border-bottom:2px solid rgba(0,0,0,0.25);background:transparent;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#1a1a1a;outline:none;width:100%;padding:2px 0;}
+.yp-machine-zone input::placeholder{color:rgba(0,0,0,0.35);font-size:13px;font-weight:400;}
+.yp-meta{display:grid;grid-template-columns:1fr 1fr 1fr;background:#1e1e1e;border-bottom:3px solid #F7A31C;padding:8px 18px;gap:12px;}
+.yp-meta-field{display:flex;flex-direction:column;gap:2px;}
+.yp-meta-field label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#F7A31C;letter-spacing:1px;text-transform:uppercase;}
+.yp-meta-field input{border:none;border-bottom:1px solid #444;background:transparent;font-family:'Barlow',sans-serif;font-size:12px;color:#ddd;outline:none;padding:2px 0;}
+.yp-meta-field input::placeholder{color:#555;}
+.yp-table-wrap{overflow-x:auto;}
+.yp-table-wrap table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.yp-table-wrap thead tr:first-child th{background:#111;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 10px 3px;border-right:1px solid #2a2a2a;text-align:center;}
+.yp-table-wrap thead tr:last-child th{background:#1e1e1e;color:#F7A31C;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:2px 10px 7px;border-right:1px solid #2a2a2a;text-align:center;}
+.yp-table-wrap tbody tr:nth-child(even){background:#F5F5F5;}
+.yp-table-wrap tbody tr:nth-child(odd){background:#fff;}
+.yp-table-wrap tbody tr:hover .yp-row-actions{opacity:1;pointer-events:all;}
+.yp-table-wrap td{border:1px solid #DDDDDD;padding:0;vertical-align:middle;overflow:hidden;}
+.yp-td-no{text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#F7A31C;position:relative;cursor:pointer;}
+.yp-td-no:hover{background:#FFF3E0;}
+.yp-no-label{position:relative;z-index:1;pointer-events:none;}
+.yp-row-actions{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;opacity:0;transition:opacity 0.15s;pointer-events:none;}
+.yp-ra-btn{width:22px;height:22px;border:none;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.yp-ra-ins{background:#F7A31C;color:#fff;}
+.yp-ra-del{background:#dc2626;color:#fff;}
+.yp-photo-btn{width:100%;height:100%;background:#fafafa;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.yp-photo-btn:hover{background:#FFF3E0;}
+.yp-photo-btn span{font-size:9px;color:#bbb;text-align:center;line-height:1.4;}
+.yp-photo-btn img{width:100%;height:100%;object-fit:contain;display:none;}
+.yp-photo-btn.has-img svg,.yp-photo-btn.has-img span{display:none;}
+.yp-photo-btn.has-img img{display:block;}
+.yp-td-name textarea{width:100%;height:100%;border:none;background:transparent;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;color:#1a1a1a;outline:none;padding:8px 12px;resize:none;line-height:1.5;display:block;}
+.yp-td-num textarea{width:100%;height:100%;border:none;background:transparent;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:#1a1a1a;outline:none;padding:8px 10px;resize:none;line-height:1.5;text-align:center;display:block;}
+.yp-toolbar{padding:14px 18px;border-top:1px solid #DDDDDD;background:#fafafa;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.yp-btn{display:inline-flex;align-items:center;gap:6px;border:none;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:background 0.15s;}
+.yp-btn-orange{background:#F7A31C;color:#1a1a1a;}
+.yp-btn-dark{background:#111;color:#fff;}
+.yp-btn-green{background:#16a34a;color:#fff;}
+.yp-btn-blue{background:#2563eb;color:#fff;}
+.yp-btn-red{background:#dc2626;color:#fff;font-size:11px;padding:7px 12px;}
+.yp-ctrl-group{display:flex;align-items:center;gap:6px;}
+.yp-ctrl-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;}
+.yp-ctrl-btn{background:#eee;border:1px solid #ccc;border-radius:3px;padding:4px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:#333;}
+.yp-ctrl-btn:hover{background:#F7A31C;color:#1a1a1a;border-color:#F7A31C;}
+.yp-ctrl-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#333;min-width:22px;text-align:center;}
+.yp-save-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;padding:5px 10px;border-radius:12px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;display:none;}
+.yp-save-badge.show{display:inline-flex;align-items:center;gap:4px;}
+.yp-save-badge.saving{background:#fef9c3;color:#854d0e;border-color:#fde047;}
+.yp-save-badge.error{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+.yp-footer{background:#111;border-top:3px solid #F7A31C;padding:10px 18px;text-align:center;font-size:10px;color:rgba(255,255,255,0.45);font-style:italic;}
+.yp-footer b{color:#F7A31C;font-style:normal;}
+.yp-bot-bar{height:6px;background:#F7A31C;}
+.yp-hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:7px 18px;border-radius:20px;font-size:11px;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:9999;white-space:nowrap;}
+.yp-hint.on{opacity:1;}
+/* Kayıtları Yönet Modal */
+.yp-records-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10005;align-items:center;justify-content:center;}
+.yp-records-modal.open{display:flex;}
+.yp-records-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #F7A31C;border-radius:12px;width:560px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.yp-records-head{padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.yp-records-head h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:#F7A31C;}
+.yp-records-body{padding:16px 24px;overflow-y:auto;flex:1;}
+.yp-record-item{display:flex;align-items:center;gap:10px;background:#222;border:1px solid #2e2e2e;border-radius:7px;padding:10px 14px;margin-bottom:8px;}
+.yp-record-item:hover{border-color:#444;}
+.yp-record-info{flex:1;}
+.yp-record-name{font-weight:600;font-size:13px;color:#eee;}
+.yp-record-date{font-size:11px;color:#666;margin-top:2px;}
+.yp-record-btns{display:flex;gap:6px;flex-shrink:0;}
+.yp-rec-load{background:rgba(37,99,235,.15);color:#7ab8f5;border:1px solid rgba(37,99,235,.3);border-radius:4px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;}
+.yp-rec-del{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3);border-radius:4px;padding:5px 8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.yp-new-record-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #2a2a2a;}
+.yp-new-record-row input{flex:1;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
+.yp-new-record-row input:focus{border-color:#F7A31C;}
+/* SaveAs modal */
+.yp-saveas-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10006;align-items:center;justify-content:center;}
+.yp-saveas-modal.open{display:flex;}
+
 /* ── ADMIN PANELİ ── */
 #adminOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;}
 #adminOverlay.open{display:flex;}
@@ -6639,6 +6723,648 @@ if (window._db) {
 }
 
 // Escape dinleyici login script'inde birleştirildi
+</script>
+
+<!-- ══════════════════════════════════
+     YEDEK PARÇA LİSTESİ PANELİ
+══════════════════════════════════ -->
+<div class="hint yp-hint" id="ypHint"></div>
+
+<!-- Kayıtları Yönet Modal -->
+<div class="yp-records-modal" id="ypRecordsModal">
+  <div class="yp-records-box">
+    <div class="yp-records-head">
+      <h3>📂 KAYITLARI YÖNET</h3>
+      <button class="admin-close" onclick="ypCloseRecords()">✕</button>
+    </div>
+    <div class="yp-records-body">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#666;letter-spacing:1px;margin-bottom:10px;">Firebase'de kayıtlı listeler — her cihazdan erişilebilir</div>
+      <div id="ypRecordsList"></div>
+      <div class="yp-new-record-row">
+        <input type="text" id="ypNewRecordName" placeholder="Kayıt adı (örn: Motor A - Haziran 2026)" autocomplete="off"/>
+        <button class="yp-btn yp-btn-green" onclick="ypSaveNewRecord()">💾 Kaydet</button>
+      </div>
+      <div id="ypRecordMsg" style="font-size:12px;margin-top:8px;display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Farklı Kaydet (JSON indirme) Modal -->
+<div class="yp-saveas-modal" id="ypSaveAsModal">
+  <div style="background:#fff;border-radius:8px;padding:28px 28px 20px;min-width:340px;box-shadow:0 16px 48px rgba(0,0,0,.4);">
+    <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#111;margin-bottom:16px;letter-spacing:1px;">💾 JSON Olarak İndir</h3>
+    <p style="font-family:'Barlow',sans-serif;font-size:13px;color:#555;margin-bottom:12px;">Dosya adını girin:</p>
+    <input id="ypSaveAsName" type="text" placeholder="orimak-yedekparca"
+      style="width:100%;border:1px solid #d1d5db;border-radius:5px;padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;margin-bottom:16px;box-sizing:border-box;">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="ypCloseSaveAs()" style="background:#eee;color:#333;border:none;padding:9px 18px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">İptal</button>
+      <button onclick="ypDoSaveAs()" style="background:#F7A31C;color:#1a1a1a;border:none;padding:9px 18px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">⬇ İndir (.json)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  YEDEK PARÇA LİSTESİ — Firebase Entegreli
+// ════════════════════════════════════════════════
+(function(){
+var YP_FS_KEY = 'yedekparca';  // Firebase koleksiyon yolu: malzeme/yedekparca
+var ypRowCount = 0, ypFs = 15, ypSaveTimer, ypHintTimer;
+var ypCurrentRecordId = null; // aktif Firebase kayıt id'si (null = yeni)
+
+// ── HTML Panel oluştur ──
+function ypCreatePanel() {
+  var panel = document.createElement('div');
+  panel.id = 'ypanel';
+  panel.style.display = 'none';
+  panel.innerHTML = `
+  <div class="yp-page">
+    <div class="yp-top-bar"></div>
+    <div class="yp-header">
+      <div class="yp-logo-zone" onclick="document.getElementById('ypLogoInput').click()" title="Logo yükle">
+        <img id="ypLogoImg" alt="Orimak" style="max-width:180px;height:auto;display:none;">
+        <div id="ypLogoPlaceholder" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F7A31C" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#aaa;letter-spacing:1px;">LOGO YÜKLE</span>
+        </div>
+        <input type="file" id="ypLogoInput" accept="image/*" style="display:none;">
+      </div>
+      <div class="yp-title-zone">
+        <h1>Yedek Parça Listesi</h1>
+        <h2>Spare Parts List</h2>
+      </div>
+      <div class="yp-machine-zone">
+        <label>Makine Adı / Machine Name</label>
+        <input type="text" id="ypMachineName" placeholder="Makine adını giriniz...">
+      </div>
+    </div>
+    <div class="yp-meta">
+      <div class="yp-meta-field"><label>Döküman No / Doc No</label><input type="text" id="ypDocNo" placeholder="ORİ-SP-001"></div>
+      <div class="yp-meta-field"><label>Tarih / Date</label><input type="text" id="ypDateField"></div>
+      <div class="yp-meta-field"><label>Hazırlayan / Prepared by</label><input type="text" id="ypPreparedBy" placeholder="Ad Soyad"></div>
+    </div>
+    <div class="yp-table-wrap">
+      <table>
+        <colgroup>
+          <col style="width:54px">
+          <col style="width:115px">
+          <col style="width:426px">
+          <col style="width:160px">
+        </colgroup>
+        <thead>
+          <tr><th>NO</th><th>FOTOĞRAF</th><th>PARÇA ADI</th><th>PARÇA NUMARASI</th></tr>
+          <tr><th></th><th>PHOTO</th><th>PART NAME</th><th>PART NUMBER</th></tr>
+        </thead>
+        <tbody id="ypTbody"></tbody>
+      </table>
+    </div>
+    <div class="yp-toolbar">
+      <button class="yp-btn yp-btn-orange" onclick="ypAddRowAtEnd()">＋ Satır Ekle</button>
+      <div class="yp-ctrl-group">
+        <span class="yp-ctrl-label">Yazı</span>
+        <button class="yp-ctrl-btn" onclick="ypChangeFontSize(-1)">A−</button>
+        <span class="yp-ctrl-val" id="ypFsVal">15</span>
+        <button class="yp-ctrl-btn" onclick="ypChangeFontSize(1)">A+</button>
+      </div>
+      <div class="yp-ctrl-group">
+        <span class="yp-ctrl-label">Renk</span>
+        <input type="color" id="ypColorPicker" value="#1a1a1a" oninput="ypTextColor(this.value)" style="width:30px;height:28px;border:1px solid #ccc;border-radius:3px;cursor:pointer;padding:2px;">
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span class="yp-save-badge" id="ypSaveBadge"></span>
+        <button class="yp-btn yp-btn-blue" onclick="ypOpenRecords()">📂 Kayıtları Yönet</button>
+        <label class="yp-btn yp-btn-blue" style="cursor:pointer;" title="JSON dosyasından yükle">
+          📁 Dosyadan Aç
+          <input type="file" id="ypOpenFileInput" accept=".json" style="display:none" onchange="ypLoadFromFile(this)">
+        </label>
+        <button class="yp-btn yp-btn-orange" onclick="ypOpenSaveAs()">💾 JSON İndir</button>
+        <button class="yp-btn yp-btn-red" onclick="ypClearData()">Sıfırla</button>
+        <button class="yp-btn yp-btn-dark" onclick="ypMakePDF()">📄 PDF</button>
+      </div>
+    </div>
+    <div class="yp-footer">
+      <b>ORİMAK MAKİNA</b> SAN. TİC. LTD. ŞTİ. &nbsp;|&nbsp;
+      Mahmudiye Mah. 19. Mobilya Sk. No:2/E İnegöl / BURSA &nbsp;|&nbsp;
+      +90 224 718 62 68 &nbsp;|&nbsp; <b>www.orimak.com</b>
+    </div>
+    <div class="yp-bot-bar"></div>
+  </div>`;
+  document.getElementById('sheetsContainer').appendChild(panel);
+  ypInit();
+}
+
+function ypInit() {
+  // Tarih
+  var d = new Date();
+  document.getElementById('ypDateField').value =
+    String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+
+  // Input dinleyiciler
+  ['ypMachineName','ypDocNo','ypDateField','ypPreparedBy'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', ypScheduleSave);
+  });
+
+  // Logo
+  document.getElementById('ypLogoInput').addEventListener('change', function(){
+    if (!this.files || !this.files[0]) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = document.getElementById('ypLogoImg');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('ypLogoPlaceholder').style.display = 'none';
+      ypScheduleSave();
+    };
+    reader.readAsDataURL(this.files[0]);
+  });
+
+  // İlk satırlar
+  for (var i = 0; i < 5; i++) ypAddRowAtEnd();
+}
+
+// ── Satır oluşturma ──
+function ypBuildRow(opts) {
+  ypRowCount++;
+  var h = (opts && opts.height) ? opts.height : 100;
+  var tr = document.createElement('tr');
+  tr.style.height = h + 'px';
+
+  // NO sütunu
+  var tdNo = document.createElement('td');
+  tdNo.className = 'yp-td-no';
+  tdNo.style.position = 'relative';
+  tdNo.innerHTML = '<span class="yp-no-label">' + ypRowCount + '</span>' +
+    '<div class="yp-row-actions">' +
+    '<button class="yp-ra-btn yp-ra-ins" onclick="ypInsertRowBefore(this)" title="Üstüne ekle">+</button>' +
+    '<button class="yp-ra-btn yp-ra-del" onclick="ypDeleteRow(this)" title="Sil">✕</button>' +
+    '</div>';
+  tr.appendChild(tdNo);
+
+  // FOTOĞRAF sütunu
+  var tdPh = document.createElement('td');
+  tdPh.style.overflow = 'hidden';
+  var btn = document.createElement('button');
+  btn.className = 'yp-photo-btn';
+  btn.style.height = h + 'px';
+  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' +
+    '<span>Fotoğraf ekle</span><img alt="" style="height:' + h + 'px;">';
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.style.display = 'none';
+  btn.onclick = function(){ inp.click(); };
+  if (opts && opts.photo) {
+    btn.querySelector('img').src = opts.photo;
+    btn.querySelector('img').style.display = 'block';
+    btn.classList.add('has-img');
+    tr._ypPhoto = opts.photo;
+  }
+  inp.addEventListener('change', function(){
+    if (!this.files || !this.files[0]) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var imgEl = btn.querySelector('img');
+      imgEl.src = e.target.result;
+      imgEl.style.display = 'block';
+      btn.classList.add('has-img');
+      tr._ypPhoto = e.target.result;
+      ypScheduleSave();
+    };
+    reader.readAsDataURL(this.files[0]);
+  });
+  tdPh.appendChild(btn); tdPh.appendChild(inp);
+  tr.appendChild(tdPh);
+
+  // PARÇA ADI
+  var tdName = document.createElement('td');
+  tdName.className = 'yp-td-name';
+  var taName = document.createElement('textarea');
+  taName.placeholder = 'Parça adı / Part name';
+  taName.style.height = h + 'px';
+  taName.style.fontSize = ypFs + 'px';
+  taName.style.color = document.getElementById('ypColorPicker').value;
+  taName.value = (opts && opts.name) ? opts.name : '';
+  taName.addEventListener('input', ypScheduleSave);
+  tdName.appendChild(taName);
+  tr.appendChild(tdName);
+
+  // PARÇA NO
+  var tdNum = document.createElement('td');
+  tdNum.className = 'yp-td-num';
+  var taNum = document.createElement('textarea');
+  taNum.placeholder = 'ORİ-000-000';
+  taNum.style.height = h + 'px';
+  taNum.value = (opts && opts.num) ? opts.num : '';
+  taNum.addEventListener('input', ypScheduleSave);
+  tdNum.appendChild(taNum);
+  tr.appendChild(tdNum);
+
+  return tr;
+}
+
+function ypAddRowAtEnd(opts) {
+  document.getElementById('ypTbody').appendChild(ypBuildRow(opts));
+  ypRenumber();
+}
+function ypInsertRowBefore(btn) {
+  var tr = btn.closest('tr');
+  tr.parentNode.insertBefore(ypBuildRow(), tr);
+  ypRenumber(); ypScheduleSave(); ypShowHint('Satır eklendi!');
+}
+function ypDeleteRow(btn) {
+  var tbody = document.getElementById('ypTbody');
+  if (tbody.rows.length <= 1) { ypShowHint('En az 1 satır olmalı'); return; }
+  btn.closest('tr').remove(); ypRenumber(); ypScheduleSave(); ypShowHint('Satır silindi');
+}
+function ypRenumber() {
+  document.querySelectorAll('#ypTbody tr').forEach(function(tr, i){
+    var l = tr.querySelector('.yp-no-label'); if (l) l.textContent = i + 1;
+  });
+  ypRowCount = document.querySelectorAll('#ypTbody tr').length;
+}
+
+// ── Veri toplama/geri yükleme ──
+function ypCollectData() {
+  var rows = [];
+  document.querySelectorAll('#ypTbody tr').forEach(function(tr){
+    var tas = tr.querySelectorAll('textarea');
+    rows.push({ height: tr.offsetHeight, name: tas[0] ? tas[0].value : '', num: tas[1] ? tas[1].value : '', photo: tr._ypPhoto || '' });
+  });
+  var logo = document.getElementById('ypLogoImg');
+  return {
+    machineName: document.getElementById('ypMachineName').value,
+    docNo: document.getElementById('ypDocNo').value,
+    dateField: document.getElementById('ypDateField').value,
+    preparedBy: document.getElementById('ypPreparedBy').value,
+    fs: ypFs,
+    color: document.getElementById('ypColorPicker').value,
+    logo: (logo && logo.src && logo.src !== window.location.href) ? logo.src : '',
+    rows: rows,
+    savedAt: new Date().toISOString()
+  };
+}
+
+function ypRestoreData(data) {
+  if (!data) return;
+  if (data.machineName !== undefined) document.getElementById('ypMachineName').value = data.machineName;
+  if (data.docNo !== undefined) document.getElementById('ypDocNo').value = data.docNo;
+  if (data.dateField !== undefined) document.getElementById('ypDateField').value = data.dateField;
+  if (data.preparedBy !== undefined) document.getElementById('ypPreparedBy').value = data.preparedBy;
+  if (data.fs) { ypFs = data.fs; document.getElementById('ypFsVal').textContent = ypFs; }
+  if (data.color) document.getElementById('ypColorPicker').value = data.color;
+  if (data.logo) {
+    document.getElementById('ypLogoImg').src = data.logo;
+    document.getElementById('ypLogoImg').style.display = 'block';
+    document.getElementById('ypLogoPlaceholder').style.display = 'none';
+  }
+  document.getElementById('ypTbody').innerHTML = ''; ypRowCount = 0;
+  var rows = (data.rows && data.rows.length > 0) ? data.rows : Array(5).fill(null);
+  rows.forEach(function(r){ ypAddRowAtEnd(r); });
+}
+
+// ── Kaydetme (Firebase) ──
+function ypScheduleSave() { clearTimeout(ypSaveTimer); ypSaveTimer = setTimeout(ypAutoSave, 1200); }
+
+async function ypAutoSave() {
+  // Eğer açık bir kayıt varsa otomatik üzerine yaz
+  if (!ypCurrentRecordId) return; // Kayıt seçilmeden otomatik kayıt yok
+  await ypFirebaseSave(ypCurrentRecordId, null, true);
+}
+
+async function ypFirebaseSave(recordId, customName, silent) {
+  if (!window._db || !window._fsDoc || !window._fsSetDoc) {
+    ypShowBadge('⚠ Firebase bağlantısı yok', 'error'); return;
+  }
+  if (!silent) ypShowBadge('Kaydediliyor...', 'saving');
+  try {
+    var data = ypCollectData();
+    if (customName) data.name = customName;
+    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
+    await window._fsSetDoc(docRef, data);
+    ypCurrentRecordId = recordId;
+    if (!silent) ypShowBadge('✓ Kaydedildi', '');
+    return true;
+  } catch(e) {
+    if (!silent) ypShowBadge('⚠ ' + e.message, 'error');
+    return false;
+  }
+}
+
+// ── Kayıtları Yönet Modal ──
+window.ypOpenRecords = async function() {
+  document.getElementById('ypRecordsModal').classList.add('open');
+  await ypRenderRecordsList();
+};
+window.ypCloseRecords = function() {
+  document.getElementById('ypRecordsModal').classList.remove('open');
+};
+
+async function ypRenderRecordsList() {
+  var listEl = document.getElementById('ypRecordsList');
+  var msgEl = document.getElementById('ypRecordMsg');
+  listEl.innerHTML = '<div style="color:#666;font-size:12px;padding:8px;">⟳ Yükleniyor...</div>';
+  msgEl.style.display = 'none';
+
+  if (!window._db) {
+    listEl.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Firebase bağlantısı yok.</div>';
+    return;
+  }
+  try {
+    // Firestore'dan tüm kayıtları çek
+    var { getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    var snapshot = await getDocs(collection(window._db, 'yedekparca'));
+    listEl.innerHTML = '';
+    if (snapshot.empty) {
+      listEl.innerHTML = '<div style="color:#555;font-size:12px;padding:8px;">Henüz kayıt yok. Aşağıdan kaydet.</div>';
+      return;
+    }
+    snapshot.forEach(function(docSnap){
+      var d = docSnap.data();
+      var savedDate = d.savedAt ? new Date(d.savedAt).toLocaleString('tr-TR') : '';
+      var displayName = d.name || d.machineName || docSnap.id;
+      var div = document.createElement('div');
+      div.className = 'yp-record-item';
+      var isActive = (docSnap.id === ypCurrentRecordId);
+      div.innerHTML = '<div class="yp-record-info">' +
+        '<div class="yp-record-name">' + (isActive ? '🟢 ' : '') + displayName + '</div>' +
+        '<div class="yp-record-date">' + savedDate + '</div>' +
+        '</div>' +
+        '<div class="yp-record-btns">' +
+        '<button class="yp-rec-load" onclick="ypLoadRecord(\'' + docSnap.id + '\')">Yükle</button>' +
+        '<button class="yp-rec-del" onclick="ypDeleteRecord(\'' + docSnap.id + '\')">🗑</button>' +
+        '</div>';
+      listEl.appendChild(div);
+    });
+  } catch(e) {
+    listEl.innerHTML = '<div style="color:#f77;font-size:12px;padding:8px;">Hata: ' + e.message + '</div>';
+  }
+}
+
+window.ypLoadRecord = async function(recordId) {
+  if (!window._db) return;
+  try {
+    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
+    var snap = await window._fsGetDoc(docRef);
+    if (!snap.exists()) { alert('Kayıt bulunamadı.'); return; }
+    ypRestoreData(snap.data());
+    ypCurrentRecordId = recordId;
+    ypShowBadge('✓ "' + (snap.data().name || snap.data().machineName || recordId) + '" yüklendi', '');
+    ypShowHint('Kayıt yüklendi!');
+    ypCloseRecords();
+  } catch(e) {
+    alert('Yükleme hatası: ' + e.message);
+  }
+};
+
+window.ypDeleteRecord = async function(recordId) {
+  if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
+  try {
+    var { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    var docRef = window._fsDoc(window._db, 'yedekparca', recordId);
+    await deleteDoc(docRef);
+    if (ypCurrentRecordId === recordId) ypCurrentRecordId = null;
+    await ypRenderRecordsList();
+  } catch(e) {
+    alert('Silme hatası: ' + e.message);
+  }
+};
+
+window.ypSaveNewRecord = async function() {
+  var nameInp = document.getElementById('ypNewRecordName');
+  var msgEl = document.getElementById('ypRecordMsg');
+  var name = nameInp.value.trim();
+  if (!name) {
+    var mac = document.getElementById('ypMachineName').value.trim();
+    name = mac || ('Liste-' + new Date().toLocaleDateString('tr-TR'));
+  }
+  // ID: zaman damgası + makine adı
+  var id = 'yp_' + Date.now();
+  msgEl.style.display = 'block';
+  msgEl.style.color = '#F7A31C';
+  msgEl.textContent = 'Kaydediliyor...';
+  var ok = await ypFirebaseSave(id, name, false);
+  if (ok) {
+    msgEl.style.color = '#92D050';
+    msgEl.textContent = '✓ "' + name + '" kaydedildi!';
+    nameInp.value = '';
+    await ypRenderRecordsList();
+    setTimeout(function(){ msgEl.style.display = 'none'; }, 2500);
+  } else {
+    msgEl.style.color = '#f77';
+    msgEl.textContent = '⚠ Kayıt başarısız.';
+  }
+};
+
+// ── JSON Farklı Kaydet ──
+window.ypOpenSaveAs = function() {
+  var mac = document.getElementById('ypMachineName').value.trim();
+  document.getElementById('ypSaveAsName').value = mac ? 'orimak-' + mac : 'orimak-yedekparca';
+  document.getElementById('ypSaveAsModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('ypSaveAsName').focus(); document.getElementById('ypSaveAsName').select(); }, 50);
+};
+window.ypCloseSaveAs = function() {
+  document.getElementById('ypSaveAsModal').classList.remove('open');
+};
+window.ypDoSaveAs = function() {
+  var name = document.getElementById('ypSaveAsName').value.trim() || 'orimak-yedekparca';
+  name = name.replace(/[\\/:*?"<>|]/g, '_');
+  var json = JSON.stringify(ypCollectData(), null, 2);
+  var blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = name + '.json'; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+  ypCloseSaveAs();
+  ypShowBadge('✓ "' + name + '.json" indirildi', '');
+};
+document.getElementById('ypSaveAsName').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') ypDoSaveAs();
+  if (e.key === 'Escape') ypCloseSaveAs();
+});
+document.getElementById('ypSaveAsModal').addEventListener('click', function(e){
+  if (e.target === this) ypCloseSaveAs();
+});
+
+// ── JSON Dosyadan Aç ──
+window.ypLoadFromFile = function(input) {
+  if (!input || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      var data = JSON.parse(e.target.result);
+      ypRestoreData(data);
+      ypCurrentRecordId = null; // yeni dosya açıldı, Firebase kaydı yok
+      ypShowBadge('✓ "' + file.name + '" yüklendi', '');
+      ypShowHint('"' + file.name + '" başarıyla açıldı!');
+    } catch(err) {
+      ypShowBadge('⚠ Geçersiz JSON dosyası', 'error');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+};
+
+// ── Sıfırla ──
+window.ypClearData = function() {
+  if (!confirm('Tüm veriler silinecek. Emin misiniz?')) return;
+  document.getElementById('ypTbody').innerHTML = ''; ypRowCount = 0;
+  ['ypMachineName','ypDocNo','ypPreparedBy'].forEach(function(id){ document.getElementById(id).value = ''; });
+  var d2 = new Date();
+  document.getElementById('ypDateField').value =
+    String(d2.getDate()).padStart(2,'0') + '.' + String(d2.getMonth()+1).padStart(2,'0') + '.' + d2.getFullYear();
+  document.getElementById('ypLogoImg').src = '';
+  document.getElementById('ypLogoImg').style.display = 'none';
+  document.getElementById('ypLogoPlaceholder').style.display = '';
+  ypCurrentRecordId = null;
+  for (var i = 0; i < 5; i++) ypAddRowAtEnd();
+  ypShowBadge('Sıfırlandı', '');
+};
+
+// ── Font / Renk ──
+window.ypChangeFontSize = function(d) {
+  ypFs = Math.max(8, Math.min(36, ypFs + d));
+  document.getElementById('ypFsVal').textContent = ypFs;
+  document.querySelectorAll('.yp-td-name textarea').forEach(function(ta){ ta.style.fontSize = ypFs + 'px'; });
+  ypScheduleSave();
+};
+window.ypTextColor = function(v) {
+  document.querySelectorAll('.yp-td-name textarea').forEach(function(el){ el.style.color = v; });
+  ypScheduleSave();
+};
+
+// ── PDF oluştur ──
+window.ypMakePDF = function() {
+  var data = ypCollectData();
+  var rows = data.rows.map(function(r, i){
+    return '<tr>' +
+      '<td style="text-align:center;font-weight:800;color:#F7A31C;font-size:14px;padding:6px;">' + (i+1) + '</td>' +
+      '<td style="padding:4px;">' + (r.photo ? '<img src="' + r.photo + '" style="max-width:100px;max-height:80px;object-fit:contain;">' : '') + '</td>' +
+      '<td style="padding:8px 12px;font-size:' + data.fs + 'px;color:' + data.color + ';">' + (r.name||'').replace(/\n/g,'<br>') + '</td>' +
+      '<td style="padding:8px 10px;font-size:12px;text-align:center;">' + (r.num||'').replace(/\n/g,'<br>') + '</td>' +
+      '</tr>';
+  }).join('');
+
+  var logoHtml = data.logo
+    ? '<img src="' + data.logo + '" alt="Orimak" style="max-width:150px;height:auto;">'
+    : '<div style="font-family:Arial Black,sans-serif;font-size:28px;font-weight:900;color:#1A1A1A;letter-spacing:1px;">OR<span style="color:#F7A31C;">İ</span>MAK</div>';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<title>Orimak Yedek Parça Listesi</title>' +
+    '<style>' +
+      'body{margin:0;padding:0;font-family:Arial,sans-serif;}' +
+      '.top-bar{height:7px;background:#F7A31C;}' +
+      '.header{display:grid;grid-template-columns:200px 1fr 250px;background:#111;}' +
+      '.logo-zone{background:#fff;display:flex;align-items:center;justify-content:center;padding:12px;}' +
+      '.title-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;}' +
+      '.title-zone h1{font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;margin:0;text-transform:uppercase;}' +
+      '.title-zone h2{font-size:12px;color:#F7A31C;letter-spacing:3px;margin:4px 0 0;text-transform:uppercase;}' +
+      '.machine-zone{background:#F7A31C;display:flex;flex-direction:column;justify-content:center;padding:14px 16px;}' +
+      '.machine-zone label{font-size:9px;font-weight:700;color:rgba(0,0,0,0.5);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px;}' +
+      '.machine-zone .val{font-size:17px;font-weight:700;color:#1a1a1a;}' +
+      '.meta{display:grid;grid-template-columns:1fr 1fr 1fr;background:#1e1e1e;border-bottom:3px solid #F7A31C;padding:8px 18px;gap:12px;}' +
+      '.meta-field label{font-size:9px;font-weight:700;color:#F7A31C;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px;}' +
+      '.meta-field .val{font-size:12px;color:#ddd;}' +
+      'table{width:100%;border-collapse:collapse;}' +
+      'thead tr:first-child th{background:#111;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px;border-right:1px solid #2a2a2a;text-align:center;}' +
+      'thead tr:last-child th{background:#1e1e1e;color:#F7A31C;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px 7px;border-right:1px solid #2a2a2a;text-align:center;}' +
+      'tbody tr:nth-child(even){background:#F5F5F5;}' +
+      'tbody tr:nth-child(odd){background:#fff;}' +
+      'td{border:1px solid #DDD;vertical-align:middle;}' +
+      '.footer{background:#111;border-top:3px solid #F7A31C;padding:10px 18px;text-align:center;font-size:10px;color:rgba(255,255,255,0.45);font-style:italic;}' +
+      '.footer b{color:#F7A31C;font-style:normal;}' +
+      '.bot-bar{height:6px;background:#F7A31C;}' +
+      '@page{size:A4 landscape;margin:8mm;}' +
+      '*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+    '</style></head><body>' +
+    '<div class="top-bar"></div>' +
+    '<div class="header">' +
+      '<div class="logo-zone">' + logoHtml + '</div>' +
+      '<div class="title-zone"><h1>Yedek Parça Listesi</h1><h2>Spare Parts List</h2></div>' +
+      '<div class="machine-zone"><label>Makine Adı / Machine Name</label><div class="val">' + (data.machineName||'&nbsp;') + '</div></div>' +
+    '</div>' +
+    '<div class="meta">' +
+      '<div class="meta-field"><label>Döküman No / Doc No</label><div class="val">' + (data.docNo||'&nbsp;') + '</div></div>' +
+      '<div class="meta-field"><label>Tarih / Date</label><div class="val">' + (data.dateField||'&nbsp;') + '</div></div>' +
+      '<div class="meta-field"><label>Hazırlayan / Prepared by</label><div class="val">' + (data.preparedBy||'&nbsp;') + '</div></div>' +
+    '</div>' +
+    '<table><thead>' +
+      '<tr><th>NO</th><th>FOTOĞRAF</th><th>PARÇA ADI</th><th>PARÇA NUMARASI</th></tr>' +
+      '<tr><th></th><th>PHOTO</th><th>PART NAME</th><th>PART NUMBER</th></tr>' +
+    '</thead><tbody>' + rows + '</tbody></table>' +
+    '<div class="footer"><b>ORİMAK MAKİNA</b> SAN. TİC. LTD. ŞTİ. &nbsp;|&nbsp; Mahmudiye Mah. 19. Mobilya Sk. No:2/E İnegöl / BURSA &nbsp;|&nbsp; +90 224 718 62 68 &nbsp;|&nbsp; <b>www.orimak.com</b></div>' +
+    '<div class="bot-bar"></div>' +
+    '<script>window.onload=function(){window.print();}<\/script>' +
+    '</body></html>';
+
+  var w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+  else { alert('Lütfen açılır pencere engelini kaldırın.'); }
+};
+
+// ── Yardımcılar ──
+function ypShowBadge(msg, cls) {
+  var b = document.getElementById('ypSaveBadge');
+  b.textContent = msg; b.className = 'yp-save-badge show ' + (cls||'');
+  clearTimeout(b._t); b._t = setTimeout(function(){ b.className = 'yp-save-badge'; }, 3500);
+}
+function ypShowHint(msg) {
+  var h = document.getElementById('ypHint'); h.textContent = msg; h.classList.add('on');
+  clearTimeout(ypHintTimer); ypHintTimer = setTimeout(function(){ h.classList.remove('on'); }, 2200);
+}
+
+// ── Tab entegrasyonu: buildTabs ve buildSheets'i patch et ──
+var _origBuildTabs = window.buildTabs || null;
+var _origBuildSheets = window.buildSheets || null;
+var _origSwitchTab = window.switchTab || null;
+var _ypTabIdx = -1; // yedek parça tab index'i (her zaman sonda)
+
+function ypAddTab() {
+  var wrap = document.getElementById('tabsWrap');
+  _ypTabIdx = document.querySelectorAll('.tab-btn').length; // mevcut tab sayısı
+  var btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.id = 'tabBtn-yp';
+  btn.innerHTML = '🔧 Yedek Parça <span class="tab-count" id="ypTabCount">—</span>';
+  btn.onclick = function() { ypSwitchTo(); };
+  wrap.appendChild(btn);
+}
+
+window.ypSwitchTo = function() {
+  // Diğer sekmeleri kapat
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabBtn-yp').classList.add('active');
+  document.getElementById('ypanel').style.display = '';
+  // statsBar, toolBar, legendBar gizle — yedek parça kendi toolbar'ına sahip
+  ['statsBar','toolBar','legendBar'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+};
+
+function ypSwitchAway() {
+  document.getElementById('ypanel').style.display = 'none';
+  ['statsBar','toolBar','legendBar'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
+}
+
+// buildUI tamamlandıktan sonra tab ekle
+var _origBuildUI = window.buildUI;
+window.buildUI = function() {
+  _origBuildUI.apply(this, arguments);
+  ypCreatePanel();
+  ypAddTab();
+  // switchTab'ı patch et: yedek parça dışındaki sekme geçişlerinde paneli gizle
+  var _origST = window.switchTab;
+  window.switchTab = function(idx) {
+    _origST.apply(this, arguments);
+    ypSwitchAway();
+  };
+};
+
+})(); // IIFE sonu
 </script>
 </body>
 </html>
