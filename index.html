@@ -222,6 +222,96 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .sp-durum-onay{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
 .sp-durum-teslim{background:rgba(146,208,80,.15);color:#92d050;border:1px solid rgba(146,208,80,.3);}
 
+/* ═══════════════════════════════════════
+   SATIŞ FORMU PANELİ
+═══════════════════════════════════════ */
+.sf-wrap{padding:0;display:flex;flex-direction:column;height:100%;}
+/* ── Üst toolbar ── */
+.sf-toolbar{display:flex;align-items:center;gap:12px;padding:16px 24px 14px;border-bottom:1px solid #222;flex-wrap:wrap;background:#141414;position:sticky;top:0;z-index:10;}
+.sf-toolbar-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:var(--orange);flex:1;}
+.sf-search-wrap{position:relative;}
+.sf-search{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:6px;padding:7px 12px 7px 32px;color:#ccc;font-size:12px;font-family:'Barlow',sans-serif;width:220px;outline:none;transition:border-color .2s;}
+.sf-search:focus{border-color:var(--orange);}
+.sf-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#555;font-size:13px;pointer-events:none;}
+/* ── İstatistik kartları ── */
+.sf-stats{display:flex;gap:1px;border-bottom:1px solid #1e1e1e;overflow-x:auto;}
+.sf-stat{display:flex;flex-direction:column;align-items:center;padding:12px 20px;gap:3px;background:#161616;border-right:1px solid #1e1e1e;flex:1;min-width:90px;}
+.sf-stat:last-child{border-right:none;}
+.sf-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#eee;line-height:1;}
+.sf-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
+.sf-stat.c-orange .sf-stat-val{color:var(--orange);}
+.sf-stat.c-green  .sf-stat-val{color:#92D050;}
+.sf-stat.c-red    .sf-stat-val{color:#ff6666;}
+.sf-stat.c-blue   .sf-stat-val{color:#7ab8f5;}
+/* ── Kart Grid ── */
+.sf-cards-wrap{flex:1;overflow-y:auto;padding:20px 24px 40px;}
+.sf-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+/* ── Tek kart ── */
+.sf-card{background:#181818;border:1px solid #252525;border-radius:10px;overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column;}
+.sf-card:hover{border-color:#363636;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.sf-card-head{background:#1e1e1e;padding:12px 14px 10px;border-bottom:1px solid #252525;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.sf-card-machine{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:2px;color:var(--orange);line-height:1.1;}
+.sf-card-seri{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#555;letter-spacing:1px;margin-top:3px;}
+.sf-card-badge{flex-shrink:0;}
+.sf-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:12px;}
+.sf-badge-bekle{background:rgba(245,166,35,.12);color:#e0a020;border:1px solid rgba(245,166,35,.3);}
+.sf-badge-aktif{background:rgba(146,208,80,.12);color:#6ab830;border:1px solid rgba(146,208,80,.3);}
+.sf-badge-tamam{background:rgba(90,160,255,.12);color:#5a9fe0;border:1px solid rgba(90,160,255,.3);}
+.sf-badge-gecti{background:rgba(192,0,0,.12);color:#cc3333;border:1px solid rgba(192,0,0,.3);}
+.sf-card-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.sf-card-row{display:flex;align-items:baseline;gap:6px;}
+.sf-card-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#555;white-space:nowrap;min-width:90px;}
+.sf-card-val{font-size:12.5px;color:#ccc;font-family:'Barlow',sans-serif;line-height:1.3;}
+.sf-card-val.bold{font-weight:600;color:#ddd;}
+.sf-card-divider{height:1px;background:#222;margin:4px 0;}
+.sf-card-aciklama{font-size:11px;color:#666;font-family:'Barlow',sans-serif;font-style:italic;line-height:1.5;padding-top:4px;}
+.sf-card-foot{padding:10px 14px;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sf-card-tarih{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#555;letter-spacing:.8px;}
+.sf-card-actions{display:flex;gap:6px;}
+.sf-act-btn{border:none;border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .15s;}
+.sf-act-edit{background:rgba(245,166,35,.1);color:#d08010;border:1px solid rgba(245,166,35,.25);}
+.sf-act-edit:hover{background:rgba(245,166,35,.25);}
+.sf-act-del{background:rgba(192,0,0,.1);color:#c03030;border:1px solid rgba(192,0,0,.25);}
+.sf-act-del:hover{background:rgba(192,0,0,.25);}
+/* ── Boş durum ── */
+.sf-empty{text-align:center;padding:60px 24px;color:#444;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:2px;}
+.sf-empty-ico{font-size:40px;display:block;margin-bottom:12px;opacity:.4;}
+/* ── Termin bandı ── */
+.sf-card.termin-gecti{border-color:rgba(192,0,0,.4);box-shadow:0 0 0 1px rgba(192,0,0,.15);}
+.sf-card.termin-yakin{border-color:rgba(245,166,35,.4);}
+.sf-card.tamamlandi{opacity:.72;}
+.sf-termin-chip{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.8px;}
+.sf-termin-chip.gecti{background:rgba(192,0,0,.2);color:#ff4444;}
+.sf-termin-chip.yakin{background:rgba(245,166,35,.18);color:#F5A623;}
+.sf-termin-chip.tamam{background:rgba(146,208,80,.12);color:#6ab830;}
+/* ── SATIŞ MODAL ── */
+#satisModal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10500;display:none;align-items:center;justify-content:center;padding:16px;}
+#satisModal.open{display:flex;}
+.sm-box{background:#181818;border:1px solid #2a2a2a;border-top:3px solid var(--orange);border-radius:12px;width:640px;max-width:98vw;max-height:94vh;display:flex;flex-direction:column;box-shadow:0 32px 90px rgba(0,0,0,.85);}
+.sm-head{padding:18px 24px 14px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;}
+.sm-head h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;letter-spacing:3px;color:var(--orange);}
+.sm-body{padding:22px 24px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sm-field{display:flex;flex-direction:column;gap:6px;}
+.sm-field.full{grid-column:1/-1;}
+.sm-field label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;}
+.sm-field input,.sm-field select,.sm-field textarea{background:#1e1e1e;border:1px solid #303030;border-radius:6px;padding:9px 12px;color:#ddd;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;width:100%;box-sizing:border-box;}
+.sm-field input:focus,.sm-field select:focus,.sm-field textarea:focus{border-color:var(--orange);background:#222;}
+.sm-field input::placeholder,.sm-field textarea::placeholder{color:#3a3a3a;}
+.sm-field textarea{resize:vertical;min-height:72px;}
+.sm-field select option{background:#1a1a1a;color:#ddd;}
+.sm-foot{padding:14px 24px;border-top:1px solid #252525;display:flex;justify-content:flex-end;gap:10px;}
+.sm-btn{border:none;border-radius:7px;padding:10px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
+.sm-btn-save{background:var(--orange);color:#1a1a1a;}
+.sm-btn-cancel{background:#252525;color:#888;border:1px solid #333;}
+.sm-btn:hover{opacity:.85;}
+/* Satış panel — filtre sekmeler */
+.sf-filter-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid #1e1e1e;background:#141414;overflow-x:auto;}
+.sf-ftab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;padding:9px 14px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sf-ftab:hover{color:#aaa;}
+.sf-ftab.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+
+
 /* GRUP AÇ/KAPA */
 .group-row td{cursor:pointer;user-select:none;}
 .group-toggle{margin-right:8px;font-size:11px;display:inline-block;transition:transform .15s;}
@@ -1262,14 +1352,17 @@ function buildSiparisPanel(si) {
   wrap.style.cssText = 'padding:16px;';
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">SATIŞ TAKİP FORMU</div>
-      ${window._currentRole !== 'viewer' ? `<button onclick="openSiparisEkle()" class="add-row-btn">＋ Yeni Kayıt</button>` : ''}
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">ÜRETİMDEN SATIN ALMAYA SİPARİŞ FORMU</div>
+      ${window._currentRole !== 'viewer' ? `<button onclick="openSiparisEkle()" class="add-row-btn">＋ Yeni Sipariş</button>` : ''}
     </div>
     <div class="table-wrap">
       <table id="siparisTable">
         <thead><tr>
-          <th>NO</th><th>MAKİNE İSMİ</th><th>SATILDIĞI FİRMA</th><th>MAKİNE YÖNÜ</th>
-          <th>OPSİYON ÖZELLİK</th><th>TERMİN TARİHİ</th><th>NOTLAR</th><th>DURUM</th><th>İŞLEMLER</th>
+          <th>NO</th><th>ÜRÜN KODU</th><th>ÜRÜN ADI</th><th>SİP. ADEDİ</th>
+          <th>SİPARİŞİ OLUŞTURAN</th><th>YETKİLİ ONAYI</th>
+          <th>OLUŞTURMA TARİHİ</th><th>TERMİN TARİHİ</th>
+          <th>GELİŞ TARİHİ</th><th>GELİŞ ONAYI</th>
+          <th>GELEN ADET</th><th>SİPARİŞ DURUMU</th><th>NOTLAR</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
         </tr></thead>
         <tbody id="siparisBody"></tbody>
       </table>
@@ -1284,39 +1377,39 @@ function renderSiparisRows() {
   const rows = getSiparisRows();
   tbody.innerHTML = '';
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz sipariş yok — ＋ Yeni Sipariş ile ekleyin</td></tr>';
     return;
   }
   rows.forEach((r, i) => {
-    const makineIsmi = r.makineIsmi || r.urunAdi || r.urunKodu || '';
-    const satildigiFirma = r.satildigiFirma || r.olusturan || '';
-    const makineYonu = r.makineYonu || '';
-    const opsiyonOzellik = r.opsiyonOzellik || '';
-    const notlar = r.notlar || '';
+    // Teslim kayıttan geliş bilgisini çek
+    const teslimRows = getTeslimRows();
+    const teslim = teslimRows.find(t => t.urunKodu === r.urunKodu);
+    const gelisAdet = teslim ? teslim.gelisAdet : '';
+    const gelisTarihi = teslim ? teslim.gelisTarihi : '';
+    const teslimAlan = teslim ? teslim.teslimAlan : '';
 
-    let durum = 'Planlandı';
+    // Durum hesapla
+    let durum = 'Yeni Sipariş';
     let durumClass = 'sp-durum-yeni';
-    if (r.gelisOnay === 'Onaylandı') {
-      durum = 'Teslim Edildi';
-      durumClass = 'sp-durum-teslim';
-    } else if (isTerminYakin(r.terminTarihi)) {
-      durum = 'Termin Yakın';
-      durumClass = 'sp-durum-onay';
-    }
+    if (teslim || r.gelisOnay === 'Onaylandı') { durum = 'Teslim Alındı'; durumClass = 'sp-durum-teslim'; }
+    else if (r.yetkiliOnay === 'Onaylandı') { durum = 'Onay Bekliyor'; durumClass = 'sp-durum-onay'; }
 
-    function getSiparisRowClass(r) {
-      if (r.gelisOnay === 'Onaylandı') return 'status-gelis';
+    // Satır rengi — diğer sayfalarla aynı mantık
+    function getSiparisRowClass(r, teslim) {
+      if (teslim || r.gelisOnay === 'Onaylandı') return 'status-gelis';
+      // Termin geçmişse ve teslim yoksa kırmızı
       const terminD = parseTerminDate(r.terminTarihi || '');
       if (terminD) {
         const bugun = new Date(); bugun.setHours(0,0,0,0);
         if (terminD < bugun) return 'status-eksik';
       }
-      if (isTerminYakin(r.terminTarihi)) return 'status-onay';
+      if (r.yetkiliOnay === 'Onaylandı') return 'status-onay';
+      if (r.yetkiliOnay === 'Beklemede') return 'status-bekle';
       return '';
     }
 
     const tr = document.createElement('tr');
-    tr.className = 'data-row ' + getSiparisRowClass(r);
+    tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
 
     function mkTd(html, style) {
       const td = document.createElement('td');
@@ -1332,13 +1425,39 @@ function renderSiparisRows() {
     }
 
     tr.appendChild(mkTd(String(i+1), 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
-    tr.appendChild(mkTd(makineIsmi, "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
-    tr.appendChild(mkTd(satildigiFirma || '—'));
-    tr.appendChild(mkTd(makineYonu || '—', 'text-align:center;'));
-    tr.appendChild(mkTd(opsiyonOzellik || '—', 'font-size:11px;line-height:1.4;'));
+    tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
+    tr.appendChild(mkTd(r.urunAdi||''));
+    tr.appendChild(mkTd(r.sipAdet||'', 'text-align:center;'));
+    tr.appendChild(mkTd(r.olusturan||''));
+    const yetkiliTd = document.createElement('td');
+    const yetkiliDiv = document.createElement('div');
+    yetkiliDiv.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
+    const yetkiliSipSel = mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => {
+      rows[i].yetkiliOnay = v;
+      if (v === 'Onaylandı') {
+        const kisi = window._currentUser || '?';
+        const tarih = new Date().toLocaleDateString('tr-TR');
+        rows[i].yetkiliOnayKisi = kisi + ' · ' + tarih;
+      } else {
+        rows[i].yetkiliOnayKisi = '';
+      }
+      saveSiparisRows(); renderSiparisRows();
+    }, true);
+    yetkiliDiv.appendChild(yetkiliSipSel);
+    const yetkiliKisiSip = document.createElement('div');
+    yetkiliKisiSip.className = 'onaylayan-kisi';
+    yetkiliKisiSip.textContent = r.yetkiliOnayKisi || '';
+    yetkiliDiv.appendChild(yetkiliKisiSip);
+    yetkiliTd.appendChild(yetkiliDiv);
+    tr.appendChild(yetkiliTd);
+    tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#888;'));
     tr.appendChild(mkTd(r.terminTarihi||'', 'font-size:11px;' + (isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':'')));
-    tr.appendChild(mkTd(notlar || '—', 'font-size:11px;color:#888;line-height:1.4;'));
+    tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })));
+    tr.appendChild(mkTd(String(gelisAdet||''), 'text-align:center;'));
     tr.appendChild(mkTd(`<span class="sp-durum ${durumClass}">${durum}</span>`));
+    tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#888;'));
 
     const tdAct = document.createElement('td');
     const actDiv = document.createElement('div');
@@ -1398,6 +1517,7 @@ async function saveSiparisRows() {
 function openSiparisEkle(editIdx = -1) {
   const rows = getSiparisRows();
   const r = editIdx >= 0 ? rows[editIdx] : {};
+  const bugun = new Date().toLocaleDateString('tr-TR');
 
   const overlay = document.createElement('div');
   overlay.id = 'siparisModal';
@@ -1405,16 +1525,17 @@ function openSiparisEkle(editIdx = -1) {
   overlay.innerHTML = `
     <div style="background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);">
       <div style="padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;">
-        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);">${editIdx>=0?'✏️ SATIŞ KAYDI DÜZENLE':'➕ YENİ SATIŞ KAYDI'}</h3>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);">${editIdx>=0?'✏️ SİPARİŞ DÜZENLE':'➕ YENİ SİPARİŞ'}</h3>
         <button onclick="document.getElementById('siparisModal').remove()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;">✕</button>
       </div>
       <div style="padding:20px 24px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        ${siparisField('Makine İsmi','sp_makine',r.makineIsmi||r.urunAdi||'')}
-        ${siparisField('Satıldığı Firma','sp_firma',r.satildigiFirma||r.olusturan||'')}
-        ${siparisField('Makine Yönü','sp_yon',r.makineYonu||'')}
+        ${siparisField('Ürün Kodu','sp_kod',r.urunKodu||'')}
+        ${siparisField('Ürün Adı','sp_ad',r.urunAdi||'','full')}
+        ${siparisField('Sipariş Adedi','sp_adet',r.sipAdet||'')}
+        ${siparisField('Sipariş Oluşturan','sp_olusturan',r.olusturan||'')}
+        ${siparisField('Oluşturma Tarihi','sp_otar',r.olusturmaTarihi||bugun)}
         ${siparisField('Termin Tarihi','sp_termin',r.terminTarihi||'')}
-        ${siparisTextareaField('Opsiyon Özellik','sp_opsiyon',r.opsiyonOzellik||'','full')}
-        ${siparisTextareaField('Notlar','sp_notlar',r.notlar||'','full')}
+        ${siparisField('Notlar','sp_notlar',r.notlar||'','full')}
       </div>
       <div style="padding:16px 24px;border-top:1px solid #2a2a2a;display:flex;gap:8px;justify-content:flex-end;">
         <button onclick="document.getElementById('siparisModal').remove()" style="padding:10px 18px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;">İptal</button>
@@ -1425,11 +1546,6 @@ function openSiparisEkle(editIdx = -1) {
 }
 window.openSiparisEkle = openSiparisEkle;
 
-function buildSiparisKayitKodu(makineIsmi, firma) {
-  const kaynak = `${makineIsmi}-${firma}`.toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return kaynak || `SATIS-${Date.now()}`;
-}
-
 function siparisField(label, id, val, cls='') {
   return `<div style="${cls==='full'?'grid-column:1/-1;':''}">
     <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">${label}</label>
@@ -1437,31 +1553,15 @@ function siparisField(label, id, val, cls='') {
   </div>`;
 }
 
-function siparisTextareaField(label, id, val, cls='') {
-  return `<div style="${cls==='full'?'grid-column:1/-1;':''}">
-    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">${label}</label>
-    <textarea id="${id}" style="width:100%;min-height:84px;resize:vertical;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='#3a3a3a'">${(val||'').replace(/</g,'&lt;')}</textarea>
-  </div>`;
-}
-
 async function saveSiparis(editIdx) {
   const si = getSiparisIdx();
   const rows = getSiparisRows();
-  const makineIsmi = document.getElementById('sp_makine').value.trim();
-  const satildigiFirma = document.getElementById('sp_firma').value.trim();
-  if (!makineIsmi) {
-    alert('Makine ismi boş bırakılamaz.');
-    return;
-  }
   const yeni = {
-    makineIsmi,
-    satildigiFirma,
-    makineYonu: document.getElementById('sp_yon').value.trim(),
-    opsiyonOzellik: document.getElementById('sp_opsiyon').value.trim(),
-    urunKodu: editIdx >= 0 ? (rows[editIdx].urunKodu || buildSiparisKayitKodu(makineIsmi, satildigiFirma)) : buildSiparisKayitKodu(makineIsmi, satildigiFirma),
-    urunAdi: makineIsmi,
-    olusturan: satildigiFirma,
-    olusturmaTarihi: editIdx >= 0 ? (rows[editIdx].olusturmaTarihi || new Date().toLocaleDateString('tr-TR')) : new Date().toLocaleDateString('tr-TR'),
+    urunKodu: document.getElementById('sp_kod').value.trim(),
+    urunAdi: document.getElementById('sp_ad').value.trim(),
+    sipAdet: document.getElementById('sp_adet').value.trim(),
+    olusturan: document.getElementById('sp_olusturan').value.trim(),
+    olusturmaTarihi: document.getElementById('sp_otar').value.trim(),
     terminTarihi: document.getElementById('sp_termin').value.trim(),
     notlar: document.getElementById('sp_notlar').value.trim(),
     yetkiliOnay: editIdx >= 0 ? (rows[editIdx].yetkiliOnay||'') : '',
@@ -1482,7 +1582,7 @@ function editSiparis(idx) { openSiparisEkle(idx); }
 window.editSiparis = editSiparis;
 
 async function deleteSiparis(idx) {
-  if (!confirm('Bu satış kaydını silmek istediğinizden emin misiniz?')) return;
+  if (!confirm('Bu siparişi silmek istediğinizden emin misiniz?')) return;
   const si = getSiparisIdx();
   SHEETS[si].rows.splice(idx, 1);
   if (isOnline) await fbSaveAll();
@@ -1516,6 +1616,343 @@ window.buildSiparisPanel = buildSiparisPanel;
 window.buildTeslimPanel = buildTeslimPanel;
 window.renderSiparisRows = renderSiparisRows;
 window.renderTeslimRows = renderTeslimRows;
+
+// ╔═══════════════════════════════════════════════════════════════╗
+// ║               SATIŞ FORMU PANELİ                             ║
+// ╚═══════════════════════════════════════════════════════════════╝
+
+(function() {
+
+var _sfEditIdx = -1;   // -1 = yeni kayıt
+var _sfFilter  = 'hepsi'; // aktif filtre sekmesi
+var _sfSearch  = '';
+
+function getSatisSheet() {
+  return SHEETS.find(function(s){ return s.type === 'satis'; });
+}
+function getSatisRows() {
+  var s = getSatisSheet();
+  return s ? (s.rows || []) : [];
+}
+
+// ── Termin durumu hesapla ──
+function terminDurum(t) {
+  if (!t) return 'yok';
+  var p = t.split('.');
+  var d = p.length === 3 ? new Date(p[2], p[1]-1, p[0]) : new Date(t);
+  if (isNaN(d)) return 'yok';
+  var now = new Date(); now.setHours(0,0,0,0);
+  var diff = Math.round((d - now) / 86400000);
+  if (diff < 0)  return 'gecti';
+  if (diff <= 14) return 'yakin';
+  return 'tamam';
+}
+function terminLabel(t) {
+  if (!t) return '';
+  var td = terminDurum(t);
+  var ico = td === 'gecti' ? '⚠ ' : td === 'yakin' ? '⏰ ' : '';
+  return ico + t;
+}
+function formatTarihinputToTR(v) {
+  // YYYY-MM-DD → DD.MM.YYYY
+  if (!v) return '';
+  var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? m[3]+'.'+m[2]+'.'+m[1] : v;
+}
+function formatTRtoInput(v) {
+  // DD.MM.YYYY → YYYY-MM-DD
+  if (!v) return '';
+  var m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  return m ? m[3]+'-'+m[2]+'-'+m[1] : v;
+}
+
+// ── Panel inşa et ──
+window.buildSatisPanel = function(si) {
+  var role = window._currentRole || 'viewer';
+  var canEdit = (role === 'admin' || role === 'manager');
+
+  var wrap = document.createElement('div');
+  wrap.className = 'sf-wrap';
+
+  // Toolbar
+  var tb = document.createElement('div');
+  tb.className = 'sf-toolbar';
+  tb.innerHTML =
+    '<div class="sf-toolbar-title">💼 SATIŞ FORMU</div>' +
+    '<div class="sf-search-wrap"><span class="sf-search-ico">🔍</span>' +
+    '<input class="sf-search" id="sfSearch" type="text" placeholder="Makine, firma, il, seri no..."' +
+    ' oninput="window._sfSearchChange(this.value)"/></div>' +
+    (canEdit ? '<button class="add-row-btn" onclick="window.openSatisYeni()" style="white-space:nowrap;">＋ Yeni Kayıt</button>' : '');
+  wrap.appendChild(tb);
+
+  // İstatistik bar
+  var stats = document.createElement('div');
+  stats.className = 'sf-stats';
+  stats.innerHTML =
+    '<div class="sf-stat"><div class="sf-stat-val" id="sfStatToplam">0</div><div class="sf-stat-lbl">Toplam</div></div>' +
+    '<div class="sf-stat c-orange"><div class="sf-stat-val" id="sfStatBekle">0</div><div class="sf-stat-lbl">Beklemede</div></div>' +
+    '<div class="sf-stat c-green"><div class="sf-stat-val" id="sfStatAktif">0</div><div class="sf-stat-lbl">Aktif / Üretimde</div></div>' +
+    '<div class="sf-stat c-blue"><div class="sf-stat-val" id="sfStatTamam">0</div><div class="sf-stat-lbl">Tamamlandı</div></div>' +
+    '<div class="sf-stat c-red"><div class="sf-stat-val" id="sfStatGecti">0</div><div class="sf-stat-lbl">Termin Geçti</div></div>';
+  wrap.appendChild(stats);
+
+  // Filtre sekmeleri
+  var ftabs = document.createElement('div');
+  ftabs.className = 'sf-filter-tabs';
+  ftabs.id = 'sfFilterTabs';
+  [
+    ['hepsi','Tümü'], ['bekle','Beklemede'], ['aktif','Aktif'],
+    ['tamam','Tamamlandı'], ['gecti','Termin Geçti']
+  ].forEach(function(pair) {
+    var btn = document.createElement('button');
+    btn.className = 'sf-ftab' + (pair[0] === _sfFilter ? ' active' : '');
+    btn.dataset.filter = pair[0];
+    btn.textContent = pair[1];
+    btn.onclick = function(){ window._sfSetFilter(pair[0]); };
+    ftabs.appendChild(btn);
+  });
+  wrap.appendChild(ftabs);
+
+  // Kart grid alanı
+  var cardsWrap = document.createElement('div');
+  cardsWrap.className = 'sf-cards-wrap';
+  cardsWrap.id = 'sfCardsWrap';
+  cardsWrap.innerHTML = '<div class="sf-cards-grid" id="sfCardsGrid"></div>';
+  wrap.appendChild(cardsWrap);
+
+  setTimeout(function(){ sfRenderCards(); }, 0);
+  return wrap;
+};
+
+// ── Kartları render et ──
+function sfRenderCards() {
+  var grid = document.getElementById('sfCardsGrid');
+  if (!grid) return;
+  var role = window._currentRole || 'viewer';
+  var canEdit = (role === 'admin' || role === 'manager');
+  var rows = getSatisRows();
+
+  // Filtrele
+  var filtered = rows.filter(function(r) {
+    // Arama filtresi
+    var q = (_sfSearch || '').toLowerCase();
+    if (q) {
+      var haystack = [r.makineAdi, r.yon, r.opsiyon, r.firma, r.il, r.seriNo, r.aciklama, r.durum]
+        .map(function(v){ return (v||'').toLowerCase(); }).join(' ');
+      if (haystack.indexOf(q) === -1) return false;
+    }
+    // Sekme filtresi
+    var td = terminDurum(r.terminTarihi);
+    if (_sfFilter === 'bekle')  return r.durum !== 'Aktif' && r.durum !== 'Tamamlandı' && td !== 'gecti';
+    if (_sfFilter === 'aktif')  return r.durum === 'Aktif';
+    if (_sfFilter === 'tamam')  return r.durum === 'Tamamlandı';
+    if (_sfFilter === 'gecti')  return td === 'gecti' && r.durum !== 'Tamamlandı';
+    return true;
+  });
+
+  // İstatistik güncelle
+  var total = rows.length;
+  var bekle = rows.filter(function(r){ return r.durum !== 'Aktif' && r.durum !== 'Tamamlandı' && terminDurum(r.terminTarihi) !== 'gecti'; }).length;
+  var aktif = rows.filter(function(r){ return r.durum === 'Aktif'; }).length;
+  var tamam = rows.filter(function(r){ return r.durum === 'Tamamlandı'; }).length;
+  var gecti = rows.filter(function(r){ return terminDurum(r.terminTarihi) === 'gecti' && r.durum !== 'Tamamlandı'; }).length;
+  function setS(id, v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+  setS('sfStatToplam', total); setS('sfStatBekle', bekle);
+  setS('sfStatAktif', aktif); setS('sfStatTamam', tamam); setS('sfStatGecti', gecti);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="sf-empty"><span class="sf-empty-ico">💼</span>' +
+      (_sfSearch ? 'Arama sonucu bulunamadı' : 'Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin') + '</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  filtered.forEach(function(r) {
+    var ri = rows.indexOf(r);
+    var td = terminDurum(r.terminTarihi);
+    var cardClass = 'sf-card' +
+      (r.durum === 'Tamamlandı' ? ' tamamlandi' : '') +
+      (td === 'gecti' && r.durum !== 'Tamamlandı' ? ' termin-gecti' : '') +
+      (td === 'yakin' && r.durum !== 'Tamamlandı' ? ' termin-yakin' : '');
+
+    // Durum badge
+    var badgeCls = '', badgeTxt = '';
+    if (r.durum === 'Tamamlandı') { badgeCls='sf-badge-tamam'; badgeTxt='📦 Tamamlandı'; }
+    else if (r.durum === 'Aktif') { badgeCls='sf-badge-aktif'; badgeTxt='✅ Aktif'; }
+    else if (td === 'gecti')      { badgeCls='sf-badge-gecti'; badgeTxt='⚠ Termin Geçti'; }
+    else                           { badgeCls='sf-badge-bekle'; badgeTxt='⏳ Beklemede'; }
+
+    // Termin chip
+    var terminChip = '';
+    if (r.terminTarihi) {
+      terminChip = '<span class="sf-termin-chip ' + td + '">' + terminLabel(r.terminTarihi) + '</span>';
+    }
+
+    var actBtns = canEdit
+      ? '<button class="sf-act-btn sf-act-edit" onclick="window.openSatisEdit('+ri+')">✏️ Düzenle</button>' +
+        '<button class="sf-act-btn sf-act-del"  onclick="window.deleteSatisRow('+ri+')">✕ Sil</button>'
+      : '';
+
+    function sfRow(lbl, val) {
+      if (!val && val !== 0) return '';
+      return '<div class="sf-card-row"><span class="sf-card-lbl">'+lbl+'</span><span class="sf-card-val">'+esc(val)+'</span></div>';
+    }
+
+    var card = document.createElement('div');
+    card.className = cardClass;
+    card.innerHTML =
+      '<div class="sf-card-head">' +
+        '<div>' +
+          '<div class="sf-card-machine">'+esc(r.makineAdi||'—')+'</div>' +
+          '<div class="sf-card-seri">'+(r.seriNo?'S/N: '+esc(r.seriNo):'&nbsp;')+'</div>' +
+        '</div>' +
+        '<div class="sf-card-badge"><span class="sf-badge '+badgeCls+'">'+badgeTxt+'</span></div>' +
+      '</div>' +
+      '<div class="sf-card-body">' +
+        sfRow('Yön', r.yon) +
+        sfRow('Opsiyon / Özellik', r.opsiyon) +
+        '<div class="sf-card-divider"></div>' +
+        sfRow('Firma', r.firma) +
+        sfRow('İl / Şehir', r.il) +
+        '<div class="sf-card-divider"></div>' +
+        '<div class="sf-card-row"><span class="sf-card-lbl">Termin</span><span class="sf-card-val">' +
+          (r.terminTarihi ? terminChip : '<span style="color:#444;">—</span>') +
+        '</span></div>' +
+        (r.aciklama ? '<div class="sf-card-divider"></div><div class="sf-card-aciklama">'+esc(r.aciklama)+'</div>' : '') +
+      '</div>' +
+      '<div class="sf-card-foot">' +
+        '<span class="sf-card-tarih">'+(r.kayitTarihi?'📅 '+esc(r.kayitTarihi):'')+'</span>' +
+        '<div class="sf-card-actions">'+actBtns+'</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Filtre / arama ──
+window._sfSetFilter = function(f) {
+  _sfFilter = f;
+  document.querySelectorAll('.sf-ftab').forEach(function(b){
+    b.classList.toggle('active', b.dataset.filter === f);
+  });
+  sfRenderCards();
+};
+window._sfSearchChange = function(v) {
+  _sfSearch = v;
+  sfRenderCards();
+};
+
+// ── Modal aç/kapat ──
+window.openSatisYeni = function() {
+  _sfEditIdx = -1;
+  sfModalTitle('➕ YENİ SATIŞ KAYDI');
+  sfModalClear();
+  sfModalOpen();
+};
+window.openSatisEdit = function(ri) {
+  var rows = getSatisRows();
+  var r = rows[ri];
+  if (!r) return;
+  _sfEditIdx = ri;
+  sfModalTitle('✏️ SATIŞ KAYDINI DÜZENLE');
+  sfModalFill(r);
+  sfModalOpen();
+};
+window.closeSatisModal = function() {
+  var m = document.getElementById('satisModal');
+  if (m) m.classList.remove('open');
+};
+
+function sfModalOpen() {
+  var m = document.getElementById('satisModal');
+  if (m) { m.classList.add('open'); sfFocus('sfMakineAdi'); }
+}
+function sfModalTitle(t) {
+  var el = document.getElementById('sfModalTitle');
+  if (el) el.textContent = t;
+}
+function sfFocus(id) { setTimeout(function(){ var el=document.getElementById(id); if(el) el.focus(); }, 80); }
+
+function sfModalClear() {
+  ['sfMakineAdi','sfYon','sfOpsiyon','sfFirma','sfIl','sfSeriNo','sfTermin','sfDurum','sfAciklama']
+    .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  var dur = document.getElementById('sfDurum');
+  if (dur) dur.value = 'Beklemede';
+}
+function sfModalFill(r) {
+  function set(id, v){ var el=document.getElementById(id); if(el) el.value=v||''; }
+  set('sfMakineAdi', r.makineAdi);
+  set('sfYon',       r.yon);
+  set('sfOpsiyon',   r.opsiyon);
+  set('sfFirma',     r.firma);
+  set('sfIl',        r.il);
+  set('sfSeriNo',    r.seriNo);
+  set('sfTermin',    formatTRtoInput(r.terminTarihi));
+  set('sfDurum',     r.durum || 'Beklemede');
+  set('sfAciklama',  r.aciklama);
+}
+
+// ── Kaydet ──
+window.saveSatisRow = function() {
+  var makineAdi = (document.getElementById('sfMakineAdi')||{}).value || '';
+  var firma     = (document.getElementById('sfFirma')||{}).value || '';
+  makineAdi = makineAdi.trim(); firma = firma.trim();
+  if (!makineAdi) { alert('Makine adı zorunludur!'); sfFocus('sfMakineAdi'); return; }
+  if (!firma)     { alert('Firma adı zorunludur!');  sfFocus('sfFirma'); return; }
+
+  var terminRaw = (document.getElementById('sfTermin')||{}).value || '';
+  var row = {
+    makineAdi  : makineAdi,
+    yon        : ((document.getElementById('sfYon')||{}).value||'').trim(),
+    opsiyon    : ((document.getElementById('sfOpsiyon')||{}).value||'').trim(),
+    firma      : firma,
+    il         : ((document.getElementById('sfIl')||{}).value||'').trim(),
+    seriNo     : ((document.getElementById('sfSeriNo')||{}).value||'').trim(),
+    terminTarihi: formatTarihinputToTR(terminRaw),
+    durum      : (document.getElementById('sfDurum')||{}).value || 'Beklemede',
+    aciklama   : ((document.getElementById('sfAciklama')||{}).value||'').trim(),
+    kayitTarihi: new Date().toLocaleDateString('tr-TR'),
+    olusturan  : window._currentUser || ''
+  };
+
+  var sheet = getSatisSheet();
+  if (!sheet) return;
+  if (!sheet.rows) sheet.rows = [];
+
+  if (_sfEditIdx >= 0) {
+    row.kayitTarihi = sheet.rows[_sfEditIdx].kayitTarihi || row.kayitTarihi;
+    sheet.rows[_sfEditIdx] = row;
+  } else {
+    sheet.rows.push(row);
+  }
+
+  window.closeSatisModal();
+  sfRenderCards();
+  if (typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
+};
+
+// ── Sil ──
+window.deleteSatisRow = function(ri) {
+  var rows = getSatisRows();
+  var r = rows[ri];
+  if (!r) return;
+  var label = r.firma ? '"'+r.firma+'" — '+r.makineAdi : r.makineAdi;
+  if (!confirm(label + ' kaydı silinsin mi?')) return;
+  var sheet = getSatisSheet();
+  if (sheet && sheet.rows) sheet.rows.splice(ri, 1);
+  sfRenderCards();
+  if (typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
+};
+
+// renderSatisRows — dışarıdan çağrılabilir (Firebase sync sonrası)
+window.renderSatisRows = function() { sfRenderCards(); };
+
+})();
+
+
 
 function renderTeslimRows() {
   const tbody = document.getElementById('teslimBody');
@@ -1789,11 +2226,11 @@ function getTerminUrunler(gunSinir = 7) {
         if (r.gelisOnay === 'Onaylandı') return;
         if (termin >= bugun && termin <= sinir) {
           const kalan = Math.round((termin - bugun) / (1000*60*60*24));
-          sonuclar.push({ si, ri, ad: r.makineIsmi || r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan });
+          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan });
         }
         if (termin < bugun) {
           const gecen = Math.round((bugun - termin) / (1000*60*60*24));
-          sonuclar.push({ si, ri, ad: r.makineIsmi || r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan: -gecen, gecikti: true });
+          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan: -gecen, gecikti: true });
         }
       });
       return;
@@ -6120,13 +6557,18 @@ const OFFLINE_DATA = [
     ]
   },
   {
-    "name": "SATIŞ TAKİP",
+    "name": "SİPARİŞ FORMU",
     "type": "siparis",
     "rows": []
   },
   {
     "name": "TESLİM KAYIT",
     "type": "teslim",
+    "rows": []
+  },
+  {
+    "name": "SATIŞ FORMU",
+    "type": "satis",
     "rows": []
   }
 ];
@@ -6164,7 +6606,7 @@ function buildState() {
   state = {};
   SHEETS.forEach((sheet, si) => {
     state[si] = { rows: [], name: sheet.name };
-    if (sheet.type === 'siparis' || sheet.type === 'teslim') return; // özel sayfalar
+    if (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis') return; // özel sayfalar
     let no = 0;
     sheet.rows.forEach(row => {
       const g = isGroupRow(row);
@@ -6238,7 +6680,7 @@ function buildTabs() {
   });
 
   function getSheetCount(i, sheet) {
-    return (sheet.type === 'siparis' || sheet.type === 'teslim')
+    return (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis')
       ? (SHEETS[i].rows || []).length
       : (state[i] && state[i].rows ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
   }
@@ -6271,11 +6713,7 @@ function buildTabs() {
       // Alt kategori etiketi — Talaşlı İmalat mı, Malzeme Sipariş Listesi mi?
       let label = sheet.name;
       const upper = sheet.name.toUpperCase();
-      if (sheet.type === 'siparis') {
-        label = '📈 Satış Takip';
-      } else if (sheet.type === 'teslim') {
-        label = '📦 Teslim Kayıt';
-      } else if (upper.includes('TALAŞLI') || upper.includes('TALASLI')) {
+      if (upper.includes('TALAŞLI') || upper.includes('TALASLI')) {
         label = '🔧 Talaşlı İmalat';
       } else if (upper.includes('SİPARİŞ') || upper.includes('SIPARIS') || upper.includes('HAZIR')) {
         label = '📋 Malzeme Sipariş Listesi';
@@ -6314,18 +6752,14 @@ function buildTabs() {
     wrap.appendChild(div);
   });
 
-  // Gruba girmeyen serbest sayfalar (SİPARİŞ FORMU, TESLİM KAYIT, vb.)
+  // Gruba girmeyen serbest sayfalar (SİPARİŞ FORMU, TESLİM KAYIT, SATIŞ FORMU vb.)
   freeSheets.forEach(({ idx, sheet }) => {
     const cnt = getSheetCount(idx, sheet);
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
     btn.id = 'tabBtn-' + idx;
-    const label = sheet.type === 'siparis'
-      ? '📈 Satış Takip'
-      : sheet.type === 'teslim'
-        ? '📦 Teslim Kayıt'
-        : sheet.name;
-    btn.innerHTML = label + '<span class="tab-count">' + cnt + '</span>';
+    const ico = sheet.type === 'siparis' ? '📋 ' : sheet.type === 'teslim' ? '📬 ' : sheet.type === 'satis' ? '💼 ' : '📄 ';
+    btn.innerHTML = ico + sheet.name + '<span class="tab-count">' + cnt + '</span>';
     btn.onclick = () => switchTab(idx);
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
@@ -6377,7 +6811,7 @@ function switchTab(idx) {
   filterTable('');
   updateStats(idx);
   const addRowBtn = document.getElementById('addRowBtn');
-  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
+  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim' || SHEETS[idx].type === 'satis');
   const role = window._currentRole || 'viewer';
   const canAddRow = (role === 'admin' || role === 'manager');
   if (addRowBtn) {
@@ -6480,7 +6914,7 @@ function applyGlobalMakine() {
   const si = activeSheet;
   if (!state[si] || !state[si].rows) return;
   // Sipariş/teslim sayfaları farklı, sadece normal sayfalar
-  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim')) {
+  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis')) {
     alert('Bu sayfada makine sayısı uygulaması çalışmaz.');
     return;
   }
@@ -6533,6 +6967,11 @@ function buildSheets() {
     }
     if (sheet.type === 'teslim') {
       try { panel.appendChild(window.buildTeslimPanel(si)); } catch(e) { console.warn('teslim panel hatası:', e); }
+      container.appendChild(panel);
+      return;
+    }
+    if (sheet.type === 'satis') {
+      try { panel.appendChild(window.buildSatisPanel(si)); } catch(e) { console.warn('satis panel hatası:', e); }
       container.appendChild(panel);
       return;
     }
@@ -6892,7 +7331,7 @@ async function loadData() {
     if (snap.exists() && snap.data().data) {
       const freshSheets = JSON.parse(snap.data().data);
       // Eksik özel sayfaları OFFLINE_DATA'dan ekle
-      ['siparis','teslim'].forEach(tip => {
+      ['siparis','teslim','satis'].forEach(tip => {
         if (!freshSheets.find(s => s.type === tip)) {
           const template = OFFLINE_DATA.find(s => s.type === tip);
           if (template) freshSheets.push(JSON.parse(JSON.stringify(template)));
@@ -6923,7 +7362,7 @@ async function loadData() {
       if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
-        ['siparis','teslim'].forEach(tip => {
+        ['siparis','teslim','satis'].forEach(tip => {
           if (!updated.find(s => s.type === tip)) {
             const existing = SHEETS.find(s => s.type === tip);
             if (existing) updated.push(existing);
@@ -6935,6 +7374,7 @@ async function loadData() {
         updateStats(activeSheet);
         renderSiparisRows();
         renderTeslimRows();
+        if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
     });
@@ -6981,13 +7421,13 @@ function openModal() {
   fSheet.innerHTML = '';
   let firstIdx = -1;
   SHEETS.forEach((s, i) => {
-    if (s.type === 'siparis' || s.type === 'teslim') return;
+    if (s.type === 'siparis' || s.type === 'teslim' || s.type === 'satis') return;
     const o = document.createElement('option');
     o.value = i; o.textContent = s.name;
     if (firstIdx === -1) firstIdx = i;
     fSheet.appendChild(o);
   });
-  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim')
+  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim' && SHEETS[activeSheet].type !== 'satis')
     ? activeSheet : firstIdx;
   if (defaultIdx >= 0) {
     fSheet.value = defaultIdx;
@@ -7015,7 +7455,7 @@ function closeModalOutside(e) { if (e.target === document.getElementById('modalO
 async function addRow() {
   const si = parseInt(document.getElementById('fSheet').value);
   // Sipariş/teslim sayfasına ekleme yapılamaz
-  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim') {
+  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis') {
     alert('Bu sayfaya satır eklenemez. Lütfen malzeme listesi sayfalarından birini seçin.');
     return;
   }
@@ -8936,5 +9376,83 @@ if (window._db) setTimeout(stLoad, 1800);
 
 })();
 </script>
+
+<!-- ╔══════════════════════════════════════════════╗
+     ║          SATIŞ FORMU MODAL                  ║
+     ╚══════════════════════════════════════════════╝ -->
+<div id="satisModal" onclick="if(event.target===this)window.closeSatisModal()">
+  <div class="sm-box">
+    <div class="sm-head">
+      <h2 id="sfModalTitle">➕ YENİ SATIŞ KAYDI</h2>
+      <button class="admin-close" onclick="window.closeSatisModal()">✕</button>
+    </div>
+    <div class="sm-body">
+
+      <!-- Makine Adı -->
+      <div class="sm-field full">
+        <label>Makine Adı *</label>
+        <input id="sfMakineAdi" type="text" placeholder="örn. BC 410 PRO, Q-BOX, H-CUT…" autocomplete="off"/>
+      </div>
+
+      <!-- Yön + Opsiyon -->
+      <div class="sm-field">
+        <label>Makine Yönü</label>
+        <select id="sfYon">
+          <option value="">— Seçiniz —</option>
+          <option>Sağ</option>
+          <option>Sol</option>
+          <option>Çift Yön</option>
+          <option>Diğer</option>
+        </select>
+      </div>
+      <div class="sm-field">
+        <label>Opsiyon / Özellik</label>
+        <input id="sfOpsiyon" type="text" placeholder="örn. Otomatik Besleme, Yazıcı…" autocomplete="off"/>
+      </div>
+
+      <!-- Firma + İl -->
+      <div class="sm-field">
+        <label>Satıldığı Firma *</label>
+        <input id="sfFirma" type="text" placeholder="Firma adı" autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>İl / Şehir</label>
+        <input id="sfIl" type="text" placeholder="örn. İstanbul, Bursa, Ankara…" autocomplete="off"/>
+      </div>
+
+      <!-- Seri No + Termin -->
+      <div class="sm-field">
+        <label>Seri Numarası</label>
+        <input id="sfSeriNo" type="text" placeholder="Makine seri no." autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>Termin Tarihi</label>
+        <input id="sfTermin" type="date"/>
+      </div>
+
+      <!-- Durum -->
+      <div class="sm-field">
+        <label>Durum</label>
+        <select id="sfDurum">
+          <option value="Beklemede">⏳ Beklemede</option>
+          <option value="Aktif">✅ Aktif / Üretimde</option>
+          <option value="Tamamlandı">📦 Tamamlandı / Teslim Edildi</option>
+        </select>
+      </div>
+
+      <!-- Açıklama -->
+      <div class="sm-field full">
+        <label>Açıklama / Notlar</label>
+        <textarea id="sfAciklama" placeholder="Müşteri notları, özel gereksinimler, teslimat detayları…"></textarea>
+      </div>
+
+    </div>
+    <div class="sm-foot">
+      <button class="sm-btn sm-btn-cancel" onclick="window.closeSatisModal()">İptal</button>
+      <button class="sm-btn sm-btn-save"   onclick="window.saveSatisRow()">💾 Kaydet</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
