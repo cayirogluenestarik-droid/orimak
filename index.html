@@ -222,6 +222,86 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .sp-durum-onay{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
 .sp-durum-teslim{background:rgba(146,208,80,.15);color:#92d050;border:1px solid rgba(146,208,80,.3);}
 
+/* ══════════════════════════════════════
+   SATIŞ TAKİP PANELİ
+══════════════════════════════════════ */
+.sf-wrap{display:flex;flex-direction:column;height:100%;}
+.sf-toolbar{display:flex;align-items:center;gap:12px;padding:14px 22px 12px;border-bottom:1px solid #1e1e1e;flex-wrap:wrap;background:#141414;position:sticky;top:0;z-index:10;}
+.sf-toolbar-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:var(--orange);flex:1;}
+.sf-search-wrap{position:relative;}
+.sf-search{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;padding:7px 12px 7px 32px;color:#ccc;font-size:12px;font-family:'Barlow',sans-serif;width:220px;outline:none;transition:border-color .2s;}
+.sf-search:focus{border-color:var(--orange);}
+.sf-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#555;font-size:13px;pointer-events:none;}
+.sf-stats{display:flex;gap:1px;border-bottom:1px solid #1a1a1a;overflow-x:auto;flex-shrink:0;}
+.sf-stat{display:flex;flex-direction:column;align-items:center;padding:10px 18px;gap:2px;background:#161616;border-right:1px solid #1a1a1a;flex:1;min-width:80px;}
+.sf-stat:last-child{border-right:none;}
+.sf-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:#eee;line-height:1;}
+.sf-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#444;}
+.sf-stat.c-orange .sf-stat-val{color:var(--orange);}
+.sf-stat.c-green  .sf-stat-val{color:#92D050;}
+.sf-stat.c-red    .sf-stat-val{color:#ff6666;}
+.sf-stat.c-blue   .sf-stat-val{color:#7ab8f5;}
+.sf-filter-tabs{display:flex;gap:0;border-bottom:1px solid #1a1a1a;background:#141414;overflow-x:auto;flex-shrink:0;}
+.sf-ftab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;padding:8px 14px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sf-ftab:hover{color:#aaa;}
+.sf-ftab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.sf-cards-wrap{flex:1;overflow-y:auto;padding:18px 22px 40px;}
+.sf-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.sf-card{background:#181818;border:1px solid #232323;border-radius:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;display:flex;flex-direction:column;}
+.sf-card:hover{border-color:#333;box-shadow:0 6px 24px rgba(0,0,0,.4);}
+.sf-card.termin-gecti{border-color:rgba(192,0,0,.5);box-shadow:0 0 0 1px rgba(192,0,0,.15);}
+.sf-card.termin-yakin{border-color:rgba(245,166,35,.4);}
+.sf-card.tamamlandi{opacity:.65;}
+.sf-card-head{background:#1e1e1e;padding:11px 14px 9px;border-bottom:1px solid #232323;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.sf-card-machine{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;letter-spacing:2px;color:var(--orange);line-height:1.1;}
+.sf-card-seri{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#555;letter-spacing:1px;margin-top:3px;}
+.sf-badge{display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.8px;padding:3px 8px;border-radius:10px;white-space:nowrap;}
+.sf-badge-bekle{background:rgba(245,166,35,.1);color:#c8880a;border:1px solid rgba(245,166,35,.25);}
+.sf-badge-aktif{background:rgba(146,208,80,.1);color:#5aaa20;border:1px solid rgba(146,208,80,.25);}
+.sf-badge-tamam{background:rgba(90,160,255,.1);color:#4a8fe0;border:1px solid rgba(90,160,255,.25);}
+.sf-badge-gecti{background:rgba(192,0,0,.1);color:#cc2222;border:1px solid rgba(192,0,0,.25);}
+.sf-card-body{padding:10px 14px;display:flex;flex-direction:column;gap:6px;flex:1;}
+.sf-row{display:flex;align-items:baseline;gap:6px;}
+.sf-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#444;white-space:nowrap;min-width:86px;}
+.sf-val{font-size:12px;color:#bbb;font-family:'Barlow',sans-serif;line-height:1.3;}
+.sf-val.bold{font-weight:600;color:#ccc;}
+.sf-divider{height:1px;background:#1e1e1e;margin:3px 0;}
+.sf-aciklama{font-size:11px;color:#555;font-style:italic;line-height:1.5;padding-top:3px;}
+.sf-termin-chip{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;letter-spacing:.5px;}
+.sf-termin-chip.gecti{background:rgba(192,0,0,.18);color:#ff4444;}
+.sf-termin-chip.yakin{background:rgba(245,166,35,.15);color:#F5A623;}
+.sf-termin-chip.tamam{background:rgba(146,208,80,.1);color:#5aaa20;}
+.sf-card-foot{padding:8px 14px;border-top:1px solid #1e1e1e;display:flex;align-items:center;justify-content:space-between;}
+.sf-card-tarih{font-family:'Barlow Condensed',sans-serif;font-size:9.5px;color:#444;letter-spacing:.5px;}
+.sf-card-actions{display:flex;gap:5px;}
+.sf-act-btn{border:none;border-radius:5px;padding:4px 9px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .15s;}
+.sf-act-edit{background:rgba(245,166,35,.08);color:#c08010;border:1px solid rgba(245,166,35,.2);}
+.sf-act-edit:hover{background:rgba(245,166,35,.2);}
+.sf-act-del{background:rgba(192,0,0,.08);color:#bb2222;border:1px solid rgba(192,0,0,.2);}
+.sf-act-del:hover{background:rgba(192,0,0,.2);}
+.sf-empty{text-align:center;padding:60px 24px;color:#3a3a3a;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:2px;}
+.sf-empty-ico{font-size:38px;display:block;margin-bottom:12px;opacity:.3;}
+/* Satış Modal */
+#satisModal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10400;display:none;align-items:center;justify-content:center;padding:16px;}
+#satisModal.open{display:flex;}
+.sm-box{background:#181818;border:1px solid #2a2a2a;border-top:3px solid var(--orange);border-radius:12px;width:620px;max-width:98vw;max-height:94vh;display:flex;flex-direction:column;box-shadow:0 32px 90px rgba(0,0,0,.85);}
+.sm-head{padding:16px 22px 13px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;}
+.sm-head h2{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:2.5px;color:var(--orange);}
+.sm-body{padding:20px 22px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.sm-field{display:flex;flex-direction:column;gap:5px;}
+.sm-field.full{grid-column:1/-1;}
+.sm-field label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#555;}
+.sm-field input,.sm-field select,.sm-field textarea{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:6px;padding:9px 11px;color:#ddd;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;width:100%;box-sizing:border-box;}
+.sm-field input:focus,.sm-field select:focus,.sm-field textarea:focus{border-color:var(--orange);}
+.sm-field input::placeholder,.sm-field textarea::placeholder{color:#333;}
+.sm-field textarea{resize:vertical;min-height:68px;}
+.sm-field select option{background:#1a1a1a;color:#ddd;}
+.sm-foot{padding:13px 22px;border-top:1px solid #252525;display:flex;justify-content:flex-end;gap:10px;}
+.sm-btn{border:none;border-radius:7px;padding:9px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
+.sm-btn:hover{opacity:.85;}
+.sm-btn-save{background:var(--orange);color:#1a1a1a;}
+.sm-btn-cancel{background:#252525;color:#888;border:1px solid #2e2e2e;}
+
 /* ── TOPLU TARİH MODAL ── */
 #topluTarihModal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10200;display:none;align-items:center;justify-content:center;padding:16px;}
 #topluTarihModal.open{display:flex;}
@@ -1560,6 +1640,229 @@ window.buildSiparisPanel = buildSiparisPanel;
 window.buildTeslimPanel = buildTeslimPanel;
 window.renderSiparisRows = renderSiparisRows;
 window.renderTeslimRows = renderTeslimRows;
+
+// ╔══════════════════════════════════════════════════════╗
+// ║             SATIŞ TAKİP PANELİ                      ║
+// ╚══════════════════════════════════════════════════════╝
+(function(){
+
+var _sfEditIdx = -1;
+var _sfFilter  = 'hepsi';
+var _sfSearch  = '';
+
+function getSatisSheet(){ return SHEETS.find(function(s){ return s.type==='satis'; }); }
+function getSatisRows(){ var s=getSatisSheet(); return s?(s.rows||[]):[];}
+
+function terminDurum(t){
+  if(!t) return 'yok';
+  var p=t.split('.'); var d=p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(t);
+  if(isNaN(d)) return 'yok';
+  var now=new Date(); now.setHours(0,0,0,0);
+  var diff=Math.round((d-now)/86400000);
+  if(diff<0) return 'gecti'; if(diff<=14) return 'yakin'; return 'tamam';
+}
+function isoToTR(v){ if(!v)return ''; var m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/); return m?m[3]+'.'+m[2]+'.'+m[1]:v; }
+function trToISO(v){ if(!v)return ''; var m=v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); return m?m[3]+'-'+m[2]+'-'+m[1]:v; }
+function sEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Panel inşa ──
+window.buildSatisPanel = function(si){
+  var role = window._currentRole||'viewer';
+  var canEdit = (role==='admin'||role==='manager');
+  var wrap = document.createElement('div');
+  wrap.className = 'sf-wrap';
+
+  // Toolbar
+  var tb = document.createElement('div'); tb.className='sf-toolbar';
+  tb.innerHTML = '<div class="sf-toolbar-title">💼 SATIŞ TAKİP</div>'+
+    '<div class="sf-search-wrap"><span class="sf-search-ico">🔍</span>'+
+    '<input class="sf-search" id="sfSearch" type="text" placeholder="Makine, firma, il, seri no..." oninput="window._sfSearch(this.value)"/></div>'+
+    (canEdit?'<button class="add-row-btn" onclick="window.openSatisYeni()" style="white-space:nowrap;">＋ Yeni Kayıt</button>':'');
+  wrap.appendChild(tb);
+
+  // İstatistik
+  var stats = document.createElement('div'); stats.className='sf-stats';
+  stats.innerHTML=
+    '<div class="sf-stat"><div class="sf-stat-val" id="sfST">0</div><div class="sf-stat-lbl">Toplam</div></div>'+
+    '<div class="sf-stat c-orange"><div class="sf-stat-val" id="sfSB">0</div><div class="sf-stat-lbl">Beklemede</div></div>'+
+    '<div class="sf-stat c-green"><div class="sf-stat-val" id="sfSA">0</div><div class="sf-stat-lbl">Aktif</div></div>'+
+    '<div class="sf-stat c-blue"><div class="sf-stat-val" id="sfSM">0</div><div class="sf-stat-lbl">Tamamlandı</div></div>'+
+    '<div class="sf-stat c-red"><div class="sf-stat-val" id="sfSG">0</div><div class="sf-stat-lbl">Termin Geçti</div></div>';
+  wrap.appendChild(stats);
+
+  // Filtre sekmeleri
+  var ft = document.createElement('div'); ft.className='sf-filter-tabs'; ft.id='sfFTabs';
+  [['hepsi','Tümü'],['bekle','Beklemede'],['aktif','Aktif'],['tamam','Tamamlandı'],['gecti','Termin Geçti']].forEach(function(p){
+    var b=document.createElement('button'); b.className='sf-ftab'+(p[0]===_sfFilter?' active':'');
+    b.dataset.f=p[0]; b.textContent=p[1];
+    b.onclick=function(){ window._sfFilter(p[0]); };
+    ft.appendChild(b);
+  });
+  wrap.appendChild(ft);
+
+  // Kart alanı
+  var cw=document.createElement('div'); cw.className='sf-cards-wrap';
+  cw.innerHTML='<div class="sf-cards-grid" id="sfGrid"></div>';
+  wrap.appendChild(cw);
+
+  setTimeout(function(){ sfRender(); },0);
+  return wrap;
+};
+
+function sfRender(){
+  var grid=document.getElementById('sfGrid'); if(!grid) return;
+  var role=window._currentRole||'viewer';
+  var canEdit=(role==='admin'||role==='manager');
+  var rows=getSatisRows();
+
+  var filtered=rows.filter(function(r){
+    var q=(_sfSearch||'').toLowerCase();
+    if(q){
+      var h=[r.makineAdi,r.yon,r.opsiyon,r.firma,r.il,r.seriNo,r.aciklama,r.durum].map(function(v){return (v||'').toLowerCase();}).join(' ');
+      if(h.indexOf(q)===-1) return false;
+    }
+    var td=terminDurum(r.terminTarihi);
+    if(_sfFilter==='bekle') return r.durum!=='Aktif'&&r.durum!=='Tamamlandı'&&td!=='gecti';
+    if(_sfFilter==='aktif') return r.durum==='Aktif';
+    if(_sfFilter==='tamam') return r.durum==='Tamamlandı';
+    if(_sfFilter==='gecti') return td==='gecti'&&r.durum!=='Tamamlandı';
+    return true;
+  });
+
+  // İstatistik
+  function ss(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  ss('sfST',rows.length);
+  ss('sfSB',rows.filter(function(r){return r.durum!=='Aktif'&&r.durum!=='Tamamlandı'&&terminDurum(r.terminTarihi)!=='gecti';}).length);
+  ss('sfSA',rows.filter(function(r){return r.durum==='Aktif';}).length);
+  ss('sfSM',rows.filter(function(r){return r.durum==='Tamamlandı';}).length);
+  ss('sfSG',rows.filter(function(r){return terminDurum(r.terminTarihi)==='gecti'&&r.durum!=='Tamamlandı';}).length);
+
+  if(filtered.length===0){
+    grid.innerHTML='<div class="sf-empty"><span class="sf-empty-ico">💼</span>'+(_sfSearch?'Arama sonucu bulunamadı':'Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin')+'</div>';
+    return;
+  }
+
+  grid.innerHTML='';
+  filtered.forEach(function(r){
+    var ri=rows.indexOf(r);
+    var td=terminDurum(r.terminTarihi);
+    var cc='sf-card'+(r.durum==='Tamamlandı'?' tamamlandi':'')+(td==='gecti'&&r.durum!=='Tamamlandı'?' termin-gecti':'')+(td==='yakin'&&r.durum!=='Tamamlandı'?' termin-yakin':'');
+    var bc='',bt='';
+    if(r.durum==='Tamamlandı'){bc='sf-badge-tamam';bt='📦 Tamamlandı';}
+    else if(r.durum==='Aktif'){bc='sf-badge-aktif';bt='✅ Aktif';}
+    else if(td==='gecti'){bc='sf-badge-gecti';bt='⚠ Termin Geçti';}
+    else{bc='sf-badge-bekle';bt='⏳ Beklemede';}
+
+    var terminHtml='<span style="color:#333;">—</span>';
+    if(r.terminTarihi){
+      terminHtml='<span class="sf-termin-chip '+td+'">'+sEsc(r.terminTarihi)+'</span>';
+    }
+
+    function sfRow(lbl,val){
+      if(!val&&val!==0) return '';
+      return '<div class="sf-row"><span class="sf-lbl">'+lbl+'</span><span class="sf-val">'+sEsc(val)+'</span></div>';
+    }
+
+    var acts=canEdit?
+      '<button class="sf-act-btn sf-act-edit" onclick="window.openSatisEdit('+ri+')">✏️ Düzenle</button>'+
+      '<button class="sf-act-btn sf-act-del" onclick="window.deleteSatisRow('+ri+')">✕ Sil</button>':'';
+
+    var card=document.createElement('div');
+    card.className=cc;
+    card.innerHTML=
+      '<div class="sf-card-head">'+
+        '<div>'+
+          '<div class="sf-card-machine">'+sEsc(r.makineAdi||'—')+'</div>'+
+          '<div class="sf-card-seri">'+(r.seriNo?'S/N: '+sEsc(r.seriNo):'&nbsp;')+'</div>'+
+        '</div>'+
+        '<span class="sf-badge '+bc+'">'+bt+'</span>'+
+      '</div>'+
+      '<div class="sf-card-body">'+
+        sfRow('Yön',r.yon)+
+        sfRow('Opsiyon / Özellik',r.opsiyon)+
+        (r.yon||r.opsiyon?'<div class="sf-divider"></div>':'')+
+        sfRow('Firma',r.firma)+
+        sfRow('İl / Şehir',r.il)+
+        '<div class="sf-divider"></div>'+
+        '<div class="sf-row"><span class="sf-lbl">Termin</span><span class="sf-val">'+terminHtml+'</span></div>'+
+        (r.aciklama?'<div class="sf-divider"></div><div class="sf-aciklama">'+sEsc(r.aciklama)+'</div>':'')+
+      '</div>'+
+      '<div class="sf-card-foot">'+
+        '<span class="sf-card-tarih">'+(r.kayitTarihi?'📅 '+sEsc(r.kayitTarihi):'')+'</span>'+
+        '<div class="sf-card-actions">'+acts+'</div>'+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+// Arama & filtre
+window._sfSearch=function(v){ _sfSearch=v; sfRender(); };
+window._sfFilter=function(f){
+  _sfFilter=f;
+  document.querySelectorAll('.sf-ftab').forEach(function(b){ b.classList.toggle('active',b.dataset.f===f); });
+  sfRender();
+};
+
+// Modal yardımcıları
+function sfModalOpen(){ var m=document.getElementById('satisModal'); if(m) m.classList.add('open'); setTimeout(function(){var e=document.getElementById('sfMakineAdi');if(e)e.focus();},80); }
+window.closeSatisModal=function(){ var m=document.getElementById('satisModal'); if(m) m.classList.remove('open'); };
+
+function sfModalClear(){
+  ['sfMakineAdi','sfYon','sfOpsiyon','sfFirma','sfIl','sfSeriNo','sfTermin','sfDurum','sfAciklama'].forEach(function(id){
+    var e=document.getElementById(id); if(e) e.value='';
+  });
+  var d=document.getElementById('sfDurum'); if(d) d.value='Beklemede';
+}
+function sfModalFill(r){
+  function sv(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
+  sv('sfMakineAdi',r.makineAdi); sv('sfYon',r.yon); sv('sfOpsiyon',r.opsiyon);
+  sv('sfFirma',r.firma); sv('sfIl',r.il); sv('sfSeriNo',r.seriNo);
+  sv('sfTermin',trToISO(r.terminTarihi)); sv('sfDurum',r.durum||'Beklemede'); sv('sfAciklama',r.aciklama);
+}
+function sfModalTitle(t){ var e=document.getElementById('sfModalTitle'); if(e) e.textContent=t; }
+
+window.openSatisYeni=function(){ _sfEditIdx=-1; sfModalTitle('➕ YENİ SATIŞ KAYDI'); sfModalClear(); sfModalOpen(); };
+window.openSatisEdit=function(ri){ var r=getSatisRows()[ri]; if(!r)return; _sfEditIdx=ri; sfModalTitle('✏️ KAYDI DÜZENLE'); sfModalFill(r); sfModalOpen(); };
+
+window.saveSatisRow=function(){
+  var makineAdi=((document.getElementById('sfMakineAdi')||{}).value||'').trim();
+  var firma=((document.getElementById('sfFirma')||{}).value||'').trim();
+  if(!makineAdi){alert('Makine adı zorunludur!');return;}
+  if(!firma){alert('Firma adı zorunludur!');return;}
+  var terminRaw=((document.getElementById('sfTermin')||{}).value||'');
+  var row={
+    makineAdi:makineAdi, yon:((document.getElementById('sfYon')||{}).value||'').trim(),
+    opsiyon:((document.getElementById('sfOpsiyon')||{}).value||'').trim(), firma:firma,
+    il:((document.getElementById('sfIl')||{}).value||'').trim(),
+    seriNo:((document.getElementById('sfSeriNo')||{}).value||'').trim(),
+    terminTarihi:isoToTR(terminRaw),
+    durum:(document.getElementById('sfDurum')||{}).value||'Beklemede',
+    aciklama:((document.getElementById('sfAciklama')||{}).value||'').trim(),
+    kayitTarihi:new Date().toLocaleDateString('tr-TR'),
+    olusturan:window._currentUser||''
+  };
+  var sheet=getSatisSheet(); if(!sheet) return;
+  if(!sheet.rows) sheet.rows=[];
+  if(_sfEditIdx>=0){ row.kayitTarihi=sheet.rows[_sfEditIdx].kayitTarihi||row.kayitTarihi; sheet.rows[_sfEditIdx]=row; }
+  else{ sheet.rows.push(row); }
+  window.closeSatisModal();
+  sfRender();
+  if(typeof fbSaveAll==='function'&&typeof isOnline!=='undefined'&&isOnline) fbSaveAll();
+};
+
+window.deleteSatisRow=function(ri){
+  var r=getSatisRows()[ri]; if(!r)return;
+  if(!confirm('"'+(r.firma||r.makineAdi)+'" silinsin mi?'))return;
+  var sheet=getSatisSheet(); if(sheet&&sheet.rows) sheet.rows.splice(ri,1);
+  sfRender();
+  if(typeof fbSaveAll==='function'&&typeof isOnline!=='undefined'&&isOnline) fbSaveAll();
+};
+
+window.renderSatisRows=function(){ sfRender(); };
+
+})();
+
+
 
 function renderTeslimRows() {
   const tbody = document.getElementById('teslimBody');
@@ -6173,6 +6476,11 @@ const OFFLINE_DATA = [
     "name": "TESLİM KAYIT",
     "type": "teslim",
     "rows": []
+  },
+  {
+    "name": "SATIŞ TAKİP",
+    "type": "satis",
+    "rows": []
   }
 ];
 
@@ -6209,7 +6517,7 @@ function buildState() {
   state = {};
   SHEETS.forEach((sheet, si) => {
     state[si] = { rows: [], name: sheet.name };
-    if (sheet.type === 'siparis' || sheet.type === 'teslim') return; // özel sayfalar
+    if (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis') return; // özel sayfalar
     let no = 0;
     sheet.rows.forEach(row => {
       const g = isGroupRow(row);
@@ -6283,7 +6591,7 @@ function buildTabs() {
   });
 
   function getSheetCount(i, sheet) {
-    return (sheet.type === 'siparis' || sheet.type === 'teslim')
+    return (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis')
       ? (SHEETS[i].rows || []).length
       : (state[i] && state[i].rows ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
   }
@@ -6361,7 +6669,8 @@ function buildTabs() {
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
     btn.id = 'tabBtn-' + idx;
-    btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
+    const ico = sheet.type === 'siparis' ? '📋 ' : sheet.type === 'teslim' ? '📬 ' : sheet.type === 'satis' ? '💼 ' : '📄 ';
+    btn.innerHTML = ico + sheet.name + '<span class="tab-count">' + cnt + '</span>';
     btn.onclick = () => switchTab(idx);
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
@@ -6413,7 +6722,7 @@ function switchTab(idx) {
   filterTable('');
   updateStats(idx);
   const addRowBtn = document.getElementById('addRowBtn');
-  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
+  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim' || SHEETS[idx].type === 'satis');
   const role = window._currentRole || 'viewer';
   const canAddRow = (role === 'admin' || role === 'manager');
   if (addRowBtn) {
@@ -6522,7 +6831,7 @@ function applyGlobalMakine() {
   const si = activeSheet;
   if (!state[si] || !state[si].rows) return;
   // Sipariş/teslim sayfaları farklı, sadece normal sayfalar
-  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim')) {
+  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis')) {
     alert('Bu sayfada makine sayısı uygulaması çalışmaz.');
     return;
   }
@@ -6575,6 +6884,11 @@ function buildSheets() {
     }
     if (sheet.type === 'teslim') {
       try { panel.appendChild(window.buildTeslimPanel(si)); } catch(e) { console.warn('teslim panel hatası:', e); }
+      container.appendChild(panel);
+      return;
+    }
+    if (sheet.type === 'satis') {
+      try { panel.appendChild(window.buildSatisPanel(si)); } catch(e) { console.warn('satis panel hatası:', e); }
       container.appendChild(panel);
       return;
     }
@@ -6934,7 +7248,7 @@ async function loadData() {
     if (snap.exists() && snap.data().data) {
       const freshSheets = JSON.parse(snap.data().data);
       // Eksik özel sayfaları OFFLINE_DATA'dan ekle
-      ['siparis','teslim'].forEach(tip => {
+      ['siparis','teslim','satis'].forEach(tip => {
         if (!freshSheets.find(s => s.type === tip)) {
           const template = OFFLINE_DATA.find(s => s.type === tip);
           if (template) freshSheets.push(JSON.parse(JSON.stringify(template)));
@@ -6965,7 +7279,7 @@ async function loadData() {
       if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
-        ['siparis','teslim'].forEach(tip => {
+        ['siparis','teslim','satis'].forEach(tip => {
           if (!updated.find(s => s.type === tip)) {
             const existing = SHEETS.find(s => s.type === tip);
             if (existing) updated.push(existing);
@@ -6977,6 +7291,7 @@ async function loadData() {
         updateStats(activeSheet);
         renderSiparisRows();
         renderTeslimRows();
+        if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
     });
@@ -7023,13 +7338,13 @@ function openModal() {
   fSheet.innerHTML = '';
   let firstIdx = -1;
   SHEETS.forEach((s, i) => {
-    if (s.type === 'siparis' || s.type === 'teslim') return;
+    if (s.type === 'siparis' || s.type === 'teslim' || s.type === 'satis') return;
     const o = document.createElement('option');
     o.value = i; o.textContent = s.name;
     if (firstIdx === -1) firstIdx = i;
     fSheet.appendChild(o);
   });
-  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim')
+  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim' && SHEETS[activeSheet].type !== 'satis')
     ? activeSheet : firstIdx;
   if (defaultIdx >= 0) {
     fSheet.value = defaultIdx;
@@ -7057,7 +7372,7 @@ function closeModalOutside(e) { if (e.target === document.getElementById('modalO
 async function addRow() {
   const si = parseInt(document.getElementById('fSheet').value);
   // Sipariş/teslim sayfasına ekleme yapılamaz
-  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim') {
+  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis') {
     alert('Bu sayfaya satır eklenemez. Lütfen malzeme listesi sayfalarından birini seçin.');
     return;
   }
@@ -8978,6 +9293,67 @@ if (window._db) setTimeout(stLoad, 1800);
 
 })();
 </script>
+
+<!-- ╔══════════════════════════════════════════════╗
+     ║           SATIŞ TAKİP MODAL                 ║
+     ╚══════════════════════════════════════════════╝ -->
+<div id="satisModal" onclick="if(event.target===this)window.closeSatisModal()">
+  <div class="sm-box">
+    <div class="sm-head">
+      <h2 id="sfModalTitle">➕ YENİ SATIŞ KAYDI</h2>
+      <button class="admin-close" onclick="window.closeSatisModal()">✕</button>
+    </div>
+    <div class="sm-body">
+      <div class="sm-field full">
+        <label>Makine Adı *</label>
+        <input id="sfMakineAdi" type="text" placeholder="örn. BC 410 PRO, Q-BOX, H-CUT…" autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>Makine Yönü</label>
+        <select id="sfYon">
+          <option value="">— Seçiniz —</option>
+          <option>Sağ</option><option>Sol</option><option>Çift Yön</option><option>Diğer</option>
+        </select>
+      </div>
+      <div class="sm-field">
+        <label>Opsiyon / Özellik</label>
+        <input id="sfOpsiyon" type="text" placeholder="Otomatik Besleme, Yazıcı…" autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>Satıldığı Firma *</label>
+        <input id="sfFirma" type="text" placeholder="Firma adı" autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>İl / Şehir</label>
+        <input id="sfIl" type="text" placeholder="İstanbul, Bursa…" autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>Seri Numarası</label>
+        <input id="sfSeriNo" type="text" placeholder="Makine seri no." autocomplete="off"/>
+      </div>
+      <div class="sm-field">
+        <label>Termin Tarihi</label>
+        <input id="sfTermin" type="date"/>
+      </div>
+      <div class="sm-field">
+        <label>Durum</label>
+        <select id="sfDurum">
+          <option value="Beklemede">⏳ Beklemede</option>
+          <option value="Aktif">✅ Aktif / Üretimde</option>
+          <option value="Tamamlandı">📦 Tamamlandı / Teslim Edildi</option>
+        </select>
+      </div>
+      <div class="sm-field full">
+        <label>Açıklama / Notlar</label>
+        <textarea id="sfAciklama" placeholder="Müşteri notları, özel gereksinimler…"></textarea>
+      </div>
+    </div>
+    <div class="sm-foot">
+      <button class="sm-btn sm-btn-cancel" onclick="window.closeSatisModal()">İptal</button>
+      <button class="sm-btn sm-btn-save" onclick="window.saveSatisRow()">💾 Kaydet</button>
+    </div>
+  </div>
+</div>
 
 <!-- ╔══════════════════════════════════════════════╗
      ║       TOPLU TARİH GÜNCELLEME MODAL          ║
