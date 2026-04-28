@@ -7762,6 +7762,8 @@ function ypAddTab() {
 window.ypSwitchTo = function() {
   // Diğer sekmeleri kapat
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-child').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-header').forEach(function(h){ h.classList.remove('has-active'); });
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById('tabBtn-yp').classList.add('active');
   document.getElementById('ypanel').style.display = '';
@@ -8040,6 +8042,8 @@ window.snSwitchTo = function() {
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-child').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-header').forEach(function(h){ h.classList.remove('has-active'); });
   var btn = document.getElementById('tabBtn-sn');
   if (btn) btn.classList.add('active');
   var p = document.getElementById('snPanel');
@@ -8880,6 +8884,8 @@ window.stSwitchTo = function() {
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   var snp = document.getElementById('snPanel'); if (snp) snp.style.display='none';
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-child').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-machine-header').forEach(function(h){ h.classList.remove('has-active'); });
   var btn = document.getElementById('tabBtn-st');
   if (btn) btn.classList.add('active');
   var p = document.getElementById('stPanel');
