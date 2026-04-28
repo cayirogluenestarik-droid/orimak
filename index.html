@@ -7958,6 +7958,9 @@ function stGetRowColor(pg, r) {
     if (onayVal === 'ONAYLANDI') {
       return { bg: 'rgba(50,140,30,0.20)', border: '#2d6010', text: '#a8e860' };
     }
+    if (onayVal === 'FATURASI KESİLDİ') {
+      return { bg: 'rgba(245,166,35,0.25)', border: '#8a5500', text: '#F5A623' };
+    }
     if (servisTarih) {
       return { bg: 'rgba(200,100,10,0.20)', border: '#7a4010', text: '#f5a623' };
     }
@@ -8050,6 +8053,7 @@ function stRenderContent() {
       '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#d8c000;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(200,180,0,0.35);border:1px solid #706000;border-radius:3px;display:inline-block;"></span>Firma Eklendi</span>'+
       '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#f5a623;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(200,100,10,0.35);border:1px solid #7a4010;border-radius:3px;display:inline-block;"></span>Servis Tarihi Var</span>'+
       '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#a8e860;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(50,140,30,0.35);border:1px solid #2d6010;border-radius:3px;display:inline-block;"></span>Onaylandi</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#F5A623;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(245,166,35,0.35);border:1px solid #8a5500;border-radius:3px;display:inline-block;"></span>Faturası Kesildi</span>'+
       '</div>';
   }
 
@@ -8057,7 +8061,7 @@ function stRenderContent() {
   var form = headers.map(function(h, ci) {
     // ONAY dropdown
     if (fname === 'Servis Plan.html' && h === 'ONAY') {
-      var selOpts = ['', 'ONAYLANDI', 'BEKLEMEDE', 'IPTAL'].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
+      var selOpts = ['', 'ONAYLANDI', 'BEKLEMEDİ', 'FATURASI KESİLDİ', 'IPTAL'].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
       return '<div style="flex:1;min-width:120px;">'+
         '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
         '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+selOpts+'</select>'+
@@ -8078,18 +8082,36 @@ function stRenderContent() {
         '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+katOpts+'</select>'+
         '</div>';
     }
+    // Para Birimi dropdown (FaturaDetaylari) - Birim Fiyat veya Ara Toplam'dan sonraki para birimi
+    if (isFaturaDetay && h === 'Para Birimi') {
+      var pbOpts = ['TL', 'EUR', 'USD'].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
+      return '<div style="flex:0;min-width:80px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+        '<select id="stF_'+ci+'" onchange="stParaBirimiChange('+ci+')" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+pbOpts+'</select>'+
+        '</div>';
+    }
+    // KDV % dropdown (FaturaDetaylari)
+    if (isFaturaDetay && h === 'KDV %') {
+      var kdvOpts = ['0', '1', '10', '20', '30'].map(function(o){ return '<option value="'+o+'"'+(o==='20'?' selected':'')+'>%'+o+'</option>'; }).join('');
+      return '<div style="flex:0;min-width:80px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+        '<select id="stF_'+ci+'" onchange="stUpdateDetayCalc()" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+kdvOpts+'</select>'+
+        '</div>';
+    }
     return '<div style="flex:1;min-width:120px;">'+
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
-      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
+      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" oninput="'+(isFaturaDetay?'stUpdateDetayCalc()':'')+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
     '</div>';
   }).join('');
 
   var formBlock = '<div style="background:#161616;border:1px solid #222;border-top:2px solid var(--orange);border-radius:10px;padding:16px;margin-bottom:18px;">'+
     '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--orange);margin-bottom:12px;">+ YENİ KAYIT — '+label+'</div>'+
     '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">'+form+'</div>'+
+    (isFaturaDetay ? '<div id="stDetayCalcInfo" style="margin-bottom:10px;font-size:11px;color:#888;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;background:#111;padding:8px 12px;border-radius:5px;display:none;"></div>' : '')+
     '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
+      (isFaturaDetay ? '<button onclick="stKurAl()" style="padding:8px 14px;background:rgba(90,160,255,.15);border:1px solid rgba(90,160,255,.3);color:#7ab8f5;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;">💱 GÜNCEL KUR AL</button>' : '')+
       '<button onclick="stClear()" style="padding:8px 16px;background:#1e1e1e;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;">TEMİZLE</button>'+
-      '<button onclick="stAdd()" style="padding:8px 22px;background:var(--orange);color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">💾 KAYDET</button>'+
+      '<button onclick="'+(isFaturaDetay ? 'stAddDetay()' : 'stAdd()')+'" style="padding:8px 22px;background:var(--orange);color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">💾 KAYDET</button>'+
     '</div>'+
   '</div>';
 
@@ -8115,11 +8137,11 @@ function stRenderContent() {
 
       // ONAY dropdown (Servis Plan)
       if (fname === 'Servis Plan.html' && h === 'ONAY') {
-        var opts = ['', 'ONAYLANDI', 'BEKLEMEDE', 'IPTAL'];
+        var opts = ['', 'ONAYLANDI', 'BEKLEMEDİ', 'FATURASI KESİLDİ', 'IPTAL'];
         var selOpts = opts.map(function(o){ return '<option value="'+o+'"'+(String(val)===o?' selected':'')+'>'+o+'</option>'; }).join('');
-        var sc = val==='ONAYLANDI'?'#a8e860':val==='BEKLEMEDE'?'#f5a623':val==='IPTAL'?'#ff6666':'#666';
+        var sc = val==='ONAYLANDI'?'#a8e860':val==='BEKLEMEDİ'?'#f5a623':val==='FATURASI KESİLDİ'?'#F5A623':val==='IPTAL'?'#ff6666':'#666';
         return '<td style="padding:4px 8px;border-bottom:1px solid '+rowBC+';">'+
-          '<select onchange="stOnayChange('+actualIdx+','+ci+',this)" style="background:rgba(0,0,0,0.45);border:1px solid #3a3a3a;border-radius:4px;color:'+sc+';font-size:11px;font-family:Barlow Condensed,sans-serif;font-weight:700;padding:3px 5px;cursor:pointer;width:100%;min-width:95px;">'+selOpts+'</select>'+
+          '<select onchange="stOnayChange('+actualIdx+','+ci+',this)" style="background:rgba(0,0,0,0.45);border:1px solid #3a3a3a;border-radius:4px;color:'+sc+';font-size:11px;font-family:Barlow Condensed,sans-serif;font-weight:700;padding:3px 5px;cursor:pointer;width:100%;min-width:115px;">'+selOpts+'</select>'+
           '</td>';
       }
 
@@ -8157,7 +8179,7 @@ function stRenderContent() {
     '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#888;letter-spacing:1px;">'+filtered.length+(q?' / '+rows.length:'')+' kayit</span>'+
     '<input id="stSearch" type="text" placeholder="Ara..." value="'+stEsc(stSearchQuery)+'" oninput="stFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:240px;"/>'+
     '<button onclick="stExport()" style="background:#1e1e1e;border:1px solid #333;color:#888;border-radius:5px;padding:7px 12px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">📥 EXCELE AKTAR</button>'+
-    (fname === 'Servis Plan.html' ? '<button onclick="stAutoOnayAll();stRenderContent();" style="background:rgba(50,140,30,0.15);border:1px solid rgba(50,140,30,0.4);color:#a8e860;border-radius:5px;padding:7px 12px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">✓ Son 6 Hariç Onayla</button>' : '')+
+    ''+ // Son 6 Hariç Onayla butonu kaldırıldı
     '</div>'+
     '<div style="overflow:auto;border-radius:8px;border:1px solid #1e1e1e;max-height:520px;">'+
       '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+
@@ -8171,7 +8193,7 @@ window.stOnayChange = function(rowIdx, colIdx, sel) {
   ST_DATA[fname].data[rowIdx][colIdx] = sel.value;
   stFireSave();
   stBadge('✓ Onay guncellendi');
-  stRenderContent();
+  stRenderContent(); // renk güncellemesi için
 };
 
 window.stKatChange = function(rowIdx, colIdx, sel) {
@@ -8265,8 +8287,131 @@ window.stAdd = function() {
   stBadge('✓ Kaydedildi');
 };
 
-window.stExport = function() {
+// ── FaturaDetaylari para birimi / kur / KDV yardımcıları ──
+var _stKurCache = {};
+window.stKurAl = function() {
   var pg = ST_PAGES[stActiveIdx];
+  if (pg[0] !== 'FaturaDetaylari.html') return;
+  var headers = (ST_DATA['FaturaDetaylari.html'] || {}).headers || [];
+  var pbIdx = headers.indexOf('Para Birimi');
+  var pbEl = pbIdx >= 0 ? document.getElementById('stF_'+pbIdx) : null;
+  if (!pbEl) { stBadge('Para birimi alanı bulunamadı'); return; }
+  var pb = pbEl.value;
+  if (pb === 'TL') { stBadge('TL seçili, kur 1,00'); return; }
+  var pair = pb === 'EUR' ? 'EUR' : 'USD';
+  stBadge('⏳ Kur alınıyor...');
+  fetch('https://api.frankfurter.app/latest?from='+pair+'&to=TRY')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.rates && d.rates.TRY) {
+        var kur = d.rates.TRY;
+        _stKurCache[pair] = kur;
+        var kruIdx = headers.indexOf('PB Kuru');
+        var kruEl = kruIdx >= 0 ? document.getElementById('stF_'+kruIdx) : null;
+        if (kruEl) kruEl.value = kur.toFixed(2).replace('.',',')+' TRY';
+        stBadge('✓ '+pair+'/TRY: '+kur.toFixed(4));
+        stUpdateDetayCalc();
+      } else { stBadge('Kur alınamadı'); }
+    }).catch(function(){ stBadge('Kur servisi hatası'); });
+};
+
+window.stParaBirimiChange = function(ci) {
+  var pg = ST_PAGES[stActiveIdx];
+  if (pg[0] !== 'FaturaDetaylari.html') return;
+  var el = document.getElementById('stF_'+ci);
+  if (!el) return;
+  var pb = el.value;
+  if (pb !== 'TL') {
+    setTimeout(function() { window.stKurAl(); }, 100);
+  } else {
+    var headers = (ST_DATA['FaturaDetaylari.html'] || {}).headers || [];
+    var kruIdx = headers.indexOf('PB Kuru');
+    var kruEl = kruIdx >= 0 ? document.getElementById('stF_'+kruIdx) : null;
+    if (kruEl) kruEl.value = '1,00 TRY';
+    stUpdateDetayCalc();
+  }
+};
+
+function stUpdateDetayCalc() {
+  var info = document.getElementById('stDetayCalcInfo');
+  if (!info) return;
+  var headers = (ST_DATA['FaturaDetaylari.html'] || {}).headers || [];
+  var getVal = function(h) {
+    var idx = headers.indexOf(h);
+    if (idx < 0) return '';
+    var el = document.getElementById('stF_'+idx);
+    return el ? el.value.trim() : '';
+  };
+  var pb = getVal('Para Birimi') || 'TL';
+  var kurRaw = getVal('PB Kuru').replace(/[^0-9,]/g,'').replace(',','.');
+  var kur = pb === 'TL' ? 1 : (parseFloat(kurRaw) || 1);
+  var miktarStr = (getVal('Miktar')||'0').replace(',','.');
+  var birimFiyatStr = (getVal('Birim Fiyat')||'0').replace(',','.');
+  var kdvStr = getVal('KDV %') || '0';
+  var miktar = parseFloat(miktarStr) || 0;
+  var birimFiyat = parseFloat(birimFiyatStr) || 0;
+  var kdvPct = parseFloat(kdvStr) || 0;
+  if (!miktar || !birimFiyat) { info.style.display='none'; return; }
+  var araToplam = miktar * birimFiyat;
+  var araToplamTL = araToplam * kur;
+  var kdvTL = araToplamTL * kdvPct / 100;
+  var genelToplam = araToplamTL + kdvTL;
+  var fmt = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' TRY'; };
+  info.style.display = 'block';
+  info.innerHTML = 'Ara Toplam: <b>'+araToplam.toLocaleString('tr-TR',{minimumFractionDigits:2})+' '+pb+'</b>'+(pb!=='TL'?' × '+kur.toFixed(2)+' = <b>'+fmt(araToplamTL)+'</b>':' = <b>'+fmt(araToplamTL)+'</b>')+' | KDV %'+kdvPct+': <b>'+fmt(kdvTL)+'</b> | <span style="color:var(--orange)"><b>Genel Toplam: '+fmt(genelToplam)+'</b></span>';
+}
+
+window.stAddDetay = function() {
+  var pg = ST_PAGES[stActiveIdx];
+  var fname = pg[0];
+  var info = ST_DATA[fname];
+  if (!info) return;
+  var headers = info.headers || [];
+  var row = [];
+  var has = false;
+  headers.forEach(function(h, ci) {
+    var el = document.getElementById('stF_'+ci);
+    var v = el ? el.value.trim() : '';
+    row.push(v);
+    if (v) has = true;
+  });
+  if (!has) { alert('Lütfen en az bir alan doldurun.'); return; }
+  // Auto-calculate
+  try {
+    var pbIdx = headers.indexOf('Para Birimi');
+    var kruIdx = headers.indexOf('PB Kuru');
+    var miktarIdx = headers.indexOf('Miktar');
+    var birimFiyatIdx = headers.indexOf('Birim Fiyat');
+    var araToplIdx = headers.indexOf('Ara Toplam');
+    var araToplTLIdx = headers.indexOf('Ara Toplam (TL)');
+    var kdvPctIdx = headers.indexOf('KDV %');
+    var kdvTLIdx = headers.indexOf('KDV (TL)');
+    var genelIdx = headers.indexOf('Genel Toplam (TL)');
+    var pb = row[pbIdx] || 'TL';
+    var kurRaw = (row[kruIdx] || '1').replace(/[^0-9,]/g,'').replace(',','.');
+    var kur = pb === 'TL' ? 1 : (parseFloat(kurRaw) || 1);
+    var miktar = parseFloat((row[miktarIdx] || '0').replace(',','.')) || 0;
+    var birimFiyat = parseFloat((row[birimFiyatIdx] || '0').replace(',','.')) || 0;
+    var kdvPct = parseFloat(row[kdvPctIdx] || '0') || 0;
+    var araToplam = miktar * birimFiyat;
+    var araToplamTL = araToplam * kur;
+    var kdvTL = araToplamTL * kdvPct / 100;
+    var genelTL = araToplamTL + kdvTL;
+    var fmt = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' TRY'; };
+    if (araToplIdx >= 0) row[araToplIdx] = araToplam.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    if (pb === 'TL' && kruIdx >= 0) row[kruIdx] = '1,00 TRY';
+    if (araToplTLIdx >= 0) row[araToplTLIdx] = fmt(araToplamTL);
+    if (kdvTLIdx >= 0) row[kdvTLIdx] = fmt(kdvTL);
+    if (genelIdx >= 0) row[genelIdx] = fmt(genelTL);
+  } catch(e) {}
+  info.data.unshift(row);
+  stFireSave();
+  stClear();
+  stRender();
+  stBadge('✓ Kaydedildi');
+};
+
+window.stExport = function() {  var pg = ST_PAGES[stActiveIdx];
   var fname = pg[0], label = pg[1];
   var info = ST_DATA[fname];
   if (!info) return;
