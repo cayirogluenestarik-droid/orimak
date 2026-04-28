@@ -222,96 +222,6 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 .sp-durum-onay{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
 .sp-durum-teslim{background:rgba(146,208,80,.15);color:#92d050;border:1px solid rgba(146,208,80,.3);}
 
-/* ═══════════════════════════════════════
-   SATIŞ FORMU PANELİ
-═══════════════════════════════════════ */
-.sf-wrap{padding:0;display:flex;flex-direction:column;height:100%;}
-/* ── Üst toolbar ── */
-.sf-toolbar{display:flex;align-items:center;gap:12px;padding:16px 24px 14px;border-bottom:1px solid #222;flex-wrap:wrap;background:#141414;position:sticky;top:0;z-index:10;}
-.sf-toolbar-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:var(--orange);flex:1;}
-.sf-search-wrap{position:relative;}
-.sf-search{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:6px;padding:7px 12px 7px 32px;color:#ccc;font-size:12px;font-family:'Barlow',sans-serif;width:220px;outline:none;transition:border-color .2s;}
-.sf-search:focus{border-color:var(--orange);}
-.sf-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#555;font-size:13px;pointer-events:none;}
-/* ── İstatistik kartları ── */
-.sf-stats{display:flex;gap:1px;border-bottom:1px solid #1e1e1e;overflow-x:auto;}
-.sf-stat{display:flex;flex-direction:column;align-items:center;padding:12px 20px;gap:3px;background:#161616;border-right:1px solid #1e1e1e;flex:1;min-width:90px;}
-.sf-stat:last-child{border-right:none;}
-.sf-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#eee;line-height:1;}
-.sf-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
-.sf-stat.c-orange .sf-stat-val{color:var(--orange);}
-.sf-stat.c-green  .sf-stat-val{color:#92D050;}
-.sf-stat.c-red    .sf-stat-val{color:#ff6666;}
-.sf-stat.c-blue   .sf-stat-val{color:#7ab8f5;}
-/* ── Kart Grid ── */
-.sf-cards-wrap{flex:1;overflow-y:auto;padding:20px 24px 40px;}
-.sf-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
-/* ── Tek kart ── */
-.sf-card{background:#181818;border:1px solid #252525;border-radius:10px;overflow:hidden;transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column;}
-.sf-card:hover{border-color:#363636;box-shadow:0 8px 32px rgba(0,0,0,.4);}
-.sf-card-head{background:#1e1e1e;padding:12px 14px 10px;border-bottom:1px solid #252525;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.sf-card-machine{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:2px;color:var(--orange);line-height:1.1;}
-.sf-card-seri{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#555;letter-spacing:1px;margin-top:3px;}
-.sf-card-badge{flex-shrink:0;}
-.sf-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:12px;}
-.sf-badge-bekle{background:rgba(245,166,35,.12);color:#e0a020;border:1px solid rgba(245,166,35,.3);}
-.sf-badge-aktif{background:rgba(146,208,80,.12);color:#6ab830;border:1px solid rgba(146,208,80,.3);}
-.sf-badge-tamam{background:rgba(90,160,255,.12);color:#5a9fe0;border:1px solid rgba(90,160,255,.3);}
-.sf-badge-gecti{background:rgba(192,0,0,.12);color:#cc3333;border:1px solid rgba(192,0,0,.3);}
-.sf-card-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
-.sf-card-row{display:flex;align-items:baseline;gap:6px;}
-.sf-card-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#555;white-space:nowrap;min-width:90px;}
-.sf-card-val{font-size:12.5px;color:#ccc;font-family:'Barlow',sans-serif;line-height:1.3;}
-.sf-card-val.bold{font-weight:600;color:#ddd;}
-.sf-card-divider{height:1px;background:#222;margin:4px 0;}
-.sf-card-aciklama{font-size:11px;color:#666;font-family:'Barlow',sans-serif;font-style:italic;line-height:1.5;padding-top:4px;}
-.sf-card-foot{padding:10px 14px;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.sf-card-tarih{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#555;letter-spacing:.8px;}
-.sf-card-actions{display:flex;gap:6px;}
-.sf-act-btn{border:none;border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .15s;}
-.sf-act-edit{background:rgba(245,166,35,.1);color:#d08010;border:1px solid rgba(245,166,35,.25);}
-.sf-act-edit:hover{background:rgba(245,166,35,.25);}
-.sf-act-del{background:rgba(192,0,0,.1);color:#c03030;border:1px solid rgba(192,0,0,.25);}
-.sf-act-del:hover{background:rgba(192,0,0,.25);}
-/* ── Boş durum ── */
-.sf-empty{text-align:center;padding:60px 24px;color:#444;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:2px;}
-.sf-empty-ico{font-size:40px;display:block;margin-bottom:12px;opacity:.4;}
-/* ── Termin bandı ── */
-.sf-card.termin-gecti{border-color:rgba(192,0,0,.4);box-shadow:0 0 0 1px rgba(192,0,0,.15);}
-.sf-card.termin-yakin{border-color:rgba(245,166,35,.4);}
-.sf-card.tamamlandi{opacity:.72;}
-.sf-termin-chip{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.8px;}
-.sf-termin-chip.gecti{background:rgba(192,0,0,.2);color:#ff4444;}
-.sf-termin-chip.yakin{background:rgba(245,166,35,.18);color:#F5A623;}
-.sf-termin-chip.tamam{background:rgba(146,208,80,.12);color:#6ab830;}
-/* ── SATIŞ MODAL ── */
-#satisModal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10500;display:none;align-items:center;justify-content:center;padding:16px;}
-#satisModal.open{display:flex;}
-.sm-box{background:#181818;border:1px solid #2a2a2a;border-top:3px solid var(--orange);border-radius:12px;width:640px;max-width:98vw;max-height:94vh;display:flex;flex-direction:column;box-shadow:0 32px 90px rgba(0,0,0,.85);}
-.sm-head{padding:18px 24px 14px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;}
-.sm-head h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;letter-spacing:3px;color:var(--orange);}
-.sm-body{padding:22px 24px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.sm-field{display:flex;flex-direction:column;gap:6px;}
-.sm-field.full{grid-column:1/-1;}
-.sm-field label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;}
-.sm-field input,.sm-field select,.sm-field textarea{background:#1e1e1e;border:1px solid #303030;border-radius:6px;padding:9px 12px;color:#ddd;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s,background .2s;width:100%;box-sizing:border-box;}
-.sm-field input:focus,.sm-field select:focus,.sm-field textarea:focus{border-color:var(--orange);background:#222;}
-.sm-field input::placeholder,.sm-field textarea::placeholder{color:#3a3a3a;}
-.sm-field textarea{resize:vertical;min-height:72px;}
-.sm-field select option{background:#1a1a1a;color:#ddd;}
-.sm-foot{padding:14px 24px;border-top:1px solid #252525;display:flex;justify-content:flex-end;gap:10px;}
-.sm-btn{border:none;border-radius:7px;padding:10px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
-.sm-btn-save{background:var(--orange);color:#1a1a1a;}
-.sm-btn-cancel{background:#252525;color:#888;border:1px solid #333;}
-.sm-btn:hover{opacity:.85;}
-/* Satış panel — filtre sekmeler */
-.sf-filter-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid #1e1e1e;background:#141414;overflow-x:auto;}
-.sf-ftab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;padding:9px 14px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.sf-ftab:hover{color:#aaa;}
-.sf-ftab.active{color:var(--orange);border-bottom-color:var(--orange);}
-
-
-
 /* GRUP AÇ/KAPA */
 .group-row td{cursor:pointer;user-select:none;}
 .group-toggle{margin-right:8px;font-size:11px;display:inline-block;transition:transform .15s;}
@@ -716,9 +626,12 @@ function onLoggedIn(u) {
     if (addBtn) addBtn.style.display = 'none';
     const gmWrap = document.getElementById('globalMakineWrap');
     if (gmWrap) gmWrap.style.display = 'none';
+    // Seri No, Servis Takip, Yedek Parça tablarını gizle
+    ['tabBtn-sn','tabBtn-st','tabBtn-yp'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
   }
-
-  // Sayfa kısıtlaması — UI hazır olunca uygula
   if (u.sayfalar && u.sayfalar.length > 0) {
     setTimeout(() => applySayfaKisitlama(u.sayfalar), 100);
   }
@@ -767,6 +680,11 @@ function reapplySession() {
       if (addBtn) addBtn.style.display = 'none';
       const gmWrap = document.getElementById('globalMakineWrap');
       if (gmWrap) gmWrap.style.display = 'none';
+      // Seri No, Servis Takip, Yedek Parça tablarını gizle
+      ['tabBtn-sn','tabBtn-st','tabBtn-yp'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
     }
 
     // Sayfa kısıtlaması
@@ -1616,343 +1534,6 @@ window.buildSiparisPanel = buildSiparisPanel;
 window.buildTeslimPanel = buildTeslimPanel;
 window.renderSiparisRows = renderSiparisRows;
 window.renderTeslimRows = renderTeslimRows;
-
-// ╔═══════════════════════════════════════════════════════════════╗
-// ║               SATIŞ FORMU PANELİ                             ║
-// ╚═══════════════════════════════════════════════════════════════╝
-
-(function() {
-
-var _sfEditIdx = -1;   // -1 = yeni kayıt
-var _sfFilter  = 'hepsi'; // aktif filtre sekmesi
-var _sfSearch  = '';
-
-function getSatisSheet() {
-  return SHEETS.find(function(s){ return s.type === 'satis'; });
-}
-function getSatisRows() {
-  var s = getSatisSheet();
-  return s ? (s.rows || []) : [];
-}
-
-// ── Termin durumu hesapla ──
-function terminDurum(t) {
-  if (!t) return 'yok';
-  var p = t.split('.');
-  var d = p.length === 3 ? new Date(p[2], p[1]-1, p[0]) : new Date(t);
-  if (isNaN(d)) return 'yok';
-  var now = new Date(); now.setHours(0,0,0,0);
-  var diff = Math.round((d - now) / 86400000);
-  if (diff < 0)  return 'gecti';
-  if (diff <= 14) return 'yakin';
-  return 'tamam';
-}
-function terminLabel(t) {
-  if (!t) return '';
-  var td = terminDurum(t);
-  var ico = td === 'gecti' ? '⚠ ' : td === 'yakin' ? '⏰ ' : '';
-  return ico + t;
-}
-function formatTarihinputToTR(v) {
-  // YYYY-MM-DD → DD.MM.YYYY
-  if (!v) return '';
-  var m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  return m ? m[3]+'.'+m[2]+'.'+m[1] : v;
-}
-function formatTRtoInput(v) {
-  // DD.MM.YYYY → YYYY-MM-DD
-  if (!v) return '';
-  var m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  return m ? m[3]+'-'+m[2]+'-'+m[1] : v;
-}
-
-// ── Panel inşa et ──
-window.buildSatisPanel = function(si) {
-  var role = window._currentRole || 'viewer';
-  var canEdit = (role === 'admin' || role === 'manager');
-
-  var wrap = document.createElement('div');
-  wrap.className = 'sf-wrap';
-
-  // Toolbar
-  var tb = document.createElement('div');
-  tb.className = 'sf-toolbar';
-  tb.innerHTML =
-    '<div class="sf-toolbar-title">💼 SATIŞ FORMU</div>' +
-    '<div class="sf-search-wrap"><span class="sf-search-ico">🔍</span>' +
-    '<input class="sf-search" id="sfSearch" type="text" placeholder="Makine, firma, il, seri no..."' +
-    ' oninput="window._sfSearchChange(this.value)"/></div>' +
-    (canEdit ? '<button class="add-row-btn" onclick="window.openSatisYeni()" style="white-space:nowrap;">＋ Yeni Kayıt</button>' : '');
-  wrap.appendChild(tb);
-
-  // İstatistik bar
-  var stats = document.createElement('div');
-  stats.className = 'sf-stats';
-  stats.innerHTML =
-    '<div class="sf-stat"><div class="sf-stat-val" id="sfStatToplam">0</div><div class="sf-stat-lbl">Toplam</div></div>' +
-    '<div class="sf-stat c-orange"><div class="sf-stat-val" id="sfStatBekle">0</div><div class="sf-stat-lbl">Beklemede</div></div>' +
-    '<div class="sf-stat c-green"><div class="sf-stat-val" id="sfStatAktif">0</div><div class="sf-stat-lbl">Aktif / Üretimde</div></div>' +
-    '<div class="sf-stat c-blue"><div class="sf-stat-val" id="sfStatTamam">0</div><div class="sf-stat-lbl">Tamamlandı</div></div>' +
-    '<div class="sf-stat c-red"><div class="sf-stat-val" id="sfStatGecti">0</div><div class="sf-stat-lbl">Termin Geçti</div></div>';
-  wrap.appendChild(stats);
-
-  // Filtre sekmeleri
-  var ftabs = document.createElement('div');
-  ftabs.className = 'sf-filter-tabs';
-  ftabs.id = 'sfFilterTabs';
-  [
-    ['hepsi','Tümü'], ['bekle','Beklemede'], ['aktif','Aktif'],
-    ['tamam','Tamamlandı'], ['gecti','Termin Geçti']
-  ].forEach(function(pair) {
-    var btn = document.createElement('button');
-    btn.className = 'sf-ftab' + (pair[0] === _sfFilter ? ' active' : '');
-    btn.dataset.filter = pair[0];
-    btn.textContent = pair[1];
-    btn.onclick = function(){ window._sfSetFilter(pair[0]); };
-    ftabs.appendChild(btn);
-  });
-  wrap.appendChild(ftabs);
-
-  // Kart grid alanı
-  var cardsWrap = document.createElement('div');
-  cardsWrap.className = 'sf-cards-wrap';
-  cardsWrap.id = 'sfCardsWrap';
-  cardsWrap.innerHTML = '<div class="sf-cards-grid" id="sfCardsGrid"></div>';
-  wrap.appendChild(cardsWrap);
-
-  setTimeout(function(){ sfRenderCards(); }, 0);
-  return wrap;
-};
-
-// ── Kartları render et ──
-function sfRenderCards() {
-  var grid = document.getElementById('sfCardsGrid');
-  if (!grid) return;
-  var role = window._currentRole || 'viewer';
-  var canEdit = (role === 'admin' || role === 'manager');
-  var rows = getSatisRows();
-
-  // Filtrele
-  var filtered = rows.filter(function(r) {
-    // Arama filtresi
-    var q = (_sfSearch || '').toLowerCase();
-    if (q) {
-      var haystack = [r.makineAdi, r.yon, r.opsiyon, r.firma, r.il, r.seriNo, r.aciklama, r.durum]
-        .map(function(v){ return (v||'').toLowerCase(); }).join(' ');
-      if (haystack.indexOf(q) === -1) return false;
-    }
-    // Sekme filtresi
-    var td = terminDurum(r.terminTarihi);
-    if (_sfFilter === 'bekle')  return r.durum !== 'Aktif' && r.durum !== 'Tamamlandı' && td !== 'gecti';
-    if (_sfFilter === 'aktif')  return r.durum === 'Aktif';
-    if (_sfFilter === 'tamam')  return r.durum === 'Tamamlandı';
-    if (_sfFilter === 'gecti')  return td === 'gecti' && r.durum !== 'Tamamlandı';
-    return true;
-  });
-
-  // İstatistik güncelle
-  var total = rows.length;
-  var bekle = rows.filter(function(r){ return r.durum !== 'Aktif' && r.durum !== 'Tamamlandı' && terminDurum(r.terminTarihi) !== 'gecti'; }).length;
-  var aktif = rows.filter(function(r){ return r.durum === 'Aktif'; }).length;
-  var tamam = rows.filter(function(r){ return r.durum === 'Tamamlandı'; }).length;
-  var gecti = rows.filter(function(r){ return terminDurum(r.terminTarihi) === 'gecti' && r.durum !== 'Tamamlandı'; }).length;
-  function setS(id, v){ var el=document.getElementById(id); if(el) el.textContent=v; }
-  setS('sfStatToplam', total); setS('sfStatBekle', bekle);
-  setS('sfStatAktif', aktif); setS('sfStatTamam', tamam); setS('sfStatGecti', gecti);
-
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="sf-empty"><span class="sf-empty-ico">💼</span>' +
-      (_sfSearch ? 'Arama sonucu bulunamadı' : 'Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin') + '</div>';
-    return;
-  }
-
-  grid.innerHTML = '';
-  filtered.forEach(function(r) {
-    var ri = rows.indexOf(r);
-    var td = terminDurum(r.terminTarihi);
-    var cardClass = 'sf-card' +
-      (r.durum === 'Tamamlandı' ? ' tamamlandi' : '') +
-      (td === 'gecti' && r.durum !== 'Tamamlandı' ? ' termin-gecti' : '') +
-      (td === 'yakin' && r.durum !== 'Tamamlandı' ? ' termin-yakin' : '');
-
-    // Durum badge
-    var badgeCls = '', badgeTxt = '';
-    if (r.durum === 'Tamamlandı') { badgeCls='sf-badge-tamam'; badgeTxt='📦 Tamamlandı'; }
-    else if (r.durum === 'Aktif') { badgeCls='sf-badge-aktif'; badgeTxt='✅ Aktif'; }
-    else if (td === 'gecti')      { badgeCls='sf-badge-gecti'; badgeTxt='⚠ Termin Geçti'; }
-    else                           { badgeCls='sf-badge-bekle'; badgeTxt='⏳ Beklemede'; }
-
-    // Termin chip
-    var terminChip = '';
-    if (r.terminTarihi) {
-      terminChip = '<span class="sf-termin-chip ' + td + '">' + terminLabel(r.terminTarihi) + '</span>';
-    }
-
-    var actBtns = canEdit
-      ? '<button class="sf-act-btn sf-act-edit" onclick="window.openSatisEdit('+ri+')">✏️ Düzenle</button>' +
-        '<button class="sf-act-btn sf-act-del"  onclick="window.deleteSatisRow('+ri+')">✕ Sil</button>'
-      : '';
-
-    function sfRow(lbl, val) {
-      if (!val && val !== 0) return '';
-      return '<div class="sf-card-row"><span class="sf-card-lbl">'+lbl+'</span><span class="sf-card-val">'+esc(val)+'</span></div>';
-    }
-
-    var card = document.createElement('div');
-    card.className = cardClass;
-    card.innerHTML =
-      '<div class="sf-card-head">' +
-        '<div>' +
-          '<div class="sf-card-machine">'+esc(r.makineAdi||'—')+'</div>' +
-          '<div class="sf-card-seri">'+(r.seriNo?'S/N: '+esc(r.seriNo):'&nbsp;')+'</div>' +
-        '</div>' +
-        '<div class="sf-card-badge"><span class="sf-badge '+badgeCls+'">'+badgeTxt+'</span></div>' +
-      '</div>' +
-      '<div class="sf-card-body">' +
-        sfRow('Yön', r.yon) +
-        sfRow('Opsiyon / Özellik', r.opsiyon) +
-        '<div class="sf-card-divider"></div>' +
-        sfRow('Firma', r.firma) +
-        sfRow('İl / Şehir', r.il) +
-        '<div class="sf-card-divider"></div>' +
-        '<div class="sf-card-row"><span class="sf-card-lbl">Termin</span><span class="sf-card-val">' +
-          (r.terminTarihi ? terminChip : '<span style="color:#444;">—</span>') +
-        '</span></div>' +
-        (r.aciklama ? '<div class="sf-card-divider"></div><div class="sf-card-aciklama">'+esc(r.aciklama)+'</div>' : '') +
-      '</div>' +
-      '<div class="sf-card-foot">' +
-        '<span class="sf-card-tarih">'+(r.kayitTarihi?'📅 '+esc(r.kayitTarihi):'')+'</span>' +
-        '<div class="sf-card-actions">'+actBtns+'</div>' +
-      '</div>';
-    grid.appendChild(card);
-  });
-}
-
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Filtre / arama ──
-window._sfSetFilter = function(f) {
-  _sfFilter = f;
-  document.querySelectorAll('.sf-ftab').forEach(function(b){
-    b.classList.toggle('active', b.dataset.filter === f);
-  });
-  sfRenderCards();
-};
-window._sfSearchChange = function(v) {
-  _sfSearch = v;
-  sfRenderCards();
-};
-
-// ── Modal aç/kapat ──
-window.openSatisYeni = function() {
-  _sfEditIdx = -1;
-  sfModalTitle('➕ YENİ SATIŞ KAYDI');
-  sfModalClear();
-  sfModalOpen();
-};
-window.openSatisEdit = function(ri) {
-  var rows = getSatisRows();
-  var r = rows[ri];
-  if (!r) return;
-  _sfEditIdx = ri;
-  sfModalTitle('✏️ SATIŞ KAYDINI DÜZENLE');
-  sfModalFill(r);
-  sfModalOpen();
-};
-window.closeSatisModal = function() {
-  var m = document.getElementById('satisModal');
-  if (m) m.classList.remove('open');
-};
-
-function sfModalOpen() {
-  var m = document.getElementById('satisModal');
-  if (m) { m.classList.add('open'); sfFocus('sfMakineAdi'); }
-}
-function sfModalTitle(t) {
-  var el = document.getElementById('sfModalTitle');
-  if (el) el.textContent = t;
-}
-function sfFocus(id) { setTimeout(function(){ var el=document.getElementById(id); if(el) el.focus(); }, 80); }
-
-function sfModalClear() {
-  ['sfMakineAdi','sfYon','sfOpsiyon','sfFirma','sfIl','sfSeriNo','sfTermin','sfDurum','sfAciklama']
-    .forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-  var dur = document.getElementById('sfDurum');
-  if (dur) dur.value = 'Beklemede';
-}
-function sfModalFill(r) {
-  function set(id, v){ var el=document.getElementById(id); if(el) el.value=v||''; }
-  set('sfMakineAdi', r.makineAdi);
-  set('sfYon',       r.yon);
-  set('sfOpsiyon',   r.opsiyon);
-  set('sfFirma',     r.firma);
-  set('sfIl',        r.il);
-  set('sfSeriNo',    r.seriNo);
-  set('sfTermin',    formatTRtoInput(r.terminTarihi));
-  set('sfDurum',     r.durum || 'Beklemede');
-  set('sfAciklama',  r.aciklama);
-}
-
-// ── Kaydet ──
-window.saveSatisRow = function() {
-  var makineAdi = (document.getElementById('sfMakineAdi')||{}).value || '';
-  var firma     = (document.getElementById('sfFirma')||{}).value || '';
-  makineAdi = makineAdi.trim(); firma = firma.trim();
-  if (!makineAdi) { alert('Makine adı zorunludur!'); sfFocus('sfMakineAdi'); return; }
-  if (!firma)     { alert('Firma adı zorunludur!');  sfFocus('sfFirma'); return; }
-
-  var terminRaw = (document.getElementById('sfTermin')||{}).value || '';
-  var row = {
-    makineAdi  : makineAdi,
-    yon        : ((document.getElementById('sfYon')||{}).value||'').trim(),
-    opsiyon    : ((document.getElementById('sfOpsiyon')||{}).value||'').trim(),
-    firma      : firma,
-    il         : ((document.getElementById('sfIl')||{}).value||'').trim(),
-    seriNo     : ((document.getElementById('sfSeriNo')||{}).value||'').trim(),
-    terminTarihi: formatTarihinputToTR(terminRaw),
-    durum      : (document.getElementById('sfDurum')||{}).value || 'Beklemede',
-    aciklama   : ((document.getElementById('sfAciklama')||{}).value||'').trim(),
-    kayitTarihi: new Date().toLocaleDateString('tr-TR'),
-    olusturan  : window._currentUser || ''
-  };
-
-  var sheet = getSatisSheet();
-  if (!sheet) return;
-  if (!sheet.rows) sheet.rows = [];
-
-  if (_sfEditIdx >= 0) {
-    row.kayitTarihi = sheet.rows[_sfEditIdx].kayitTarihi || row.kayitTarihi;
-    sheet.rows[_sfEditIdx] = row;
-  } else {
-    sheet.rows.push(row);
-  }
-
-  window.closeSatisModal();
-  sfRenderCards();
-  if (typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
-};
-
-// ── Sil ──
-window.deleteSatisRow = function(ri) {
-  var rows = getSatisRows();
-  var r = rows[ri];
-  if (!r) return;
-  var label = r.firma ? '"'+r.firma+'" — '+r.makineAdi : r.makineAdi;
-  if (!confirm(label + ' kaydı silinsin mi?')) return;
-  var sheet = getSatisSheet();
-  if (sheet && sheet.rows) sheet.rows.splice(ri, 1);
-  sfRenderCards();
-  if (typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
-};
-
-// renderSatisRows — dışarıdan çağrılabilir (Firebase sync sonrası)
-window.renderSatisRows = function() { sfRenderCards(); };
-
-})();
-
-
 
 function renderTeslimRows() {
   const tbody = document.getElementById('teslimBody');
@@ -6565,11 +6146,6 @@ const OFFLINE_DATA = [
     "name": "TESLİM KAYIT",
     "type": "teslim",
     "rows": []
-  },
-  {
-    "name": "SATIŞ FORMU",
-    "type": "satis",
-    "rows": []
   }
 ];
 
@@ -6606,7 +6182,7 @@ function buildState() {
   state = {};
   SHEETS.forEach((sheet, si) => {
     state[si] = { rows: [], name: sheet.name };
-    if (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis') return; // özel sayfalar
+    if (sheet.type === 'siparis' || sheet.type === 'teslim') return; // özel sayfalar
     let no = 0;
     sheet.rows.forEach(row => {
       const g = isGroupRow(row);
@@ -6680,7 +6256,7 @@ function buildTabs() {
   });
 
   function getSheetCount(i, sheet) {
-    return (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis')
+    return (sheet.type === 'siparis' || sheet.type === 'teslim')
       ? (SHEETS[i].rows || []).length
       : (state[i] && state[i].rows ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
   }
@@ -6752,14 +6328,13 @@ function buildTabs() {
     wrap.appendChild(div);
   });
 
-  // Gruba girmeyen serbest sayfalar (SİPARİŞ FORMU, TESLİM KAYIT, SATIŞ FORMU vb.)
+  // Gruba girmeyen serbest sayfalar (SİPARİŞ FORMU, TESLİM KAYIT, vb.)
   freeSheets.forEach(({ idx, sheet }) => {
     const cnt = getSheetCount(idx, sheet);
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
     btn.id = 'tabBtn-' + idx;
-    const ico = sheet.type === 'siparis' ? '📋 ' : sheet.type === 'teslim' ? '📬 ' : sheet.type === 'satis' ? '💼 ' : '📄 ';
-    btn.innerHTML = ico + sheet.name + '<span class="tab-count">' + cnt + '</span>';
+    btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
     btn.onclick = () => switchTab(idx);
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
@@ -6811,7 +6386,7 @@ function switchTab(idx) {
   filterTable('');
   updateStats(idx);
   const addRowBtn = document.getElementById('addRowBtn');
-  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim' || SHEETS[idx].type === 'satis');
+  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
   const role = window._currentRole || 'viewer';
   const canAddRow = (role === 'admin' || role === 'manager');
   if (addRowBtn) {
@@ -6914,7 +6489,7 @@ function applyGlobalMakine() {
   const si = activeSheet;
   if (!state[si] || !state[si].rows) return;
   // Sipariş/teslim sayfaları farklı, sadece normal sayfalar
-  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis')) {
+  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim')) {
     alert('Bu sayfada makine sayısı uygulaması çalışmaz.');
     return;
   }
@@ -6967,11 +6542,6 @@ function buildSheets() {
     }
     if (sheet.type === 'teslim') {
       try { panel.appendChild(window.buildTeslimPanel(si)); } catch(e) { console.warn('teslim panel hatası:', e); }
-      container.appendChild(panel);
-      return;
-    }
-    if (sheet.type === 'satis') {
-      try { panel.appendChild(window.buildSatisPanel(si)); } catch(e) { console.warn('satis panel hatası:', e); }
       container.appendChild(panel);
       return;
     }
@@ -7331,7 +6901,7 @@ async function loadData() {
     if (snap.exists() && snap.data().data) {
       const freshSheets = JSON.parse(snap.data().data);
       // Eksik özel sayfaları OFFLINE_DATA'dan ekle
-      ['siparis','teslim','satis'].forEach(tip => {
+      ['siparis','teslim'].forEach(tip => {
         if (!freshSheets.find(s => s.type === tip)) {
           const template = OFFLINE_DATA.find(s => s.type === tip);
           if (template) freshSheets.push(JSON.parse(JSON.stringify(template)));
@@ -7362,7 +6932,7 @@ async function loadData() {
       if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
-        ['siparis','teslim','satis'].forEach(tip => {
+        ['siparis','teslim'].forEach(tip => {
           if (!updated.find(s => s.type === tip)) {
             const existing = SHEETS.find(s => s.type === tip);
             if (existing) updated.push(existing);
@@ -7374,7 +6944,6 @@ async function loadData() {
         updateStats(activeSheet);
         renderSiparisRows();
         renderTeslimRows();
-        if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
     });
@@ -7421,13 +6990,13 @@ function openModal() {
   fSheet.innerHTML = '';
   let firstIdx = -1;
   SHEETS.forEach((s, i) => {
-    if (s.type === 'siparis' || s.type === 'teslim' || s.type === 'satis') return;
+    if (s.type === 'siparis' || s.type === 'teslim') return;
     const o = document.createElement('option');
     o.value = i; o.textContent = s.name;
     if (firstIdx === -1) firstIdx = i;
     fSheet.appendChild(o);
   });
-  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim' && SHEETS[activeSheet].type !== 'satis')
+  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim')
     ? activeSheet : firstIdx;
   if (defaultIdx >= 0) {
     fSheet.value = defaultIdx;
@@ -7455,7 +7024,7 @@ function closeModalOutside(e) { if (e.target === document.getElementById('modalO
 async function addRow() {
   const si = parseInt(document.getElementById('fSheet').value);
   // Sipariş/teslim sayfasına ekleme yapılamaz
-  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis') {
+  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim') {
     alert('Bu sayfaya satır eklenemez. Lütfen malzeme listesi sayfalarından birini seçin.');
     return;
   }
@@ -8309,27 +7878,40 @@ function snRenderContent() {
   var cols = SN_COLS[m];
   var rows = SN_DATA[m] || [];
 
+  // ── Azalan sıralama: seri no büyükten küçüğe ──
+  var sortedIdx = rows.map(function(r, i){ return i; });
+  sortedIdx.sort(function(a, b){
+    var sa = (rows[a].seriNo || '').trim();
+    var sb = (rows[b].seriNo || '').trim();
+    // Sayısal karşılaştırma dene
+    var na = parseFloat(sa), nb = parseFloat(sb);
+    if (!isNaN(na) && !isNaN(nb)) return nb - na;
+    return sb.localeCompare(sa, 'tr');
+  });
+
   var th = '<th style="background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;width:36px;">#</th>'+
     cols.map(function(c){
       return '<th style="background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;white-space:nowrap;">'+c[1]+'</th>';
     }).join('')+
-    '<th style="background:#0e0e0e;width:50px;"></th>';
+    '<th style="background:#0e0e0e;width:80px;padding:8px 10px;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;">İŞLEM</th>';
 
-  var body = rows.map(function(r,i){
+  var body = sortedIdx.map(function(origIdx, displayPos){
+    var r = rows[origIdx];
     var tds = cols.map(function(c){
       return '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;color:#ccc;font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="'+snEsc(r[c[0]]||'')+'">'+snEsc(r[c[0]]||'')+'</td>';
     }).join('');
-    return '<tr style="cursor:pointer;" onclick="snFillForm('+i+')" onmouseover="this.style.background=\'rgba(0,200,200,.04)\'" onmouseout="this.style.background=\'\'">'+
-      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;color:#444;font-size:11px;">'+(i+1)+'</td>'+
+    return '<tr data-orig-idx="'+origIdx+'" style="cursor:pointer;" onmouseover="this.style.background=\'rgba(0,200,200,.04)\'" onmouseout="this.style.background=\'\'">'+
+      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;color:#444;font-size:11px;">'+(displayPos+1)+'</td>'+
       tds+
-      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;text-align:center;">'+
-        '<button onclick="event.stopPropagation();snDel('+i+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;" title="Sil">✕</button>'+
+      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;text-align:center;white-space:nowrap;">'+
+        '<button onclick="event.stopPropagation();snEditRow('+origIdx+')" style="background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);color:#e0a020;border-radius:4px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:3px;" title="Düzenle">✏️</button>'+
+        '<button onclick="event.stopPropagation();snDel('+origIdx+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:4px;padding:3px 7px;font-size:11px;cursor:pointer;" title="Sil">✕</button>'+
       '</td></tr>';
   }).join('');
 
   if (!body) body = '<tr><td colspan="99" style="padding:32px;text-align:center;color:#444;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz kayıt yok</td></tr>';
 
-  // Form alanları
+  // Form alanları (YENİ KAYIT)
   var form = cols.map(function(c){
     var inp;
     if (c[0]==='makine' || c[0]==='model') {
@@ -8337,7 +7919,7 @@ function snRenderContent() {
       rows.forEach(function(r){ if(r[c[0]]) opts[r[c[0]]]=1; });
       var optList = Object.keys(opts).sort();
       inp = '<select id="snF_'+c[0]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+
-        '<option value="">— Seç veya yaz —</option>'+
+        '<option value="">— Seç —</option>'+
         optList.map(function(o){return '<option value="'+snEsc(o)+'">'+snEsc(o)+'</option>';}).join('')+
         '</select>';
     } else if (c[0]==='yon') {
@@ -8350,13 +7932,31 @@ function snRenderContent() {
       inp+'</div>';
   }).join('');
 
-  box.innerHTML = '<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
-    '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;">'+rows.length+' kayıt</span>'+
-    '<input id="snSearch" type="text" placeholder="Ara..." oninput="snFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:240px;"/>'+
+  box.innerHTML =
+    // Düzenleme Modal (hidden)
+    '<div id="snEditModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;align-items:center;justify-content:center;" onclick="if(event.target===this)snCloseEdit()">'+
+      '<div style="background:#181818;border:1px solid #2a2a2a;border-top:3px solid #F5A623;border-radius:12px;width:580px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.9);">'+
+        '<div style="padding:16px 22px 14px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;">'+
+          '<span style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:900;letter-spacing:2px;color:#F5A623;">✏️ SERİ NO DÜZENLE</span>'+
+          '<button onclick="snCloseEdit()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>'+
+        '</div>'+
+        '<div id="snEditBody" style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:12px;overflow-y:auto;"></div>'+
+        '<div style="padding:14px 22px;border-top:1px solid #252525;display:flex;justify-content:flex-end;gap:10px;">'+
+          '<button onclick="snCloseEdit()" style="padding:9px 18px;background:#252525;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;">İptal</button>'+
+          '<button onclick="snSaveEdit()" style="padding:9px 22px;background:#F5A623;color:#1a1a1a;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;">💾 Kaydet</button>'+
+        '</div>'+
+      '</div>'+
     '</div>'+
-    '<div style="overflow-x:auto;margin-bottom:24px;border-radius:8px;border:1px solid #1e1e1e;max-height:400px;overflow-y:auto;">'+
+    // Üst bilgi + arama
+    '<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
+    '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;">'+rows.length+' kayıt · <span style="color:#F5A623;">↓ azalan seri no</span></span>'+
+    '<input id="snSearch" type="text" placeholder="Ara (seri no, firma, il...)" oninput="snFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:260px;"/>'+
+    '<span id="snBadge" style="font-size:11px;color:#92D050;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;"></span>'+
+    '</div>'+
+    '<div style="overflow-x:auto;margin-bottom:24px;border-radius:8px;border:1px solid #1e1e1e;max-height:420px;overflow-y:auto;">'+
       '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody id="snTbody">'+body+'</tbody></table>'+
     '</div>'+
+    // Yeni kayıt formu
     '<div style="background:#161616;border:1px solid #222;border-top:2px solid #00c8c8;border-radius:10px;padding:20px;">'+
       '<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:#00c8c8;margin-bottom:16px;">＋ YENİ KAYIT EKLE — '+m+'</div>'+
       '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">'+form+'</div>'+
@@ -8366,6 +7966,64 @@ function snRenderContent() {
       '</div>'+
     '</div>';
 }
+
+// ── SERİ NO DÜZENLEME ──
+var _snEditIdx = -1;
+
+window.snEditRow = function(origIdx) {
+  var m = SN_MACHINES[snActiveMachine];
+  var cols = SN_COLS[m];
+  var r = (SN_DATA[m]||[])[origIdx];
+  if (!r) return;
+  _snEditIdx = origIdx;
+
+  var body = document.getElementById('snEditBody');
+  if (!body) return;
+
+  body.innerHTML = cols.map(function(c){
+    var val = snEsc(r[c[0]]||'');
+    var inp;
+    if (c[0]==='yon') {
+      inp = '<select id="snE_'+c[0]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+
+        ['','SAĞ MAKİNE','SOL MAKİNE'].map(function(o){ return '<option value="'+o+'"'+(o===r[c[0]]?' selected':'')+'>'+o+'</option>'; }).join('')+
+        '</select>';
+    } else {
+      inp = '<input id="snE_'+c[0]+'" type="text" value="'+val+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />';
+    }
+    return '<div style="flex:1;min-width:160px;max-width:260px;">'+
+      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#666;font-family:Barlow Condensed,sans-serif;margin-bottom:5px;text-transform:uppercase;">'+c[1]+'</div>'+
+      inp+'</div>';
+  }).join('');
+
+  var modal = document.getElementById('snEditModal');
+  if (modal) modal.style.display = 'flex';
+  // İlk input'a focus
+  var first = body.querySelector('input');
+  if (first) setTimeout(function(){ first.focus(); }, 80);
+};
+
+window.snCloseEdit = function() {
+  var modal = document.getElementById('snEditModal');
+  if (modal) modal.style.display = 'none';
+  _snEditIdx = -1;
+};
+
+window.snSaveEdit = function() {
+  if (_snEditIdx < 0) return;
+  var m = SN_MACHINES[snActiveMachine];
+  var cols = SN_COLS[m];
+  var r = (SN_DATA[m]||[])[_snEditIdx];
+  if (!r) return;
+  cols.forEach(function(c){
+    var el = document.getElementById('snE_'+c[0]);
+    if (el) r[c[0]] = el.value.trim();
+  });
+  snCloseEdit();
+  snFireSave();
+  snRender();
+  snBadge('✓ Güncellendi');
+};
+
 
 window.snSwitchM = function(i) { snActiveMachine = i; snRender(); };
 window.snBack = function() {
@@ -8385,13 +8043,8 @@ window.snFilter = function() {
 };
 
 window.snFillForm = function(i) {
-  var m = SN_MACHINES[snActiveMachine];
-  var r = (SN_DATA[m]||[])[i];
-  if (!r) return;
-  SN_COLS[m].forEach(function(c){
-    var el = document.getElementById('snF_'+c[0]);
-    if (el) el.value = r[c[0]]||'';
-  });
+  // Artık snEditRow modal kullanıyor — bu fonksiyon backward compat için korunuyor
+  window.snEditRow(i);
 };
 
 window.snClear = function() {
@@ -8468,6 +8121,9 @@ function snAddTab() {
   var w = document.getElementById('tabsWrap');
   if (!w) return;
   if (document.getElementById('tabBtn-sn')) return;
+  // Rol kısıtlaması: sadece admin ve manager görebilir
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var b = document.createElement('button');
   b.className = 'tab-btn';
   b.id = 'tabBtn-sn';
@@ -9307,6 +8963,9 @@ function stLoad() {
 function stAddTab() {
   var w = document.getElementById('tabsWrap');
   if (!w || document.getElementById('tabBtn-st')) return;
+  // Rol kısıtlaması: sadece admin ve manager görebilir
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var b = document.createElement('button');
   b.className = 'tab-btn';
   b.id = 'tabBtn-st';
@@ -9376,83 +9035,5 @@ if (window._db) setTimeout(stLoad, 1800);
 
 })();
 </script>
-
-<!-- ╔══════════════════════════════════════════════╗
-     ║          SATIŞ FORMU MODAL                  ║
-     ╚══════════════════════════════════════════════╝ -->
-<div id="satisModal" onclick="if(event.target===this)window.closeSatisModal()">
-  <div class="sm-box">
-    <div class="sm-head">
-      <h2 id="sfModalTitle">➕ YENİ SATIŞ KAYDI</h2>
-      <button class="admin-close" onclick="window.closeSatisModal()">✕</button>
-    </div>
-    <div class="sm-body">
-
-      <!-- Makine Adı -->
-      <div class="sm-field full">
-        <label>Makine Adı *</label>
-        <input id="sfMakineAdi" type="text" placeholder="örn. BC 410 PRO, Q-BOX, H-CUT…" autocomplete="off"/>
-      </div>
-
-      <!-- Yön + Opsiyon -->
-      <div class="sm-field">
-        <label>Makine Yönü</label>
-        <select id="sfYon">
-          <option value="">— Seçiniz —</option>
-          <option>Sağ</option>
-          <option>Sol</option>
-          <option>Çift Yön</option>
-          <option>Diğer</option>
-        </select>
-      </div>
-      <div class="sm-field">
-        <label>Opsiyon / Özellik</label>
-        <input id="sfOpsiyon" type="text" placeholder="örn. Otomatik Besleme, Yazıcı…" autocomplete="off"/>
-      </div>
-
-      <!-- Firma + İl -->
-      <div class="sm-field">
-        <label>Satıldığı Firma *</label>
-        <input id="sfFirma" type="text" placeholder="Firma adı" autocomplete="off"/>
-      </div>
-      <div class="sm-field">
-        <label>İl / Şehir</label>
-        <input id="sfIl" type="text" placeholder="örn. İstanbul, Bursa, Ankara…" autocomplete="off"/>
-      </div>
-
-      <!-- Seri No + Termin -->
-      <div class="sm-field">
-        <label>Seri Numarası</label>
-        <input id="sfSeriNo" type="text" placeholder="Makine seri no." autocomplete="off"/>
-      </div>
-      <div class="sm-field">
-        <label>Termin Tarihi</label>
-        <input id="sfTermin" type="date"/>
-      </div>
-
-      <!-- Durum -->
-      <div class="sm-field">
-        <label>Durum</label>
-        <select id="sfDurum">
-          <option value="Beklemede">⏳ Beklemede</option>
-          <option value="Aktif">✅ Aktif / Üretimde</option>
-          <option value="Tamamlandı">📦 Tamamlandı / Teslim Edildi</option>
-        </select>
-      </div>
-
-      <!-- Açıklama -->
-      <div class="sm-field full">
-        <label>Açıklama / Notlar</label>
-        <textarea id="sfAciklama" placeholder="Müşteri notları, özel gereksinimler, teslimat detayları…"></textarea>
-      </div>
-
-    </div>
-    <div class="sm-foot">
-      <button class="sm-btn sm-btn-cancel" onclick="window.closeSatisModal()">İptal</button>
-      <button class="sm-btn sm-btn-save"   onclick="window.saveSatisRow()">💾 Kaydet</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
