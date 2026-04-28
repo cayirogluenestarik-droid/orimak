@@ -1262,17 +1262,14 @@ function buildSiparisPanel(si) {
   wrap.style.cssText = 'padding:16px;';
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">ÜRETİMDEN SATIN ALMAYA SİPARİŞ FORMU</div>
-      ${window._currentRole !== 'viewer' ? `<button onclick="openSiparisEkle()" class="add-row-btn">＋ Yeni Sipariş</button>` : ''}
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#666;letter-spacing:1px;">SATIŞ TAKİP FORMU</div>
+      ${window._currentRole !== 'viewer' ? `<button onclick="openSiparisEkle()" class="add-row-btn">＋ Yeni Kayıt</button>` : ''}
     </div>
     <div class="table-wrap">
       <table id="siparisTable">
         <thead><tr>
-          <th>NO</th><th>ÜRÜN KODU</th><th>ÜRÜN ADI</th><th>SİP. ADEDİ</th>
-          <th>SİPARİŞİ OLUŞTURAN</th><th>YETKİLİ ONAYI</th>
-          <th>OLUŞTURMA TARİHİ</th><th>TERMİN TARİHİ</th>
-          <th>GELİŞ TARİHİ</th><th>GELİŞ ONAYI</th>
-          <th>GELEN ADET</th><th>SİPARİŞ DURUMU</th><th>NOTLAR</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
+          <th>NO</th><th>MAKİNE İSMİ</th><th>SATILDIĞI FİRMA</th><th>MAKİNE YÖNÜ</th>
+          <th>OPSİYON ÖZELLİK</th><th>TERMİN TARİHİ</th><th>NOTLAR</th><th>DURUM</th><th>İŞLEMLER</th>
         </tr></thead>
         <tbody id="siparisBody"></tbody>
       </table>
@@ -1287,39 +1284,39 @@ function renderSiparisRows() {
   const rows = getSiparisRows();
   tbody.innerHTML = '';
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz sipariş yok — ＋ Yeni Sipariş ile ekleyin</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin</td></tr>';
     return;
   }
   rows.forEach((r, i) => {
-    // Teslim kayıttan geliş bilgisini çek
-    const teslimRows = getTeslimRows();
-    const teslim = teslimRows.find(t => t.urunKodu === r.urunKodu);
-    const gelisAdet = teslim ? teslim.gelisAdet : '';
-    const gelisTarihi = teslim ? teslim.gelisTarihi : '';
-    const teslimAlan = teslim ? teslim.teslimAlan : '';
+    const makineIsmi = r.makineIsmi || r.urunAdi || r.urunKodu || '';
+    const satildigiFirma = r.satildigiFirma || r.olusturan || '';
+    const makineYonu = r.makineYonu || '';
+    const opsiyonOzellik = r.opsiyonOzellik || '';
+    const notlar = r.notlar || '';
 
-    // Durum hesapla
-    let durum = 'Yeni Sipariş';
+    let durum = 'Planlandı';
     let durumClass = 'sp-durum-yeni';
-    if (teslim || r.gelisOnay === 'Onaylandı') { durum = 'Teslim Alındı'; durumClass = 'sp-durum-teslim'; }
-    else if (r.yetkiliOnay === 'Onaylandı') { durum = 'Onay Bekliyor'; durumClass = 'sp-durum-onay'; }
+    if (r.gelisOnay === 'Onaylandı') {
+      durum = 'Teslim Edildi';
+      durumClass = 'sp-durum-teslim';
+    } else if (isTerminYakin(r.terminTarihi)) {
+      durum = 'Termin Yakın';
+      durumClass = 'sp-durum-onay';
+    }
 
-    // Satır rengi — diğer sayfalarla aynı mantık
-    function getSiparisRowClass(r, teslim) {
-      if (teslim || r.gelisOnay === 'Onaylandı') return 'status-gelis';
-      // Termin geçmişse ve teslim yoksa kırmızı
+    function getSiparisRowClass(r) {
+      if (r.gelisOnay === 'Onaylandı') return 'status-gelis';
       const terminD = parseTerminDate(r.terminTarihi || '');
       if (terminD) {
         const bugun = new Date(); bugun.setHours(0,0,0,0);
         if (terminD < bugun) return 'status-eksik';
       }
-      if (r.yetkiliOnay === 'Onaylandı') return 'status-onay';
-      if (r.yetkiliOnay === 'Beklemede') return 'status-bekle';
+      if (isTerminYakin(r.terminTarihi)) return 'status-onay';
       return '';
     }
 
     const tr = document.createElement('tr');
-    tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
+    tr.className = 'data-row ' + getSiparisRowClass(r);
 
     function mkTd(html, style) {
       const td = document.createElement('td');
@@ -1335,39 +1332,13 @@ function renderSiparisRows() {
     }
 
     tr.appendChild(mkTd(String(i+1), 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
-    tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
-    tr.appendChild(mkTd(r.urunAdi||''));
-    tr.appendChild(mkTd(r.sipAdet||'', 'text-align:center;'));
-    tr.appendChild(mkTd(r.olusturan||''));
-    const yetkiliTd = document.createElement('td');
-    const yetkiliDiv = document.createElement('div');
-    yetkiliDiv.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
-    const yetkiliSipSel = mkSiparisSelect(['','Onaylandı','Beklemede'], r.yetkiliOnay, v => {
-      rows[i].yetkiliOnay = v;
-      if (v === 'Onaylandı') {
-        const kisi = window._currentUser || '?';
-        const tarih = new Date().toLocaleDateString('tr-TR');
-        rows[i].yetkiliOnayKisi = kisi + ' · ' + tarih;
-      } else {
-        rows[i].yetkiliOnayKisi = '';
-      }
-      saveSiparisRows(); renderSiparisRows();
-    }, true);
-    yetkiliDiv.appendChild(yetkiliSipSel);
-    const yetkiliKisiSip = document.createElement('div');
-    yetkiliKisiSip.className = 'onaylayan-kisi';
-    yetkiliKisiSip.textContent = r.yetkiliOnayKisi || '';
-    yetkiliDiv.appendChild(yetkiliKisiSip);
-    yetkiliTd.appendChild(yetkiliDiv);
-    tr.appendChild(yetkiliTd);
-    tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(makineIsmi, "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
+    tr.appendChild(mkTd(satildigiFirma || '—'));
+    tr.appendChild(mkTd(makineYonu || '—', 'text-align:center;'));
+    tr.appendChild(mkTd(opsiyonOzellik || '—', 'font-size:11px;line-height:1.4;'));
     tr.appendChild(mkTd(r.terminTarihi||'', 'font-size:11px;' + (isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':'')));
-    tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
-    tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })));
-    tr.appendChild(mkTd(String(gelisAdet||''), 'text-align:center;'));
+    tr.appendChild(mkTd(notlar || '—', 'font-size:11px;color:#888;line-height:1.4;'));
     tr.appendChild(mkTd(`<span class="sp-durum ${durumClass}">${durum}</span>`));
-    tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#888;'));
-    tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#888;'));
 
     const tdAct = document.createElement('td');
     const actDiv = document.createElement('div');
@@ -1427,7 +1398,6 @@ async function saveSiparisRows() {
 function openSiparisEkle(editIdx = -1) {
   const rows = getSiparisRows();
   const r = editIdx >= 0 ? rows[editIdx] : {};
-  const bugun = new Date().toLocaleDateString('tr-TR');
 
   const overlay = document.createElement('div');
   overlay.id = 'siparisModal';
@@ -1435,17 +1405,16 @@ function openSiparisEkle(editIdx = -1) {
   overlay.innerHTML = `
     <div style="background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);">
       <div style="padding:18px 24px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;">
-        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);">${editIdx>=0?'✏️ SİPARİŞ DÜZENLE':'➕ YENİ SİPARİŞ'}</h3>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);">${editIdx>=0?'✏️ SATIŞ KAYDI DÜZENLE':'➕ YENİ SATIŞ KAYDI'}</h3>
         <button onclick="document.getElementById('siparisModal').remove()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;">✕</button>
       </div>
       <div style="padding:20px 24px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        ${siparisField('Ürün Kodu','sp_kod',r.urunKodu||'')}
-        ${siparisField('Ürün Adı','sp_ad',r.urunAdi||'','full')}
-        ${siparisField('Sipariş Adedi','sp_adet',r.sipAdet||'')}
-        ${siparisField('Sipariş Oluşturan','sp_olusturan',r.olusturan||'')}
-        ${siparisField('Oluşturma Tarihi','sp_otar',r.olusturmaTarihi||bugun)}
+        ${siparisField('Makine İsmi','sp_makine',r.makineIsmi||r.urunAdi||'')}
+        ${siparisField('Satıldığı Firma','sp_firma',r.satildigiFirma||r.olusturan||'')}
+        ${siparisField('Makine Yönü','sp_yon',r.makineYonu||'')}
         ${siparisField('Termin Tarihi','sp_termin',r.terminTarihi||'')}
-        ${siparisField('Notlar','sp_notlar',r.notlar||'','full')}
+        ${siparisTextareaField('Opsiyon Özellik','sp_opsiyon',r.opsiyonOzellik||'','full')}
+        ${siparisTextareaField('Notlar','sp_notlar',r.notlar||'','full')}
       </div>
       <div style="padding:16px 24px;border-top:1px solid #2a2a2a;display:flex;gap:8px;justify-content:flex-end;">
         <button onclick="document.getElementById('siparisModal').remove()" style="padding:10px 18px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;">İptal</button>
@@ -1456,6 +1425,11 @@ function openSiparisEkle(editIdx = -1) {
 }
 window.openSiparisEkle = openSiparisEkle;
 
+function buildSiparisKayitKodu(makineIsmi, firma) {
+  const kaynak = `${makineIsmi}-${firma}`.toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return kaynak || `SATIS-${Date.now()}`;
+}
+
 function siparisField(label, id, val, cls='') {
   return `<div style="${cls==='full'?'grid-column:1/-1;':''}">
     <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">${label}</label>
@@ -1463,15 +1437,31 @@ function siparisField(label, id, val, cls='') {
   </div>`;
 }
 
+function siparisTextareaField(label, id, val, cls='') {
+  return `<div style="${cls==='full'?'grid-column:1/-1;':''}">
+    <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:5px;font-family:'Barlow Condensed',sans-serif;">${label}</label>
+    <textarea id="${id}" style="width:100%;min-height:84px;resize:vertical;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='#3a3a3a'">${(val||'').replace(/</g,'&lt;')}</textarea>
+  </div>`;
+}
+
 async function saveSiparis(editIdx) {
   const si = getSiparisIdx();
   const rows = getSiparisRows();
+  const makineIsmi = document.getElementById('sp_makine').value.trim();
+  const satildigiFirma = document.getElementById('sp_firma').value.trim();
+  if (!makineIsmi) {
+    alert('Makine ismi boş bırakılamaz.');
+    return;
+  }
   const yeni = {
-    urunKodu: document.getElementById('sp_kod').value.trim(),
-    urunAdi: document.getElementById('sp_ad').value.trim(),
-    sipAdet: document.getElementById('sp_adet').value.trim(),
-    olusturan: document.getElementById('sp_olusturan').value.trim(),
-    olusturmaTarihi: document.getElementById('sp_otar').value.trim(),
+    makineIsmi,
+    satildigiFirma,
+    makineYonu: document.getElementById('sp_yon').value.trim(),
+    opsiyonOzellik: document.getElementById('sp_opsiyon').value.trim(),
+    urunKodu: editIdx >= 0 ? (rows[editIdx].urunKodu || buildSiparisKayitKodu(makineIsmi, satildigiFirma)) : buildSiparisKayitKodu(makineIsmi, satildigiFirma),
+    urunAdi: makineIsmi,
+    olusturan: satildigiFirma,
+    olusturmaTarihi: editIdx >= 0 ? (rows[editIdx].olusturmaTarihi || new Date().toLocaleDateString('tr-TR')) : new Date().toLocaleDateString('tr-TR'),
     terminTarihi: document.getElementById('sp_termin').value.trim(),
     notlar: document.getElementById('sp_notlar').value.trim(),
     yetkiliOnay: editIdx >= 0 ? (rows[editIdx].yetkiliOnay||'') : '',
@@ -1492,7 +1482,7 @@ function editSiparis(idx) { openSiparisEkle(idx); }
 window.editSiparis = editSiparis;
 
 async function deleteSiparis(idx) {
-  if (!confirm('Bu siparişi silmek istediğinizden emin misiniz?')) return;
+  if (!confirm('Bu satış kaydını silmek istediğinizden emin misiniz?')) return;
   const si = getSiparisIdx();
   SHEETS[si].rows.splice(idx, 1);
   if (isOnline) await fbSaveAll();
@@ -1799,11 +1789,11 @@ function getTerminUrunler(gunSinir = 7) {
         if (r.gelisOnay === 'Onaylandı') return;
         if (termin >= bugun && termin <= sinir) {
           const kalan = Math.round((termin - bugun) / (1000*60*60*24));
-          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan });
+          sonuclar.push({ si, ri, ad: r.makineIsmi || r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan });
         }
         if (termin < bugun) {
           const gecen = Math.round((bugun - termin) / (1000*60*60*24));
-          sonuclar.push({ si, ri, ad: r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan: -gecen, gecikti: true });
+          sonuclar.push({ si, ri, ad: r.makineIsmi || r.urunAdi || r.urunKodu || '?', sayfa: sheet.name, grup: '', termin, kalan: -gecen, gecikti: true });
         }
       });
       return;
@@ -6130,7 +6120,7 @@ const OFFLINE_DATA = [
     ]
   },
   {
-    "name": "SİPARİŞ FORMU",
+    "name": "SATIŞ TAKİP",
     "type": "siparis",
     "rows": []
   },
@@ -6281,7 +6271,11 @@ function buildTabs() {
       // Alt kategori etiketi — Talaşlı İmalat mı, Malzeme Sipariş Listesi mi?
       let label = sheet.name;
       const upper = sheet.name.toUpperCase();
-      if (upper.includes('TALAŞLI') || upper.includes('TALASLI')) {
+      if (sheet.type === 'siparis') {
+        label = '📈 Satış Takip';
+      } else if (sheet.type === 'teslim') {
+        label = '📦 Teslim Kayıt';
+      } else if (upper.includes('TALAŞLI') || upper.includes('TALASLI')) {
         label = '🔧 Talaşlı İmalat';
       } else if (upper.includes('SİPARİŞ') || upper.includes('SIPARIS') || upper.includes('HAZIR')) {
         label = '📋 Malzeme Sipariş Listesi';
@@ -6326,7 +6320,12 @@ function buildTabs() {
     const btn = document.createElement('button');
     btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
     btn.id = 'tabBtn-' + idx;
-    btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
+    const label = sheet.type === 'siparis'
+      ? '📈 Satış Takip'
+      : sheet.type === 'teslim'
+        ? '📦 Teslim Kayıt'
+        : sheet.name;
+    btn.innerHTML = label + '<span class="tab-count">' + cnt + '</span>';
     btn.onclick = () => switchTab(idx);
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
