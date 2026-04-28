@@ -7897,7 +7897,53 @@ function stRender() {
   '<div style="display:flex;gap:0;border-bottom:1px solid #222;margin-bottom:20px;overflow-x:auto;flex-wrap:wrap;">'+tabs+'</div>'+
   '<div id="stContent"></div>';
 
+  // Servis Plan sayfasındaysa otomatik onay uygula
+  if (ST_PAGES[stActiveIdx] && ST_PAGES[stActiveIdx][0] === 'Servis Plan.html') {
+    if (typeof stAutoOnayAll === 'function') stAutoOnayAll();
+  }
   stRenderContent();
+}
+
+
+// ── Tarih parse yardımcı (GG.AA.YYYY veya AA.YYYY) ──
+function stParseDate(s) {
+  if (!s) return 0;
+  var str = String(s).trim();
+  // GG.AA.YYYY
+  var m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]).getTime();
+  // AA.YYYY
+  var m2 = str.match(/^(\d{1,2})\.(\d{4})$/);
+  if (m2) return new Date(+m2[2], +m2[1]-1, 1).getTime();
+  return 0;
+}
+
+function stSortByDate(rows, dateColIdx) {
+  if (dateColIdx < 0) return rows;
+  return rows.slice().sort(function(a, b) {
+    return stParseDate(b[dateColIdx]) - stParseDate(a[dateColIdx]);
+  });
+}
+
+function stAutoOnayAll() {
+  var fname = 'Servis Plan.html';
+  var info = ST_DATA[fname];
+  if (!info) return;
+  var headers = info.headers || [];
+  if (headers.indexOf('ONAY') < 0) { headers.push('ONAY'); }
+  var onayIdx = headers.indexOf('ONAY');
+  var rows = info.data || [];
+  // Son 6 hariç hepsini ONAYLANDI yap
+  var limit = Math.max(0, rows.length - 6);
+  var changed = false;
+  rows.forEach(function(r, i) {
+    if (r.length < headers.length) { while(r.length < headers.length) r.push(''); }
+    if (i < limit && r[onayIdx] !== 'ONAYLANDI') {
+      r[onayIdx] = 'ONAYLANDI';
+      changed = true;
+    }
+  });
+  if (changed) { stFireSave(); stBadge('✓ Otomatik onay tamamlandi'); }
 }
 
 function stGetRowColor(pg, r) {
@@ -7909,14 +7955,14 @@ function stGetRowColor(pg, r) {
     var onayVal = onayIdx >= 0 ? String(r[onayIdx] || '').trim() : '';
     var servisTarih = servisTarihIdx >= 0 ? String(r[servisTarihIdx] || '').trim() : '';
     var firmaAdi = firmaIdx >= 0 ? String(r[firmaIdx] || '').trim() : '';
-    if (onayVal === 'ONAYLANDI' || onayVal === '✓' || onayVal.toLowerCase() === 'evet' || onayVal.toLowerCase() === 'onay') {
-      return { bg: 'rgba(50,140,30,0.25)', border: '#3a7a1a', text: '#c0f080' };
+    if (onayVal === 'ONAYLANDI') {
+      return { bg: 'rgba(50,140,30,0.20)', border: '#2d6010', text: '#a8e860' };
     }
     if (servisTarih) {
-      return { bg: 'rgba(200,100,10,0.22)', border: '#8a5010', text: '#f5a623' };
+      return { bg: 'rgba(200,100,10,0.20)', border: '#7a4010', text: '#f5a623' };
     }
     if (firmaAdi) {
-      return { bg: 'rgba(200,180,0,0.18)', border: '#806800', text: '#e0cc00' };
+      return { bg: 'rgba(200,180,0,0.15)', border: '#706000', text: '#d8c000' };
     }
     return null;
   }
@@ -7934,13 +7980,21 @@ function stGetInvoiceTotalForRow(invoiceNo) {
   var found = false;
   dRows.forEach(function(dr) {
     if (String(dr[fNoIdx] || '').trim() === String(invoiceNo).trim()) {
-      var v = String(dr[genelToplamIdx] || '').replace(/[^0-9,.]/g, '').replace(/\./g,'').replace(',','.');
+      var v = String(dr[genelToplamIdx] || '').replace(/[^0-9,\.]/g,'').replace(/\./g,'').replace(',','.');
       var num = parseFloat(v);
       if (!isNaN(num)) { total += num; found = true; }
     }
   });
   if (!found) return null;
   return total.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' TRY';
+}
+
+function stGetDateColIdx(fname, headers) {
+  // Her tablo için tarih sütunu
+  if (fname === 'Servis Plan.html') return headers.indexOf('SERVİS TARİHİ') >= 0 ? headers.indexOf('SERVİS TARİHİ') : headers.indexOf('SERVİS TALEP TARİHİ');
+  if (fname === 'Faturalar.html') return headers.indexOf('Fatura Tarihi');
+  if (fname === 'FaturaDetaylari.html') return -1; // Fatura no'ya göre sıralama farklı
+  return -1;
 }
 
 function stRenderContent() {
@@ -7952,21 +8006,35 @@ function stRenderContent() {
   var headers = info.headers || [];
   var rows = info.data || [];
 
-  // Servis Plan icin ONAY sutunu yoksa ekle
-  if (fname === 'Servis Plan.html' && headers.indexOf('ONAY') < 0) {
-    headers.push('ONAY');
-    rows.forEach(function(r) { if (r.length < headers.length) r.push(''); });
+  // Servis Plan: ONAY sütunu yoksa ekle + ACIKLAMA sütunu yoksa ekle (ONAY'dan önce)
+  if (fname === 'Servis Plan.html') {
+    if (headers.indexOf('ACIKLAMA') < 0) {
+      headers.push('ACIKLAMA');
+      rows.forEach(function(r){ if(r.length < headers.length) r.push(''); });
+    }
+    if (headers.indexOf('ONAY') < 0) {
+      headers.push('ONAY');
+      rows.forEach(function(r){ if(r.length < headers.length) r.push(''); });
+    }
+    // Her satır için veri uzunluğunu hizala
+    rows.forEach(function(r){ while(r.length < headers.length) r.push(''); });
   }
+
+  var isFaturalar = fname === 'Faturalar.html';
+  var isFaturaDetay = fname === 'FaturaDetaylari.html';
+  var fNoColIdx = headers.indexOf('Fatura No');
+  var genelTopColIdx = headers.indexOf('Genel Toplam (TL)');
+  var katColIdx = headers.indexOf('Kategori');
+
+  // Tarihe göre sıralama (en yeni en üstte)
+  var dateColIdx = stGetDateColIdx(fname, headers);
+  var sortedRows = (dateColIdx >= 0) ? stSortByDate(rows, dateColIdx) : rows;
 
   // Arama filtresi
   var q = stSearchQuery.toLowerCase();
-  var filtered = q ? rows.filter(function(r) {
+  var filtered = q ? sortedRows.filter(function(r) {
     return r.some(function(c) { return String(c||'').toLowerCase().includes(q); });
-  }) : rows;
-
-  var isFaturalar = fname === 'Faturalar.html';
-  var fNoColIdx = headers.indexOf('Fatura No');
-  var genelTopColIdx = headers.indexOf('Genel Toplam (TL)');
+  }) : sortedRows;
 
   var thStyle = 'background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:1;';
   var th = '<th style="'+thStyle+'width:36px;">#</th>'+
@@ -7974,27 +8042,69 @@ function stRenderContent() {
       return '<th style="'+thStyle+'">'+stEsc(h)+'</th>';
     }).join('');
 
+  // Renk göstergesi (Servis Plan)
   var legend = '';
   if (fname === 'Servis Plan.html') {
-    legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;align-items:center;padding:8px 12px;background:#111;border-radius:6px;border:1px solid #222;">'+
+    legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;align-items:center;padding:7px 12px;background:#111;border-radius:6px;border:1px solid #222;">'+
       '<span style="font-size:11px;color:#888;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;">RENK KODU:</span>'+
-      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#e0cc00;font-family:Barlow Condensed,sans-serif;"><span style="width:14px;height:14px;background:rgba(200,180,0,0.35);border:1px solid #806800;border-radius:3px;display:inline-block;"></span>Firma Eklendi</span>'+
-      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#f5a623;font-family:Barlow Condensed,sans-serif;"><span style="width:14px;height:14px;background:rgba(200,100,10,0.35);border:1px solid #8a5010;border-radius:3px;display:inline-block;"></span>Servis Tarihi Var</span>'+
-      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#c0f080;font-family:Barlow Condensed,sans-serif;"><span style="width:14px;height:14px;background:rgba(50,140,30,0.35);border:1px solid #3a7a1a;border-radius:3px;display:inline-block;"></span>Onaylandi</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#d8c000;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(200,180,0,0.35);border:1px solid #706000;border-radius:3px;display:inline-block;"></span>Firma Eklendi</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#f5a623;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(200,100,10,0.35);border:1px solid #7a4010;border-radius:3px;display:inline-block;"></span>Servis Tarihi Var</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#a8e860;font-family:Barlow Condensed,sans-serif;"><span style="width:13px;height:13px;background:rgba(50,140,30,0.35);border:1px solid #2d6010;border-radius:3px;display:inline-block;"></span>Onaylandi</span>'+
       '</div>';
   }
 
+  // ── Form alanları (üstte) ──
+  var form = headers.map(function(h, ci) {
+    // ONAY dropdown
+    if (fname === 'Servis Plan.html' && h === 'ONAY') {
+      var selOpts = ['', 'ONAYLANDI', 'BEKLEMEDE', 'IPTAL'].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
+      return '<div style="flex:1;min-width:120px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+        '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+selOpts+'</select>'+
+        '</div>';
+    }
+    // ACIKLAMA - textarea
+    if (fname === 'Servis Plan.html' && h === 'ACIKLAMA') {
+      return '<div style="flex:2;min-width:180px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+        '<textarea id="stF_'+ci+'" placeholder="Açıklama..." rows="2" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;resize:vertical;"></textarea>'+
+        '</div>';
+    }
+    // Kategori dropdown (FaturaDetaylari)
+    if (isFaturaDetay && h === 'Kategori') {
+      var katOpts = ['', 'SERVİS BEDELİ', 'YOL', 'MALZEME'].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
+      return '<div style="flex:1;min-width:130px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+        '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+katOpts+'</select>'+
+        '</div>';
+    }
+    return '<div style="flex:1;min-width:120px;">'+
+      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
+      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
+    '</div>';
+  }).join('');
+
+  var formBlock = '<div style="background:#161616;border:1px solid #222;border-top:2px solid var(--orange);border-radius:10px;padding:16px;margin-bottom:18px;">'+
+    '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--orange);margin-bottom:12px;">+ YENİ KAYIT — '+label+'</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">'+form+'</div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
+      '<button onclick="stClear()" style="padding:8px 16px;background:#1e1e1e;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;">TEMİZLE</button>'+
+      '<button onclick="stAdd()" style="padding:8px 22px;background:var(--orange);color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">💾 KAYDET</button>'+
+    '</div>'+
+  '</div>';
+
+  // ── Tablo satırları ──
   var body = filtered.map(function(r, i) {
     var actualIdx = rows.indexOf(r);
     var rowColor = stGetRowColor(pg, r);
-    var rowBg = rowColor ? rowColor.bg : (i%2===0 ? 'transparent' : 'rgba(255,255,255,.015)');
-    var rowBorderColor = rowColor ? rowColor.border : '#1a1a1a';
+    var rowBg = rowColor ? rowColor.bg : (i%2===0 ? 'transparent' : 'rgba(255,255,255,.012)');
+    var rowBC = rowColor ? rowColor.border : '#1a1a1a';
     var textColor = rowColor ? rowColor.text : '#ccc';
 
     var tds = headers.map(function(h, ci) {
       var val = r[ci] !== undefined ? r[ci] : '';
 
-      // Faturalar sayfasinda "Genel Toplam" sutununu detaylardan otomatik hesapla
+      // Faturalar: Genel Toplam otomatik hesapla
       if (isFaturalar && ci === genelTopColIdx && fNoColIdx >= 0) {
         var invoiceNo = r[fNoColIdx];
         if (invoiceNo && String(invoiceNo).trim()) {
@@ -8003,64 +8113,54 @@ function stRenderContent() {
         }
       }
 
-      // ONAY sutununda dropdown goster
+      // ONAY dropdown (Servis Plan)
       if (fname === 'Servis Plan.html' && h === 'ONAY') {
         var opts = ['', 'ONAYLANDI', 'BEKLEMEDE', 'IPTAL'];
-        var selOpts = opts.map(function(o) {
-          return '<option value="'+o+'"'+(String(val)===o?' selected':'')+'>'+o+'</option>';
-        }).join('');
-        var selColor = val === 'ONAYLANDI' ? '#c0f080' : val === 'BEKLEMEDE' ? '#f5a623' : val === 'IPTAL' ? '#ff6666' : '#888';
-        return '<td style="padding:4px 8px;border-bottom:1px solid '+rowBorderColor+';font-size:12px;">'+
-          '<select onchange="stOnayChange('+actualIdx+','+ci+',this)" style="background:rgba(0,0,0,0.4);border:1px solid #3a3a3a;border-radius:4px;color:'+selColor+';font-size:11px;font-family:Barlow Condensed,sans-serif;font-weight:700;letter-spacing:0.5px;padding:4px 6px;cursor:pointer;width:100%;min-width:100px;">'+selOpts+'</select>'+
+        var selOpts = opts.map(function(o){ return '<option value="'+o+'"'+(String(val)===o?' selected':'')+'>'+o+'</option>'; }).join('');
+        var sc = val==='ONAYLANDI'?'#a8e860':val==='BEKLEMEDE'?'#f5a623':val==='IPTAL'?'#ff6666':'#666';
+        return '<td style="padding:4px 8px;border-bottom:1px solid '+rowBC+';">'+
+          '<select onchange="stOnayChange('+actualIdx+','+ci+',this)" style="background:rgba(0,0,0,0.45);border:1px solid #3a3a3a;border-radius:4px;color:'+sc+';font-size:11px;font-family:Barlow Condensed,sans-serif;font-weight:700;padding:3px 5px;cursor:pointer;width:100%;min-width:95px;">'+selOpts+'</select>'+
           '</td>';
       }
 
-      return '<td contenteditable="true" oninput="stEdit('+actualIdx+','+ci+',this)" style="padding:7px 10px;border-bottom:1px solid '+rowBorderColor+';color:'+textColor+';font-size:12px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;outline:none;cursor:text;" title="'+stEsc(val)+'">'+stEsc(val)+'</td>';
+      // ACIKLAMA - textarea satır içi
+      if (fname === 'Servis Plan.html' && h === 'ACIKLAMA') {
+        return '<td style="padding:4px 8px;border-bottom:1px solid '+rowBC+';min-width:160px;max-width:260px;">'+
+          '<textarea oninput="stEdit('+actualIdx+','+ci+',this)" rows="2" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.07);border-radius:3px;color:'+textColor+';font-size:11px;font-family:Barlow,sans-serif;outline:none;resize:none;padding:3px 5px;box-sizing:border-box;" title="'+stEsc(val)+'">'+stEsc(val)+'</textarea>'+
+          '</td>';
+      }
+
+      // Kategori dropdown (FaturaDetaylari - görüntülemede de dropdown)
+      if (isFaturaDetay && h === 'Kategori') {
+        var katOpts = ['', 'SERVİS BEDELİ', 'YOL', 'MALZEME'].map(function(o){ return '<option value="'+o+'"'+(String(val)===o?' selected':'')+'>'+o+'</option>'; }).join('');
+        var kc = val==='SERVİS BEDELİ'?'#7ab8f5':val==='YOL'?'#f5a623':val==='MALZEME'?'#92d050':'#888';
+        return '<td style="padding:4px 8px;border-bottom:1px solid '+rowBC+';">'+
+          '<select onchange="stKatChange('+actualIdx+','+ci+',this)" style="background:rgba(0,0,0,0.45);border:1px solid #3a3a3a;border-radius:4px;color:'+kc+';font-size:11px;font-family:Barlow Condensed,sans-serif;font-weight:700;padding:3px 5px;cursor:pointer;min-width:110px;">'+katOpts+'</select>'+
+          '</td>';
+      }
+
+      return '<td contenteditable="true" oninput="stEdit('+actualIdx+','+ci+',this)" style="padding:7px 10px;border-bottom:1px solid '+rowBC+';color:'+textColor+';font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;outline:none;cursor:text;" title="'+stEsc(val)+'">'+stEsc(val)+'</td>';
     }).join('');
 
     return '<tr style="background:'+rowBg+';">'+
-      '<td style="padding:7px 10px;border-bottom:1px solid '+rowBorderColor+';color:#555;font-size:11px;">'+(i+1)+'</td>'+
+      '<td style="padding:7px 10px;border-bottom:1px solid '+rowBC+';color:#555;font-size:11px;">'+(i+1)+'</td>'+
       tds+
-      '<td style="padding:7px 10px;border-bottom:1px solid '+rowBorderColor+';text-align:center;width:50px;">'+
-        '<button onclick="stDel('+actualIdx+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;" title="Sil">✕</button>'+
+      '<td style="padding:7px 10px;border-bottom:1px solid '+rowBC+';text-align:center;width:46px;">'+
+        '<button onclick="stDel('+actualIdx+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:4px;padding:3px 7px;font-size:11px;cursor:pointer;" title="Sil">✕</button>'+
       '</td></tr>';
   }).join('');
 
   if (!body) body = '<tr><td colspan="99" style="padding:32px;text-align:center;color:#444;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Kayit yok</td></tr>';
 
-  var form = headers.map(function(h, ci) {
-    if (fname === 'Servis Plan.html' && h === 'ONAY') {
-      var selOpts = ['', 'ONAYLANDI', 'BEKLEMEDE', 'IPTAL'].map(function(o) {
-        return '<option value="'+o+'">'+o+'</option>';
-      }).join('');
-      return '<div style="flex:1;min-width:130px;">'+
-        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
-        '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+selOpts+'</select>'+
-        '</div>';
-    }
-    return '<div style="flex:1;min-width:130px;">'+
-      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
-      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
-    '</div>';
-  }).join('');
-
-  box.innerHTML = legend+
-    '<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
+  box.innerHTML = legend + formBlock +
+    '<div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
     '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#888;letter-spacing:1px;">'+filtered.length+(q?' / '+rows.length:'')+' kayit</span>'+
     '<input id="stSearch" type="text" placeholder="Ara..." value="'+stEsc(stSearchQuery)+'" oninput="stFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:240px;"/>'+
-    '<button onclick="stExport()" style="background:#1e1e1e;border:1px solid #333;color:#888;border-radius:5px;padding:7px 14px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">📥 EXCELE AKTAR</button>'+
-    '<span style="font-size:10px;color:#444;margin-left:auto;">💡 Hucreye tiklayip duzenleyebilirsiniz</span>'+
+    '<button onclick="stExport()" style="background:#1e1e1e;border:1px solid #333;color:#888;border-radius:5px;padding:7px 12px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">📥 EXCELE AKTAR</button>'+
+    (fname === 'Servis Plan.html' ? '<button onclick="stAutoOnayAll();stRenderContent();" style="background:rgba(50,140,30,0.15);border:1px solid rgba(50,140,30,0.4);color:#a8e860;border-radius:5px;padding:7px 12px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">✓ Son 6 Hariç Onayla</button>' : '')+
     '</div>'+
-    '<div style="overflow:auto;margin-bottom:24px;border-radius:8px;border:1px solid #1e1e1e;max-height:500px;">'+
+    '<div style="overflow:auto;border-radius:8px;border:1px solid #1e1e1e;max-height:520px;">'+
       '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+
-    '</div>'+
-    '<div style="background:#161616;border:1px solid #222;border-top:2px solid var(--orange);border-radius:10px;padding:18px;">'+
-      '<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--orange);margin-bottom:14px;">+ YENI KAYIT -- '+label+'</div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">'+form+'</div>'+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
-        '<button onclick="stClear()" style="padding:9px 18px;background:#1e1e1e;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;">TEMIZLE</button>'+
-        '<button onclick="stAdd()" style="padding:9px 24px;background:var(--orange);color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">KAYDET</button>'+
-      '</div>'+
     '</div>';
 }
 
@@ -8070,9 +8170,19 @@ window.stOnayChange = function(rowIdx, colIdx, sel) {
   if (!ST_DATA[fname] || !ST_DATA[fname].data[rowIdx]) return;
   ST_DATA[fname].data[rowIdx][colIdx] = sel.value;
   stFireSave();
-  stBadge('Onay guncellendi');
+  stBadge('✓ Onay guncellendi');
   stRenderContent();
 };
+
+window.stKatChange = function(rowIdx, colIdx, sel) {
+  var pg = ST_PAGES[stActiveIdx];
+  var fname = pg[0];
+  if (!ST_DATA[fname] || !ST_DATA[fname].data[rowIdx]) return;
+  ST_DATA[fname].data[rowIdx][colIdx] = sel.value;
+  stFireSave();
+  stBadge('✓ Kategori guncellendi');
+};
+
 window.stSwitchPage = function(i) { stActiveIdx = i; stSearchQuery = ''; stRender(); };
 window.stBack = function() {
   document.getElementById('stPanel').style.display = 'none';
@@ -8094,20 +8204,21 @@ window.stFilter = function() {
   }, 0);
 };
 
-window.stEdit = function(rowIdx, colIdx, td) {
+window.stEdit = function(rowIdx, colIdx, el) {
   var pg = ST_PAGES[stActiveIdx];
   var fname = pg[0];
   if (!ST_DATA[fname] || !ST_DATA[fname].data[rowIdx]) return;
-  ST_DATA[fname].data[rowIdx][colIdx] = td.innerText.trim();
+  // Textarea için .value, contenteditable için .innerText
+  var val = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') ? el.value : el.innerText.trim();
+  ST_DATA[fname].data[rowIdx][colIdx] = val;
   stFireSave();
   stBadge('✏️ Düzenlendi');
-  // Renk güncellemesi için Servis Plan satırını yeniden render et
   if (fname === 'Servis Plan.html') {
     var headers = ST_DATA[fname].headers || [];
     var servisTarihIdx = headers.indexOf('SERVİS TARİHİ');
     var firmaIdx = headers.indexOf('FİRMA İSMİ');
     if (colIdx === servisTarihIdx || colIdx === firmaIdx) {
-      setTimeout(stRenderContent, 50);
+      setTimeout(stRenderContent, 80);
     }
   }
 };
@@ -8202,7 +8313,7 @@ function stLoad() {
           if (saved[k]) ST_DATA[k] = saved[k];
         });
         var pn = document.getElementById('stPanel');
-        if (pn && pn.style.display !== 'none') stRender();
+        if (pn && pn.style.display !== 'none') { stAutoOnayAll(); stRender(); }
       }
     }).catch(function(){});
   } catch(e) {}
