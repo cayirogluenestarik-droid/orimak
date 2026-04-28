@@ -8202,6 +8202,14 @@ function stRenderContent() {
         '<select id="stF_'+ci+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+birimOpts+'</select>'+
         '</div>';
     }
+    // Hesaplanan (readonly) alanlar
+    var _calcFields = ['Ara Toplam', 'Ara Toplam (TL)', 'KDV (TL)', 'Genel Toplam (TL)'];
+    if (isFaturaDetay && _calcFields.indexOf(h) >= 0) {
+      return '<div style="flex:1;min-width:130px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--orange);font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+' ⟳</div>'+
+        '<input id="stF_'+ci+'" type="text" readonly placeholder="Otomatik" style="width:100%;background:#111;border:1px solid rgba(245,166,35,.3);border-radius:5px;padding:7px 10px;color:var(--orange);font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;cursor:default;font-weight:600;" />'+
+      '</div>';
+    }
     return '<div style="flex:1;min-width:120px;">'+
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
       '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" oninput="'+(isFaturaDetay?'stUpdateDetayCalc()':'')+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
@@ -8454,14 +8462,19 @@ window.stParaBirimiChange = function(ci) {
 };
 
 function stUpdateDetayCalc() {
-  var info = document.getElementById('stDetayCalcInfo');
-  if (!info) return;
+  var infoEl = document.getElementById('stDetayCalcInfo');
   var headers = (ST_DATA['FaturaDetaylari.html'] || {}).headers || [];
   var getVal = function(h) {
     var idx = headers.indexOf(h);
     if (idx < 0) return '';
     var el = document.getElementById('stF_'+idx);
     return el ? el.value.trim() : '';
+  };
+  var setVal = function(h, v) {
+    var idx = headers.indexOf(h);
+    if (idx < 0) return;
+    var el = document.getElementById('stF_'+idx);
+    if (el && !el.disabled) el.value = v;
   };
   var pb = getVal('Para Birimi') || 'TL';
   var kurRaw = getVal('PB Kuru').replace(/[^0-9,]/g,'').replace(',','.');
@@ -8472,14 +8485,36 @@ function stUpdateDetayCalc() {
   var miktar = parseFloat(miktarStr) || 0;
   var birimFiyat = parseFloat(birimFiyatStr) || 0;
   var kdvPct = parseFloat(kdvStr) || 0;
-  if (!miktar || !birimFiyat) { info.style.display='none'; return; }
+
+  if (!miktar || !birimFiyat) {
+    // Alanları temizle
+    setVal('Ara Toplam', '');
+    setVal('Ara Toplam (TL)', '');
+    setVal('KDV (TL)', '');
+    setVal('Genel Toplam (TL)', '');
+    if (infoEl) infoEl.style.display = 'none';
+    return;
+  }
+
   var araToplam = miktar * birimFiyat;
   var araToplamTL = araToplam * kur;
   var kdvTL = araToplamTL * kdvPct / 100;
   var genelToplam = araToplamTL + kdvTL;
-  var fmt = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' TRY'; };
-  info.style.display = 'block';
-  info.innerHTML = 'Ara Toplam: <b>'+araToplam.toLocaleString('tr-TR',{minimumFractionDigits:2})+' '+pb+'</b>'+(pb!=='TL'?' × '+kur.toFixed(2)+' = <b>'+fmt(araToplamTL)+'</b>':' = <b>'+fmt(araToplamTL)+'</b>')+' | KDV %'+kdvPct+': <b>'+fmt(kdvTL)+'</b> | <span style="color:var(--orange)"><b>Genel Toplam: '+fmt(genelToplam)+'</b></span>';
+
+  var fmtTR = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var fmtTRY = function(n){ return fmtTR(n)+' TRY'; };
+
+  // Form alanlarını doldur
+  setVal('Ara Toplam', fmtTR(araToplam));
+  setVal('Ara Toplam (TL)', fmtTRY(araToplamTL));
+  setVal('KDV (TL)', fmtTRY(kdvTL));
+  setVal('Genel Toplam (TL)', fmtTRY(genelToplam));
+
+  // Bilgi kutusunu da güncelle
+  if (infoEl) {
+    infoEl.style.display = 'block';
+    infoEl.innerHTML = 'Ara Toplam: <b>'+fmtTR(araToplam)+' '+pb+'</b>'+(pb!=='TL'?' × '+kur.toFixed(2)+' = <b>'+fmtTRY(araToplamTL)+'</b>':' = <b>'+fmtTRY(araToplamTL)+'</b>')+' | KDV %'+kdvPct+': <b>'+fmtTRY(kdvTL)+'</b> | <span style="color:var(--orange)"><b>Genel Toplam: '+fmtTRY(genelToplam)+'</b></span>';
+  }
 }
 
 window.stAddDetay = function() {
