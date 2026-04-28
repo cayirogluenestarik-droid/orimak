@@ -401,7 +401,66 @@ tr.group-hidden{display:none !important;}
 .admin-msg.ok{display:block;background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);}
 .admin-msg.err{display:block;background:rgba(192,0,0,.15);color:#ff7777;border:1px solid rgba(192,0,0,.3);}
 
-/* ── GİRİŞ EKRANI ── */
+/* ── SATIŞ TAKİP PANELİ ── */
+.satis-panel-wrap{padding:20px 32px 60px;}
+.satis-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.satis-toolbar h2{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--orange);flex:1;}
+.satis-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.satis-stat-card{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;padding:14px 20px;display:flex;flex-direction:column;gap:4px;min-width:120px;}
+.satis-stat-card .sc-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;color:#666;text-transform:uppercase;}
+.satis-stat-card .sc-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:#eee;}
+.satis-stat-card.sc-orange .sc-val{color:var(--orange);}
+.satis-stat-card.sc-green .sc-val{color:#92D050;}
+.satis-stat-card.sc-red .sc-val{color:#ff6666;}
+.satis-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;border-radius:8px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+.satis-table thead th{background:var(--dark);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:11px 10px;text-align:center;border-bottom:2px solid var(--orange);white-space:nowrap;}
+.satis-table tbody tr{background:var(--cream);color:#1a1a1a;transition:filter .15s;}
+.satis-table tbody tr:hover{filter:brightness(.94);}
+.satis-table tbody tr.satis-row-termin-gecti{background:#ffe5e5!important;}
+.satis-table tbody tr.satis-row-aktif{background:#e8fbe5!important;}
+.satis-table tbody tr.satis-row-bekle{background:#fffbe5!important;}
+.satis-table tbody td{padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;vertical-align:middle;}
+.satis-table tbody td.td-left{text-align:left;}
+.satis-table tbody td.td-aciklama{text-align:left;font-size:11px;color:#555;max-width:180px;}
+.satis-table tbody td.td-actions{width:80px;}
+.satis-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;}
+.satis-badge-aktif{background:rgba(146,208,80,.2);color:#3a8a1a;border:1px solid rgba(146,208,80,.5);}
+.satis-badge-bekle{background:rgba(245,166,35,.2);color:#b35a00;border:1px solid rgba(245,166,35,.4);}
+.satis-badge-gecti{background:rgba(192,0,0,.15);color:#c00;border:1px solid rgba(192,0,0,.3);}
+.satis-badge-tamamlandi{background:rgba(90,160,255,.15);color:#2a60c0;border:1px solid rgba(90,160,255,.3);}
+/* SATIŞ MODAL */
+#satisModal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;display:none;align-items:center;justify-content:center;}
+#satisModal.open{display:flex;}
+.satis-modal-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:660px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
+.satis-modal-head{padding:20px 26px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;}
+.satis-modal-head h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;color:var(--orange);}
+.satis-modal-body{padding:20px 26px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.satis-modal-body .sf-full{grid-column:1/-1;}
+.satis-modal-body label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#777;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;}
+.satis-modal-body input,.satis-modal-body select,.satis-modal-body textarea{width:100%;background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;box-sizing:border-box;}
+.satis-modal-body input:focus,.satis-modal-body select:focus,.satis-modal-body textarea:focus{border-color:var(--orange);}
+.satis-modal-body input::placeholder,.satis-modal-body textarea::placeholder{color:#444;}
+.satis-modal-body textarea{resize:vertical;min-height:70px;}
+.satis-modal-footer{padding:14px 26px;border-top:1px solid #2a2a2a;display:flex;justify-content:flex-end;gap:10px;}
+.satis-btn{border:none;border-radius:6px;padding:9px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;}
+.satis-btn-orange{background:var(--orange);color:#1a1a1a;}
+.satis-btn-gray{background:#2a2a2a;color:#aaa;border:1px solid #3a3a3a;}
+.satis-btn:hover{opacity:.85;}
+.satis-act-btn{border:none;border-radius:4px;padding:4px 9px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.satis-edit-btn{background:rgba(245,166,35,.15);color:#e36400;border:1px solid rgba(245,166,35,.3);}
+.satis-edit-btn:hover{background:rgba(245,166,35,.3);}
+.satis-del-btn{background:rgba(192,0,0,.12);color:#c00;border:1px solid rgba(192,0,0,.3);}
+.satis-del-btn:hover{background:rgba(192,0,0,.3);}
+.satis-search-wrap{position:relative;flex:1;max-width:300px;}
+.satis-search{width:100%;background:#222;border:1px solid #333;border-radius:6px;padding:8px 12px 8px 34px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.satis-search:focus{border-color:var(--orange);}
+.satis-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#555;font-size:13px;}
+.satis-empty{text-align:center;padding:48px;color:#555;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;font-size:13px;}
+
+/* ── ROL KISITLAMA UYARISI ── */
+.role-restricted-msg{text-align:center;padding:60px 32px;color:#555;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;font-size:14px;}
+
+
 #loginOverlay{
   position:fixed;inset:0;background:#111;z-index:9999;
   display:flex;align-items:center;justify-content:center;
@@ -6053,6 +6112,11 @@ const OFFLINE_DATA = [
     "name": "TESLİM KAYIT",
     "type": "teslim",
     "rows": []
+  },
+  {
+    "name": "SATIŞ TAKİP",
+    "type": "satis",
+    "rows": []
   }
 ];
 
@@ -6089,7 +6153,7 @@ function buildState() {
   state = {};
   SHEETS.forEach((sheet, si) => {
     state[si] = { rows: [], name: sheet.name };
-    if (sheet.type === 'siparis' || sheet.type === 'teslim') return; // özel sayfalar
+    if (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis') return; // özel sayfalar
     let no = 0;
     sheet.rows.forEach(row => {
       const g = isGroupRow(row);
@@ -6130,7 +6194,7 @@ function buildTabs() {
   const wrap = document.getElementById('tabsWrap');
   wrap.innerHTML = '';
   SHEETS.forEach((sheet, i) => {
-    const cnt = (sheet.type === 'siparis' || sheet.type === 'teslim')
+    const cnt = (sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis')
       ? (SHEETS[i].rows || []).length
       : (state[i] && state[i].rows ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
     const btn = document.createElement('button');
@@ -6166,7 +6230,7 @@ function switchTab(idx) {
   updateStats(idx);
   // Sipariş/teslim sayfasında "Yeni Satır Ekle" butonunu gizle
   const addRowBtn = document.getElementById('addRowBtn');
-  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
+  const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim' || SHEETS[idx].type === 'satis');
   if (addRowBtn) {
     addRowBtn.style.display = isSpecialPage ? 'none' : '';
   }
@@ -6270,7 +6334,7 @@ function applyGlobalMakine() {
   const si = activeSheet;
   if (!state[si] || !state[si].rows) return;
   // Sipariş/teslim sayfaları farklı, sadece normal sayfalar
-  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim')) {
+  if (SHEETS[si] && (SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis')) {
     alert('Bu sayfada makine sayısı uygulaması çalışmaz.');
     return;
   }
@@ -6323,6 +6387,11 @@ function buildSheets() {
     }
     if (sheet.type === 'teslim') {
       try { panel.appendChild(window.buildTeslimPanel(si)); } catch(e) { console.warn('teslim panel hatası:', e); }
+      container.appendChild(panel);
+      return;
+    }
+    if (sheet.type === 'satis') {
+      try { panel.appendChild(window.buildSatisPanel(si)); } catch(e) { console.warn('satis panel hatası:', e); }
       container.appendChild(panel);
       return;
     }
@@ -6653,7 +6722,7 @@ async function loadData() {
     if (snap.exists() && snap.data().data) {
       const freshSheets = JSON.parse(snap.data().data);
       // Eksik özel sayfaları OFFLINE_DATA'dan ekle
-      ['siparis','teslim'].forEach(tip => {
+      ['siparis','teslim','satis'].forEach(tip => {
         if (!freshSheets.find(s => s.type === tip)) {
           const template = OFFLINE_DATA.find(s => s.type === tip);
           if (template) freshSheets.push(JSON.parse(JSON.stringify(template)));
@@ -6684,7 +6753,7 @@ async function loadData() {
       if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
-        ['siparis','teslim'].forEach(tip => {
+        ['siparis','teslim','satis'].forEach(tip => {
           if (!updated.find(s => s.type === tip)) {
             const existing = SHEETS.find(s => s.type === tip);
             if (existing) updated.push(existing);
@@ -6741,13 +6810,13 @@ function openModal() {
   fSheet.innerHTML = '';
   let firstIdx = -1;
   SHEETS.forEach((s, i) => {
-    if (s.type === 'siparis' || s.type === 'teslim') return;
+    if (s.type === 'siparis' || s.type === 'teslim' || s.type === 'satis') return;
     const o = document.createElement('option');
     o.value = i; o.textContent = s.name;
     if (firstIdx === -1) firstIdx = i;
     fSheet.appendChild(o);
   });
-  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim')
+  const defaultIdx = (SHEETS[activeSheet] && SHEETS[activeSheet].type !== 'siparis' && SHEETS[activeSheet].type !== 'teslim' && SHEETS[activeSheet].type !== 'satis')
     ? activeSheet : firstIdx;
   if (defaultIdx >= 0) {
     fSheet.value = defaultIdx;
@@ -6775,7 +6844,7 @@ function closeModalOutside(e) { if (e.target === document.getElementById('modalO
 async function addRow() {
   const si = parseInt(document.getElementById('fSheet').value);
   // Sipariş/teslim sayfasına ekleme yapılamaz
-  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim') {
+  if (!SHEETS[si] || SHEETS[si].type === 'siparis' || SHEETS[si].type === 'teslim' || SHEETS[si].type === 'satis') {
     alert('Bu sayfaya satır eklenemez. Lütfen malzeme listesi sayfalarından birini seçin.');
     return;
   }
@@ -7509,6 +7578,9 @@ var _ypTabIdx = -1; // yedek parça tab index'i (her zaman sonda)
 
 function ypAddTab() {
   var wrap = document.getElementById('tabsWrap');
+  // Rol kısıtlaması: sadece admin ve manager görebilir
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   _ypTabIdx = document.querySelectorAll('.tab-btn').length; // mevcut tab sayısı
   var btn = document.createElement('button');
   btn.className = 'tab-btn';
@@ -7786,6 +7858,9 @@ function snAddTab() {
   var w = document.getElementById('tabsWrap');
   if (!w) return;
   if (document.getElementById('tabBtn-sn')) return;
+  // Rol kısıtlaması: sadece admin ve manager görebilir
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var b = document.createElement('button');
   b.className = 'tab-btn';
   b.id = 'tabBtn-sn';
@@ -8623,6 +8698,9 @@ function stLoad() {
 function stAddTab() {
   var w = document.getElementById('tabsWrap');
   if (!w || document.getElementById('tabBtn-st')) return;
+  // Rol kısıtlaması: sadece admin ve manager görebilir
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var b = document.createElement('button');
   b.className = 'tab-btn';
   b.id = 'tabBtn-st';
@@ -8690,5 +8768,330 @@ if (window._db) setTimeout(stLoad, 1800);
 
 })();
 </script>
+
+<!-- ══ SATIŞ TAKİP MODAL ══ -->
+<div id="satisModal" onclick="if(event.target===this)closeSatisModal()">
+  <div class="satis-modal-box">
+    <div class="satis-modal-head">
+      <h2 id="satisModalTitle">➕ YENİ SATIŞ KAYDI</h2>
+      <button class="admin-close" onclick="closeSatisModal()">✕</button>
+    </div>
+    <div class="satis-modal-body">
+      <div>
+        <label>Makine İsmi *</label>
+        <input type="text" id="sf_makineIsmi" placeholder="örn. BC410 PRO, Q-BOX, H-CUT..." autocomplete="off"/>
+      </div>
+      <div>
+        <label>Makine Yönü</label>
+        <select id="sf_yon">
+          <option value="">— Seçiniz —</option>
+          <option>Sağ</option>
+          <option>Sol</option>
+          <option>Çift Yön</option>
+          <option>Diğer</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Makine Opsiyonu</label>
+        <input type="text" id="sf_opsiyon" placeholder="örn. Otomatik Besleme, Yazıcı, İnkjet..." autocomplete="off"/>
+      </div>
+      <div>
+        <label>Satıldığı Firma *</label>
+        <input type="text" id="sf_firma" placeholder="Firma adı" autocomplete="off"/>
+      </div>
+      <div>
+        <label>İl / Şehir</label>
+        <input type="text" id="sf_il" placeholder="örn. İstanbul, Bursa..." autocomplete="off"/>
+      </div>
+      <div>
+        <label>Termin Tarihi</label>
+        <input type="date" id="sf_termin"/>
+      </div>
+      <div>
+        <label>Durum</label>
+        <select id="sf_durum">
+          <option value="Beklemede">⏳ Beklemede</option>
+          <option value="Aktif">✅ Aktif / Üretimde</option>
+          <option value="Tamamlandı">📦 Tamamlandı / Teslim Edildi</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Açıklama / Notlar</label>
+        <textarea id="sf_aciklama" placeholder="Ek notlar, özel gereksinimler..."></textarea>
+      </div>
+    </div>
+    <div class="satis-modal-footer">
+      <button class="satis-btn satis-btn-gray" onclick="closeSatisModal()">İptal</button>
+      <button class="satis-btn satis-btn-orange" id="satisModalSaveBtn" onclick="saveSatisRow()">💾 Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  SATIŞ TAKİP MODÜLÜ
+// ══════════════════════════════════════════════
+(function() {
+
+var _satisEditIdx = -1; // -1 = yeni kayıt, ≥0 = düzenleme
+
+function getSatisSheet() {
+  if (typeof SHEETS === 'undefined') return null;
+  return SHEETS.find(function(s){ return s.type === 'satis'; });
+}
+function getSatisSheetIdx() {
+  if (typeof SHEETS === 'undefined') return -1;
+  return SHEETS.findIndex(function(s){ return s.type === 'satis'; });
+}
+function getSatisRows() {
+  var s = getSatisSheet();
+  return s ? (s.rows || []) : [];
+}
+
+function satisTerminDurum(terminStr) {
+  if (!terminStr) return '';
+  var parts = terminStr.split('.');
+  var d;
+  if (parts.length === 3) d = new Date(parts[2], parts[1]-1, parts[0]);
+  else d = new Date(terminStr);
+  if (isNaN(d)) return '';
+  var now = new Date(); now.setHours(0,0,0,0);
+  var diff = Math.round((d - now) / 86400000);
+  if (diff < 0) return 'gecti';
+  if (diff <= 14) return 'yakin';
+  return 'tamam';
+}
+
+function formatTermin(terminStr) {
+  if (!terminStr) return '—';
+  // YYYY-MM-DD → DD.MM.YYYY
+  var m = terminStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return m[3]+'.'+m[2]+'.'+m[1];
+  return terminStr;
+}
+
+function satisRowClass(row) {
+  if (row.durum === 'Tamamlandı') return '';
+  var td = satisTerminDurum(row.terminTarihi);
+  if (td === 'gecti') return 'satis-row-termin-gecti';
+  if (row.durum === 'Aktif') return 'satis-row-aktif';
+  return 'satis-row-bekle';
+}
+
+function satisDurumBadge(row) {
+  var d = row.durum || 'Beklemede';
+  var td = satisTerminDurum(row.terminTarihi);
+  if (d === 'Tamamlandı') return '<span class="satis-badge satis-badge-tamamlandi">📦 Tamamlandı</span>';
+  if (d === 'Aktif') return '<span class="satis-badge satis-badge-aktif">✅ Aktif</span>';
+  if (td === 'gecti') return '<span class="satis-badge satis-badge-gecti">⚠ Termin Geçti</span>';
+  return '<span class="satis-badge satis-badge-bekle">⏳ Beklemede</span>';
+}
+
+function satisRenderRows(filterStr) {
+  var tbody = document.getElementById('satisBody');
+  if (!tbody) return;
+  var rows = getSatisRows();
+  var role = window._currentRole || 'viewer';
+  var canEdit = (role === 'admin' || role === 'manager');
+  var q = (filterStr || '').toLowerCase();
+
+  var filtered = rows.filter(function(r) {
+    if (!q) return true;
+    return [r.makineIsmi, r.yon, r.opsiyon, r.firma, r.il, r.aciklama, r.durum]
+      .map(function(v){ return (v||'').toLowerCase(); })
+      .join(' ').includes(q);
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="satis-empty">' +
+      (q ? '🔍 Arama sonucu bulunamadı' : '📋 Henüz satış kaydı yok — ＋ Yeni Kayıt ile ekleyin') + '</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  filtered.forEach(function(r, fi) {
+    // Gerçek index bul
+    var ri = rows.indexOf(r);
+    var tr = document.createElement('tr');
+    tr.className = satisRowClass(r);
+    var td = function(content, cls) {
+      var t = document.createElement('td');
+      if (cls) t.className = cls;
+      t.innerHTML = content;
+      return t;
+    };
+    tr.appendChild(td(String(fi+1), ''));
+    tr.appendChild(td(escSatis(r.makineIsmi||'—'), 'td-left'));
+    tr.appendChild(td(escSatis(r.yon||'—')));
+    tr.appendChild(td(escSatis(r.opsiyon||'—'), 'td-left'));
+    tr.appendChild(td(escSatis(r.firma||'—'), 'td-left'));
+    tr.appendChild(td(escSatis(r.il||'—')));
+    tr.appendChild(td(formatTermin(r.terminTarihi)));
+    tr.appendChild(td(r.aciklama ? '<span title="'+escSatis(r.aciklama)+'" style="cursor:help;">'+escSatis(r.aciklama).substring(0,40)+(r.aciklama.length>40?'…':'')+'</span>' : '—', 'td-aciklama'));
+    tr.appendChild(td(satisDurumBadge(r)));
+    if (canEdit) {
+      var actTd = document.createElement('td');
+      actTd.className = 'td-actions';
+      actTd.innerHTML =
+        '<button class="satis-act-btn satis-edit-btn" onclick="openSatisEdit('+ri+')">✏️</button> ' +
+        '<button class="satis-act-btn satis-del-btn" onclick="deleteSatisRow('+ri+')">✕</button>';
+      tr.appendChild(actTd);
+    } else {
+      tr.appendChild(td(''));
+    }
+    tbody.appendChild(tr);
+  });
+
+  // istatistik güncelle
+  var total = rows.length;
+  var aktif = rows.filter(function(r){ return r.durum==='Aktif'; }).length;
+  var tamamlandi = rows.filter(function(r){ return r.durum==='Tamamlandı'; }).length;
+  var terminGecti = rows.filter(function(r){ return satisTerminDurum(r.terminTarihi)==='gecti' && r.durum!=='Tamamlandı'; }).length;
+  var totalEl = document.getElementById('satisStatTotal');
+  var aktifEl = document.getElementById('satisStatAktif');
+  var tamEl = document.getElementById('satisStatTam');
+  var gectiEl = document.getElementById('satisStatGecti');
+  if(totalEl) totalEl.textContent = total;
+  if(aktifEl) aktifEl.textContent = aktif;
+  if(tamEl) tamEl.textContent = tamamlandi;
+  if(gectiEl) gectiEl.textContent = terminGecti;
+}
+
+function escSatis(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.buildSatisPanel = function(si) {
+  var wrap = document.createElement('div');
+  wrap.className = 'satis-panel-wrap';
+  var role = window._currentRole || 'viewer';
+  var canEdit = (role === 'admin' || role === 'manager');
+
+  var addBtn = canEdit
+    ? '<button class="add-row-btn" onclick="openSatisNew()" style="white-space:nowrap;">＋ Yeni Kayıt</button>'
+    : '';
+
+  wrap.innerHTML =
+    '<div class="satis-toolbar">' +
+    '<h2>💼 SATIŞ TAKİP</h2>' +
+    '<div class="satis-search-wrap"><span class="satis-search-icon">🔍</span>' +
+    '<input class="satis-search" id="satisSearch" type="text" placeholder="Makine, firma, il ara..." oninput="satisFilter(this.value)"/></div>' +
+    addBtn +
+    '</div>' +
+    '<div class="satis-stats">' +
+    '<div class="satis-stat-card"><div class="sc-label">Toplam</div><div class="sc-val" id="satisStatTotal">0</div></div>' +
+    '<div class="satis-stat-card sc-orange"><div class="sc-label">Aktif / Üretimde</div><div class="sc-val" id="satisStatAktif">0</div></div>' +
+    '<div class="satis-stat-card sc-green"><div class="sc-label">Tamamlandı</div><div class="sc-val" id="satisStatTam">0</div></div>' +
+    '<div class="satis-stat-card sc-red"><div class="sc-label">Termin Geçti</div><div class="sc-val" id="satisStatGecti">0</div></div>' +
+    '</div>' +
+    '<div style="overflow-x:auto;">' +
+    '<table class="satis-table">' +
+    '<thead><tr>' +
+    '<th>#</th><th>MAKİNE</th><th>YÖN</th><th>OPSİYON</th>' +
+    '<th>FİRMA</th><th>İL</th><th>TERMİN</th><th>AÇIKLAMA</th><th>DURUM</th><th>İŞLEMLER</th>' +
+    '</tr></thead>' +
+    '<tbody id="satisBody"></tbody>' +
+    '</table></div>';
+
+  setTimeout(function(){ satisRenderRows(''); }, 0);
+  return wrap;
+};
+
+window.satisFilter = function(q) {
+  satisRenderRows(q);
+};
+
+window.openSatisNew = function() {
+  _satisEditIdx = -1;
+  document.getElementById('satisModalTitle').textContent = '➕ YENİ SATIŞ KAYDI';
+  document.getElementById('sf_makineIsmi').value = '';
+  document.getElementById('sf_yon').value = '';
+  document.getElementById('sf_opsiyon').value = '';
+  document.getElementById('sf_firma').value = '';
+  document.getElementById('sf_il').value = '';
+  document.getElementById('sf_termin').value = '';
+  document.getElementById('sf_durum').value = 'Beklemede';
+  document.getElementById('sf_aciklama').value = '';
+  document.getElementById('satisModal').classList.add('open');
+  document.getElementById('sf_makineIsmi').focus();
+};
+
+window.openSatisEdit = function(ri) {
+  var rows = getSatisRows();
+  var r = rows[ri];
+  if (!r) return;
+  _satisEditIdx = ri;
+  document.getElementById('satisModalTitle').textContent = '✏️ KAYIT DÜZENLE';
+  document.getElementById('sf_makineIsmi').value = r.makineIsmi || '';
+  document.getElementById('sf_yon').value = r.yon || '';
+  document.getElementById('sf_opsiyon').value = r.opsiyon || '';
+  document.getElementById('sf_firma').value = r.firma || '';
+  document.getElementById('sf_il').value = r.il || '';
+  // DD.MM.YYYY → YYYY-MM-DD
+  var tv = r.terminTarihi || '';
+  var tm = tv.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  document.getElementById('sf_termin').value = tm ? tm[3]+'-'+tm[2]+'-'+tm[1] : tv;
+  document.getElementById('sf_durum').value = r.durum || 'Beklemede';
+  document.getElementById('sf_aciklama').value = r.aciklama || '';
+  document.getElementById('satisModal').classList.add('open');
+  document.getElementById('sf_makineIsmi').focus();
+};
+
+window.closeSatisModal = function() {
+  document.getElementById('satisModal').classList.remove('open');
+};
+
+window.saveSatisRow = function() {
+  var makineIsmi = document.getElementById('sf_makineIsmi').value.trim();
+  var firma = document.getElementById('sf_firma').value.trim();
+  if (!makineIsmi) { alert('Makine ismi zorunludur!'); document.getElementById('sf_makineIsmi').focus(); return; }
+  if (!firma) { alert('Firma adı zorunludur!'); document.getElementById('sf_firma').focus(); return; }
+
+  // Termin: YYYY-MM-DD → DD.MM.YYYY
+  var terminRaw = document.getElementById('sf_termin').value;
+  var terminStr = '';
+  if (terminRaw) {
+    var tm = terminRaw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    terminStr = tm ? tm[3]+'.'+tm[2]+'.'+tm[1] : terminRaw;
+  }
+
+  var row = {
+    makineIsmi: makineIsmi,
+    yon: document.getElementById('sf_yon').value,
+    opsiyon: document.getElementById('sf_opsiyon').value.trim(),
+    firma: firma,
+    il: document.getElementById('sf_il').value.trim(),
+    terminTarihi: terminStr,
+    durum: document.getElementById('sf_durum').value,
+    aciklama: document.getElementById('sf_aciklama').value.trim(),
+    olusturanKisi: window._currentUser || '',
+    olusturmaTarihi: new Date().toLocaleDateString('tr-TR')
+  };
+
+  var sheet = getSatisSheet();
+  if (!sheet) return;
+  if (_satisEditIdx >= 0) {
+    sheet.rows[_satisEditIdx] = row;
+  } else {
+    sheet.rows.push(row);
+  }
+
+  closeSatisModal();
+  satisRenderRows(document.getElementById('satisSearch') ? document.getElementById('satisSearch').value : '');
+  if (typeof fbSaveAll === 'function' && window.isOnline) fbSaveAll();
+};
+
+window.deleteSatisRow = function(ri) {
+  var rows = getSatisRows();
+  var r = rows[ri];
+  if (!r) return;
+  if (!confirm('"' + (r.firma||r.makineIsmi||'Bu kayıt') + '" silinsin mi?')) return;
+  var sheet = getSatisSheet();
+  sheet.rows.splice(ri, 1);
+  satisRenderRows(document.getElementById('satisSearch') ? document.getElementById('satisSearch').value : '');
+  if (typeof fbSaveAll === 'function' && window.isOnline) fbSaveAll();
+};
+
+})();
+</script>
 </body>
-</html>
