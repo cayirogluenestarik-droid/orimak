@@ -60,6 +60,20 @@ body{font-family:'Barlow',sans-serif;background:#111;color:#eee;min-height:100vh
 .tab-btn.active{color:var(--orange);border-left-color:var(--orange);background:rgba(245,166,35,.08);}
 .tab-count{background:#2a2a2a;color:#999;border-radius:10px;padding:1px 7px;font-size:10px;flex-shrink:0;}
 .tab-btn.active .tab-count{background:var(--orange);color:var(--dark);}
+.tab-machine-group{display:flex;flex-direction:column;width:100%;}
+.tab-machine-header{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#bbb;padding:10px 16px 6px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;border-left:3px solid transparent;transition:all .15s;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;}
+.tab-machine-header:hover{color:#eee;background:rgba(255,255,255,.04);}
+.tab-machine-header.has-active{color:var(--orange);border-left-color:var(--orange);}
+.tab-machine-arrow{font-size:10px;transition:transform .2s;color:#555;}
+.tab-machine-header.open .tab-machine-arrow{transform:rotate(90deg);}
+.tab-machine-children{display:none;flex-direction:column;gap:0;}
+.tab-machine-children.open{display:flex;}
+.tab-machine-child{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:#666;padding:9px 16px 9px 28px;border:none;border-left:3px solid transparent;background:none;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;}
+.tab-machine-child:hover{color:#ccc;background:rgba(255,255,255,.03);}
+.tab-machine-child.active{color:var(--orange);border-left-color:var(--orange);background:rgba(245,166,35,.08);}
+.tab-machine-child .tab-count{background:#2a2a2a;color:#999;border-radius:10px;padding:1px 6px;font-size:10px;flex-shrink:0;}
+.tab-machine-child.active .tab-count{background:var(--orange);color:var(--dark);}
+.tab-machine-divider{height:1px;background:#222;margin:4px 0;}
 #sheetsContainer{flex:1;min-width:0;overflow-x:auto;}
 .sidebar-toggle{position:fixed;left:0;top:50%;transform:translateY(-50%);background:#1e1e1e;border:1px solid #333;border-left:none;border-radius:0 8px 8px 0;color:#888;padding:14px 8px;cursor:pointer;z-index:100;font-size:14px;transition:all .2s;box-shadow:2px 2px 8px rgba(0,0,0,.4);}
 .sidebar-toggle:hover{background:#2a2a2a;color:var(--orange);padding-right:12px;}
@@ -947,59 +961,116 @@ async function renderPartiList() {
 }
 
 // ── PARTİ — BİLGİSAYARA İNDİR ──
-function partiIndir(format) {
+// PDF oluşturma yardımcısı (hem partiIndir hem arşiv kaydı için)
+function buildPDFHtml(baslik, altBaslik, sheets) {
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${baslik}</title>
+  <style>
+    @page{size:A4 landscape;margin:10mm;}
+    body{font-family:Arial,sans-serif;font-size:9px;color:#000;margin:0;}
+    h1{font-size:13px;margin-bottom:4px;}
+    .subtitle{font-size:9px;color:#666;margin-bottom:16px;}
+    h2{font-size:11px;background:#f0f0f0;padding:4px 8px;margin:14px 0 4px 0;border-left:3px solid #e07000;}
+    .group-title{font-size:9px;font-weight:bold;background:#fff7ee;padding:3px 5px;color:#a05000;border-left:2px solid #e07000;margin:4px 0 2px 0;}
+    table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:4px;}
+    col.c1{width:3%;}col.c2{width:8%;}col.c3{width:22%;}col.c4{width:9%;}col.c5{width:4%;}
+    col.c6{width:5%;}col.c7{width:9%;}col.c8{width:9%;}col.c9{width:7%;}col.c10{width:7%;}col.c11{width:7%;}
+    th{background:#e07000;color:#fff;padding:3px 4px;text-align:left;font-size:7.5px;word-wrap:break-word;}
+    td{padding:3px 4px;border-bottom:1px solid #eee;font-size:8px;word-wrap:break-word;}
+    tr:nth-child(even){background:#f9f9f9;}
+    .onay{color:#2a7a2a;font-weight:bold;}
+    .bekle{color:#b35a00;font-weight:bold;}
+    .bos{color:#999;}
+    @media print{button{display:none!important;}}
+  </style></head><body>
+  <h1>ORİMAK MAKİNA — ${baslik}</h1>
+  <div class="subtitle">${altBaslik}</div>`;
+
+  sheets.forEach(sheet => {
+    if (!sheet.rows || sheet.rows.length === 0) return;
+    const dataRows = sheet.rows.filter(r => !r._group && (r['3'] || r['2']));
+    if (dataRows.length === 0) return;
+    html += `<h2>${sheet.name}</h2>
+    <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5">
+    <col class="c6"><col class="c7"><col class="c8"><col class="c9"><col class="c10"><col class="c11"></colgroup>
+    <thead><tr>
+      <th>#</th><th>KOD</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
+      <th>MAKİNE</th><th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
+      <th>SİP. TARİH</th><th>TERMİN</th>
+    </tr></thead><tbody>`;
+    let grupAdi = '';
+    let no = 0;
+    sheet.rows.forEach(r => {
+      if (r._group || (Object.keys(r).filter(k=>r[k]&&k!=='_id').length===1 && r['2'] && !r['3'])) {
+        grupAdi = r['2'] || '';
+        html += `<tr><td colspan="11" class="group-title">▸ ${grupAdi}</td></tr>`;
+        return;
+      }
+      if (!r['3'] && !r['2']) return;
+      no++;
+      const yetkili = r.yetkili || r._yetkili || '';
+      const gelis = r.gelis || r._gelis || '';
+      const yetkiliClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : 'bos';
+      const gelisClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : 'bos';
+      html += `<tr>
+        <td>${no}</td>
+        <td>${r['2']||''}</td>
+        <td>${r['3']||r['2']||''}</td>
+        <td>${r['4']||''}</td>
+        <td>${r['5']||''}</td>
+        <td>${r.makine||r._makine||'—'}</td>
+        <td class="${yetkiliClass}">${yetkili||'—'}</td>
+        <td class="${gelisClass}">${gelis||'—'}</td>
+        <td>${r.gelenAdet||r._gelenAdet||'—'}</td>
+        <td>${r.sipTarihi||'—'}</td>
+        <td>${r.terminTarihi||'—'}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  });
+  html += `</body></html>`;
+  return html;
+}
+window.buildPDFHtml = buildPDFHtml;
+
+// Arşiv kaydı sırasında çağrılan inline PDF fonksiyonu
+function arsivPDFIndir_inline(ad, sheets, tarih) {
+  return new Promise(resolve => {
+    const html = buildPDFHtml(ad, `Arşiv Raporu — ${tarih}`, sheets);
+    const win = window.open('', '_blank');
+    if (!win) { resolve(); return; }
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); resolve(); }, 600);
+  });
+}
+window.arsivPDFIndir_inline = arsivPDFIndir_inline;
+
+function partiIndir() {
   if (!SHEETS || SHEETS.length === 0) {
     alert('İndirilecek veri bulunamadı.'); return;
   }
-  const tarih = new Date().toLocaleDateString('tr-TR').replace(/\./g, '-');
-  const saatStr = new Date().toTimeString().slice(0,5).replace(':','-');
-  const dosyaAdi = `Orimak_Parti_${tarih}_${saatStr}`;
-
-  if (format === 'json') {
-    const json = JSON.stringify(SHEETS, null, 2);
-    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = dosyaAdi + '.json'; a.click();
-    URL.revokeObjectURL(url);
-  } else {
-    // CSV — tüm sayfaları tek dosyada, sayfa adı satırıyla ayır
-    let csv = '\uFEFF'; // BOM — Excel'de Türkçe karakter desteği
-    SHEETS.forEach(sheet => {
-      if (!sheet.rows || sheet.rows.length === 0) return;
-      csv += `\n===== ${sheet.name} =====\n`;
-      // Başlık satırı
-      csv += '"NO","MALZEME KODU","MALZEME ADI","ÖLÇÜLER","ADET","MAKİNE","YETKİLİ ONAYI","YETKİLİ KİŞİ","SİP. TARİHİ","TERMİN","TESLİM","GELEN ADET","GELİŞ ONAYI","GELİŞ KİŞİ"\n';
-      let no = 0;
-      sheet.rows.forEach(r => {
-        if (r._group || (r['2'] && !r['3'])) {
-          csv += `"--- ${r['2'] || ''} ---"\n`; return;
-        }
-        if (!r['3'] && !r['2']) return;
-        no++;
-        const esc = v => '"' + String(v||'').replace(/"/g, '""') + '"';
-        csv += [
-          esc(no), esc(r['2']), esc(r['3']), esc(r['4']), esc(r['5']),
-          esc(r.makine||r._makine), esc(r.yetkili||r._yetkili),
-          esc(r.yetkiliKisi||r._yetkiliKisi), esc(r.sipTarihi),
-          esc(r.terminTarihi), esc(r.teslimTarihi),
-          esc(r.gelenAdet||r._gelenAdet), esc(r.gelis||r._gelis),
-          esc(r.gelisKisi||r._gelisKisi)
-        ].join(',') + '\n';
-      });
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = dosyaAdi + '.csv'; a.click();
-    URL.revokeObjectURL(url);
-  }
+  const tarih = new Date().toLocaleDateString('tr-TR');
+  const saatStr = new Date().toTimeString().slice(0,5);
+  const html = buildPDFHtml(
+    `Parti Verisi — ${tarih} ${saatStr}`,
+    `Orimak Makina — Tüm Sayfalar — ${tarih}`,
+    SHEETS
+  );
+  const win = window.open('', '_blank');
+  if (!win) { alert('Popup engelleyici aktif. Lütfen izin verin.'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 600);
 
   const msgEl = document.getElementById('partiIndirMsg');
   if (msgEl) {
-    msgEl.textContent = `✓ "${dosyaAdi}.${format}" indiriliyor...`;
+    msgEl.textContent = '✓ PDF hazırlanıyor — tarayıcınızdan kaydedin';
     msgEl.style.display = 'block';
-    setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
+    setTimeout(() => { msgEl.style.display = 'none'; }, 3500);
   }
 }
 window.partiIndir = partiIndir;
@@ -1060,15 +1131,8 @@ async function yeniPartiBaslat() {
       };
     });
 
-    // Mevcut veriyi arşive kaydet — Firebase'e değil, direkt bilgisayara indir
-    const arsivTarih = now.replace(/\./g, '-');
-    const arsivDosya = `Orimak_Arsiv_${aktifAd.replace(/[^a-zA-Z0-9]/g,'_')}_${arsivTarih}`;
-    const arsivJson = JSON.stringify({ ad: aktifAd, tarih: now, data: SHEETS }, null, 2);
-    const arsivBlob = new Blob([arsivJson], { type: 'application/json;charset=utf-8' });
-    const arsivUrl = URL.createObjectURL(arsivBlob);
-    const arsivA = document.createElement('a');
-    arsivA.href = arsivUrl; arsivA.download = arsivDosya + '.json'; arsivA.click();
-    URL.revokeObjectURL(arsivUrl);
+    // Mevcut veriyi arşive kaydet — PDF olarak yazdır/indir
+    await arsivPDFIndir_inline(aktifAd, SHEETS, now);
 
     // Yeni partiyi aktif yap
     await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), {
@@ -1167,71 +1231,13 @@ async function arsivPDFIndir(ad) {
     if (!snap.exists()) { alert('Arşiv verisi bulunamadı.'); return; }
     const sheets = JSON.parse(snap.data().data);
     const tarih = new Date().toLocaleDateString('tr-TR');
-
-    // PDF içeriği oluştur
-    let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <title>${ad} - Arşiv</title>
-    <style>
-      @page{size:A4 landscape;margin:10mm;}
-      body{font-family:Arial,sans-serif;font-size:9px;color:#000;margin:0;}
-      h1{font-size:13px;margin-bottom:4px;}
-      .subtitle{font-size:9px;color:#666;margin-bottom:16px;}
-      h2{font-size:11px;background:#f0f0f0;padding:4px 8px;margin:14px 0 4px 0;border-left:3px solid #e07000;}
-      table{width:100%;border-collapse:collapse;table-layout:fixed;}
-      col.c1{width:3%;}col.c2{width:22%;}col.c3{width:8%;}col.c4{width:5%;}
-      col.c5{width:10%;}col.c6{width:10%;}col.c7{width:7%;}
-      col.c8{width:7%;}col.c9{width:9%;}col.c10{width:9%;}
-      th{background:#e07000;color:#fff;padding:4px 5px;text-align:left;font-size:8px;word-wrap:break-word;}
-      td{padding:4px 5px;border-bottom:1px solid #eee;font-size:8px;word-wrap:break-word;}
-      tr:nth-child(even){background:#f9f9f9;}
-      .onay{color:#2a7a2a;font-weight:bold;}
-      .bekle{color:#b35a00;font-weight:bold;}
-      .bos{color:#999;}
-    </style></head><body>
-    <h1>ORİMAK MAKİNA — ${ad}</h1>
-    <div class="subtitle">Arşiv Raporu — ${tarih}</div>`;
-
-    sheets.forEach(sheet => {
-      const rows = sheet.rows.filter(r => !r._group && (r['3'] || r['2']));
-      if (rows.length === 0) return;
-      html += `<h2>${sheet.name}</h2>
-      <table>
-      <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"><col class="c6"><col class="c7"><col class="c8"><col class="c9"><col class="c10"></colgroup>
-      <thead><tr>
-        <th>#</th><th>MALZEME ADI</th><th>ÖLÇÜ</th><th>ADET</th>
-        <th>YETKİLİ ONAYI</th><th>GELİŞ ONAYI</th><th>GELEN ADET</th>
-        <th>MAKİNE</th><th>SİP. TARİH</th><th>TERMİN</th>
-      </tr></thead><tbody>`;
-      rows.forEach((r, i) => {
-        const yetkili = r.yetkili || '';
-        const gelis = r.gelis || '';
-        const yetkiliClass = yetkili === 'Onaylandı' ? 'onay' : yetkili === 'Beklemede' ? 'bekle' : 'bos';
-        const gelisClass = gelis === 'Onaylandı' ? 'onay' : gelis ? 'bekle' : 'bos';
-        html += `<tr>
-          <td>${i+1}</td>
-          <td>${r['3']||r['2']||''}</td>
-          <td>${r['4']||''}</td>
-          <td>${r['5']||''}</td>
-          <td class="${yetkiliClass}">${yetkili||'—'}</td>
-          <td class="${gelisClass}">${gelis||'—'}</td>
-          <td>${r.gelenAdet||'—'}</td>
-          <td>${r.makine||'—'}</td>
-          <td>${r.sipTarihi||'—'}</td>
-          <td>${r.terminTarihi||'—'}</td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-    });
-
-    html += `</body></html>`;
-
-    // Yeni pencerede aç ve yazdır
+    const html = buildPDFHtml(ad, `Arşiv Raporu — ${tarih}`, sheets);
     const win = window.open('', '_blank');
+    if (!win) { alert('Popup engelleyici aktif. Lütfen izin verin.'); return; }
     win.document.write(html);
     win.document.close();
     win.focus();
     setTimeout(() => { win.print(); }, 500);
-
   } catch(e) {
     alert('Hata: ' + e.message);
   }
@@ -2195,14 +2201,11 @@ function showAdminMsg(text, type) {
       <div class="admin-section-title">Mevcut Veriyi Kaydet</div>
       <div style="background:#161616;border:1px solid #2a2a2a;border-left:3px solid #92D050;border-radius:8px;padding:16px;margin-bottom:20px;">
         <div style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6;">
-          Mevcut verileri bilgisayarınıza <strong style="color:#92D050;">JSON</strong> veya <strong style="color:#92D050;">CSV</strong> olarak indirin. Firebase'de depolama yapmaz.
+          Mevcut verileri <strong style="color:#92D050;">PDF</strong> olarak indirin. Tarayıcının yazdır diyaloğundan "PDF olarak kaydet" seçeneğini kullanın.
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button onclick="partiIndir('json')" style="background:linear-gradient(135deg,#1d5c3a,#155230);color:#7fda9e;border:1px solid #2a6e4a;border-radius:6px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;">
-            📥 JSON Olarak İndir
-          </button>
-          <button onclick="partiIndir('csv')" style="background:linear-gradient(135deg,#1d3a5c,#152a45);color:#7ab8f5;border:1px solid #2a5a8e;border-radius:6px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;">
-            📊 CSV Olarak İndir
+          <button onclick="partiIndir()" style="background:linear-gradient(135deg,#6b1a00,#4a1000);color:#ffb07a;border:1px solid #8a3a00;border-radius:6px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            📄 PDF Olarak İndir
           </button>
         </div>
         <div id="partiIndirMsg" style="display:none;margin-top:10px;font-size:12px;padding:7px 12px;border-radius:5px;background:rgba(146,208,80,.15);color:#92D050;border:1px solid rgba(146,208,80,.3);"></div>
@@ -6195,39 +6198,143 @@ function buildUI() {
   buildState();
   buildTabs();
   buildSheets();
-  // statsBar/toolBar/legendBar inline style'ı temizle (CSS class'taki display geçerli olsun)
   ['statsBar','toolBar','legendBar'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = '';
   });
+  // İlk makine grubunu otomatik aç
+  const firstGroup = document.querySelector('.tab-machine-group');
+  if (firstGroup) {
+    const children = firstGroup.querySelector('.tab-machine-children');
+    const header = firstGroup.querySelector('.tab-machine-header');
+    if (children) children.classList.add('open');
+    if (header) header.classList.add('open');
+    // İlk alt butonu aktif yap
+    const firstChild = firstGroup.querySelector('.tab-machine-child');
+    if (firstChild) firstChild.classList.add('active');
+  }
   updateStats(0);
   setTimeout(updateTerminBadge, 500);
   document.getElementById('searchInput').addEventListener('input', e => filterTable(e.target.value));
-  // İlk sayfa için makine sayısını yükle
   if (typeof refreshGlobalMakineInput === 'function') refreshGlobalMakineInput(0);
-  // Sidebar toggle etiketini güncelle
   if (typeof updateSidebarToggleLabel === 'function') updateSidebarToggleLabel();
+}
+
+// Makine grubu eşlemesi — sayfa adından ana makine adını çıkar
+function getMachineGroup(sheetName) {
+  const n = sheetName.toUpperCase();
+  if (n.includes('QSBOX') || n.includes('QS HAZIR')) return 'QSBOX';
+  if (n.includes('QBOX')) return 'QBOX';
+  if (n.includes('BC ') || n.startsWith('BC')) return 'BC410PRO';
+  return null; // Gruba girmeyen sayfalar (SİPARİŞ FORMU, TESLİM KAYIT vb.)
 }
 
 function buildTabs() {
   const wrap = document.getElementById('tabsWrap');
   wrap.innerHTML = '';
+
+  // Makine gruplarını ve serbest sayfaları ayrıştır
+  const machineGroups = {}; // { 'BC410PRO': [{sheetIdx, sheet},...], ... }
+  const freeSheets = [];    // [{sheetIdx, sheet}]
+
   SHEETS.forEach((sheet, i) => {
-    const cnt = (sheet.type === 'siparis' || sheet.type === 'teslim')
+    const grp = getMachineGroup(sheet.name);
+    if (grp) {
+      if (!machineGroups[grp]) machineGroups[grp] = [];
+      machineGroups[grp].push({ idx: i, sheet });
+    } else {
+      freeSheets.push({ idx: i, sheet });
+    }
+  });
+
+  function getSheetCount(i, sheet) {
+    return (sheet.type === 'siparis' || sheet.type === 'teslim')
       ? (SHEETS[i].rows || []).length
       : (state[i] && state[i].rows ? state[i].rows.filter(r => !r._group && (r['3'] || r['2'])).length : 0);
+  }
+
+  // Makine gruplarını oluştur
+  const groupOrder = ['BC410PRO', 'QSBOX', 'QBOX'];
+  groupOrder.forEach(grpName => {
+    const items = machineGroups[grpName];
+    if (!items || items.length === 0) return;
+
+    const grpDiv = document.createElement('div');
+    grpDiv.className = 'tab-machine-group';
+    grpDiv.dataset.group = grpName;
+
+    const header = document.createElement('button');
+    header.className = 'tab-machine-header';
+    header.dataset.group = grpName;
+    header.innerHTML = `🏭 ${grpName} <span class="tab-machine-arrow">▶</span>`;
+    header.onclick = function() {
+      const children = grpDiv.querySelector('.tab-machine-children');
+      const isOpen = children.classList.toggle('open');
+      header.classList.toggle('open', isOpen);
+    };
+
+    const childrenWrap = document.createElement('div');
+    childrenWrap.className = 'tab-machine-children';
+
+    items.forEach(({ idx, sheet }) => {
+      const cnt = getSheetCount(idx, sheet);
+      // Alt kategori etiketi — Talaşlı İmalat mı, Malzeme Sipariş Listesi mi?
+      let label = sheet.name;
+      const upper = sheet.name.toUpperCase();
+      if (upper.includes('TALAŞLI') || upper.includes('TALASLI')) {
+        label = '🔧 Talaşlı İmalat';
+      } else if (upper.includes('SİPARİŞ') || upper.includes('SIPARIS') || upper.includes('HAZIR')) {
+        label = '📋 Malzeme Sipariş Listesi';
+      }
+
+      const child = document.createElement('button');
+      child.className = 'tab-machine-child' + (idx === 0 ? ' active' : '');
+      child.id = 'tabBtn-' + idx;
+      child.dataset.sheetIdx = idx;
+      child.innerHTML = label + '<span class="tab-count">' + cnt + '</span>';
+      child.onclick = () => switchTab(idx);
+
+      if (window._currentRole === 'admin' || window._currentRole === 'manager') {
+        child.title = 'Çift tıkla: isim değiştir';
+        child.ondblclick = (e) => {
+          e.stopPropagation();
+          const yeniAd = prompt(`"${sheet.name}" sayfasının yeni adını girin:`, sheet.name);
+          if (yeniAd && yeniAd.trim() && yeniAd.trim() !== sheet.name) {
+            SHEETS[idx].name = yeniAd.trim();
+            if (isOnline) fbSaveAll();
+            buildTabs();
+            if (window._currentSayfalar && window._currentSayfalar.length > 0) {
+              applySayfaKisitlama(window._currentSayfalar);
+            }
+          }
+        };
+      }
+      childrenWrap.appendChild(child);
+    });
+
+    grpDiv.appendChild(header);
+    grpDiv.appendChild(childrenWrap);
+    wrap.appendChild(grpDiv);
+    const div = document.createElement('div');
+    div.className = 'tab-machine-divider';
+    wrap.appendChild(div);
+  });
+
+  // Gruba girmeyen serbest sayfalar (SİPARİŞ FORMU, TESLİM KAYIT, vb.)
+  freeSheets.forEach(({ idx, sheet }) => {
+    const cnt = getSheetCount(idx, sheet);
     const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
-    btn.id = 'tabBtn-' + i;
+    btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+    btn.id = 'tabBtn-' + idx;
     btn.innerHTML = sheet.name + '<span class="tab-count">' + cnt + '</span>';
-    btn.onclick = () => switchTab(i);
+    btn.onclick = () => switchTab(idx);
     if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       btn.title = 'Çift tıkla: isim değiştir';
       btn.ondblclick = (e) => {
         e.stopPropagation();
         const yeniAd = prompt(`"${sheet.name}" sayfasının yeni adını girin:`, sheet.name);
         if (yeniAd && yeniAd.trim() && yeniAd.trim() !== sheet.name) {
-          SHEETS[i].name = yeniAd.trim();
+          SHEETS[idx].name = yeniAd.trim();
           if (isOnline) fbSaveAll();
           buildTabs();
           if (window._currentSayfalar && window._currentSayfalar.length > 0) {
@@ -6240,14 +6347,36 @@ function buildTabs() {
   });
 }
 
+// Makine grubu sidebar güncellemesi — switchTab'dan sonra çağrılır
+
 function switchTab(idx) {
   activeSheet = idx;
+  // Normal tab-btn butonları
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  // Makine grubu alt butonları
+  document.querySelectorAll('.tab-machine-child').forEach(b => {
+    const isActive = parseInt(b.dataset.sheetIdx) === idx;
+    b.classList.toggle('active', isActive);
+    // Aktif olan alt butonu içeren grubu aç
+    if (isActive) {
+      const children = b.closest('.tab-machine-children');
+      const header = b.closest('.tab-machine-group') && b.closest('.tab-machine-group').querySelector('.tab-machine-header');
+      if (children) children.classList.add('open');
+      if (header) { header.classList.add('open'); header.classList.add('has-active'); }
+    }
+  });
+  // Aktif olmayan grupların header has-active sınıfını kaldır
+  document.querySelectorAll('.tab-machine-header').forEach(h => {
+    const grpDiv = h.closest('.tab-machine-group');
+    if (!grpDiv) return;
+    const hasActiveChild = grpDiv.querySelector('.tab-machine-child.active');
+    h.classList.toggle('has-active', !!hasActiveChild);
+  });
+
   document.querySelectorAll('.sheet-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
   document.getElementById('searchInput').value = '';
   filterTable('');
   updateStats(idx);
-  // Sipariş/teslim sayfasında "Yeni Satır Ekle" butonunu gizle
   const addRowBtn = document.getElementById('addRowBtn');
   const isSpecialPage = SHEETS[idx] && (SHEETS[idx].type === 'siparis' || SHEETS[idx].type === 'teslim');
   const role = window._currentRole || 'viewer';
@@ -6255,17 +6384,13 @@ function switchTab(idx) {
   if (addRowBtn) {
     addRowBtn.style.display = (isSpecialPage || !canAddRow) ? 'none' : '';
   }
-  // Sipariş/teslim sayfasında veya yetkisiz rolde MAKİNE SAYISI kutusunu gizle
   const gmWrap = document.getElementById('globalMakineWrap');
   if (gmWrap) {
     const canMakine = (role === 'admin' || role === 'manager') && !isSpecialPage;
     gmWrap.style.display = canMakine ? 'flex' : 'none';
   }
-  // Aktif sayfanın baskın makine sayısını input'a yansıt
   refreshGlobalMakineInput(idx);
-  // Sayfa seçildikten sonra sidebar'ı otomatik kapat
   closeSidebar();
-  // Toggle butonundaki aktif sayfa adını güncelle
   updateSidebarToggleLabel();
 }
 
