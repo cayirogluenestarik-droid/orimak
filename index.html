@@ -10325,7 +10325,7 @@ function flLoad(){
             if(Array.isArray(raw[oldKey])) norm[dest] = norm[dest].concat(raw[oldKey]);
           });
           FL.data = norm;
-          flDraw();
+          window.flRender(null);
         }
       }).catch(function(){});
     }
@@ -10485,7 +10485,7 @@ function bindEvents(box){
     FL.sortCol = null;
     var srch = box.querySelector('#flSearch');
     if(srch) srch.value = '';
-    flDraw();
+    window.flRender(null);
   });
 
   /* Arama */
@@ -10512,7 +10512,7 @@ function bindEvents(box){
     if(!th) return;
     var col = th.getAttribute('data-sort');
     if(FL.sortCol===col) FL.sortDir*=-1; else{ FL.sortCol=col; FL.sortDir=1; }
-    flDraw();
+    window.flRender(null);
   });
 
   /* Tablo içi değişiklikler (event delegation) */
@@ -10567,7 +10567,7 @@ function bindEvents(box){
     if(!confirm('"'+isim+'" silinsin mi?')) return;
     rows2.splice(ri, 1);
     flSave();
-    flDraw();
+    window.flRender(null);
   });
 
   /* Ekle */
@@ -10576,7 +10576,7 @@ function bindEvents(box){
     var mk = flKey();
     flRows(mk).push({isim:'',gelisFiyat:'',birim:'TL',karMarj:'30'});
     flSave();
-    flDraw();
+    window.flRender(null);
     setTimeout(function(){
       var inputs = box.querySelectorAll('.fl-table tbody tr:last-child .fl-isim');
       if(inputs.length) inputs[inputs.length-1].focus();
@@ -10593,8 +10593,51 @@ function bindEvents(box){
 }
 
 /* ── Dışarıdan çağrılan hook ── */
-window.flRender = function(box){ flDraw(); };
-window.flRenderIfActive = function(){ flDraw(); };
+window.flRender = function(box){
+  /* box parametresi geldi, direkt kullanalım */
+  if(!box) box = document.getElementById('stContent');
+  if(!box) return;
+
+  var role = window._currentRole||'viewer';
+  var canEdit = (role!=='viewer');
+  var mkey = flKey();
+  var rows = flRows(mkey);
+
+  var list = rows.map(function(r,i){return{r:r,i:i};});
+  if(FL.search){
+    var q=FL.search.toLowerCase();
+    list=list.filter(function(o){return (o.r.isim||'').toLowerCase().indexOf(q)>=0;});
+  }
+  if(FL.sortCol){
+    list.sort(function(a,b){
+      var va,vb;
+      switch(FL.sortCol){
+        case 'isim': va=(a.r.isim||'').toLowerCase(); vb=(b.r.isim||'').toLowerCase(); break;
+        case 'gelis': va=parseFloat(a.r.gelisFiyat)||0; vb=parseFloat(b.r.gelisFiyat)||0; break;
+        case 'birim': va=(a.r.birim||''); vb=(b.r.birim||''); break;
+        case 'marj': va=parseFloat(a.r.karMarj)||0; vb=parseFloat(b.r.karMarj)||0; break;
+        case 'satis': va=flCalcSatis(a.r.gelisFiyat,a.r.karMarj); vb=flCalcSatis(b.r.gelisFiyat,b.r.karMarj); break;
+        default: va=0;vb=0;
+      }
+      if(va<vb) return -FL.sortDir; if(va>vb) return FL.sortDir; return 0;
+    });
+  }
+
+  var existing = box.querySelector('.fl-wrap');
+  if(existing){
+    var sel2 = box.querySelector('.fl-msel');
+    if(sel2 && parseInt(sel2.value,10)!==FL.activeIdx) sel2.value=String(FL.activeIdx);
+    var stat2 = box.querySelector('.fl-mstat');
+    if(stat2) stat2.innerHTML='Toplam: <span>'+rows.length+'</span>'+(FL.search?' &nbsp;·&nbsp; Filtre: <span>'+list.length+'</span>':'');
+    var tbody2 = box.querySelector('.fl-table tbody');
+    if(tbody2) tbody2.innerHTML=buildTbody(list,mkey,canEdit);
+    return;
+  }
+
+  box.innerHTML = buildFullHTML(list, rows, mkey, canEdit);
+  bindEvents(box);
+};
+window.flRenderIfActive = function(){ window.flRender(null); };
 
 /* ── Yükle ── */
 setTimeout(flLoad, 2000);
