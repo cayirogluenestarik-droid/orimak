@@ -10247,7 +10247,6 @@ window.printOrimakForm = function(areaId) {
 (function(){
 
 // ── Makine grupları ──
-var FL_MACHINES = ['BC410 PRO','Q-BOX','Qs-BOX','H-CUT','ORİTEQ2'];
 var flActiveMachine = 0;
 var FL_MACHINES = [
   { key:'BC410PRO', label:'BC410PRO', aliases:['BC410 PRO','BC-410 PRO'] },
@@ -10372,7 +10371,6 @@ function flRenderIfActive(){
 }
 
 function flRenderSoon(){
-  flRenderIfActive();
   if (typeof requestAnimationFrame === 'function') {
     requestAnimationFrame(function(){ flRenderIfActive(); });
   } else {
@@ -10478,36 +10476,81 @@ window.flRender = function(box) {
     '<span class="fl-badge" id="flBadge"></span>'+
   '</div>' : '';
 
-  box.innerHTML = '<div class="fl-wrap">'+
-    '<div class="fl-topbar">'+
-      '<div class="fl-title">💲 MALZEME FİYAT LİSTESİ</div>'+
-      '<div class="fl-search-wrap"><span class="fl-search-ico">🔍</span>'+
-        '<input class="fl-search" type="text" placeholder="Malzeme ara..." value="'+flEsc(flSearch)+'" oninput="window.flSearchChange(this.value)"/>'+
+  // Mevcut arama inputunu kontrol et
+  var existingSearch = box.querySelector('.fl-search');
+  var searchHadFocus = existingSearch && (document.activeElement === existingSearch);
+  var searchSelStart = searchHadFocus ? existingSearch.selectionStart : null;
+  var searchSelEnd = searchHadFocus ? existingSearch.selectionEnd : null;
+
+  // Sadece sekme butonlarını güncelle (innerHTML sıfırlamadan)
+  var existingTabs = box.querySelector('.fl-machine-tabs');
+  var existingStats = box.querySelector('.fl-stats');
+  var existingTbody = box.querySelector('.fl-table tbody');
+  var existingTopbar = box.querySelector('.fl-topbar');
+
+  if (existingTabs && existingTbody) {
+    // Sadece değişen parçaları güncelle (partial update)
+    existingTabs.innerHTML = machTabs;
+    if (existingStats) {
+      existingStats.innerHTML =
+        '<span class="fl-stat-chip">Toplam: <span>'+totalItems+'</span></span>'+
+        '<span class="fl-stat-chip">Ort. Marj: <span>%'+avgMarj.toFixed(1)+'</span></span>'+
+        (flSearch ? '<span class="fl-stat-chip" style="color:var(--orange);">Filtre: <span>'+filtered.length+' sonuç</span></span>' : '');
+    }
+    existingTbody.innerHTML = tbody;
+    // Başlıkları güncelle (sıralama ikonları için)
+    var ths = box.querySelectorAll('.fl-table thead th');
+    if (ths[1]) ths[1].innerHTML = 'MALZEME ADI'+sortIco(0);
+    if (ths[2]) ths[2].innerHTML = 'GELİŞ FİYATI'+sortIco(1);
+    if (ths[3]) ths[3].innerHTML = 'BİRİM'+sortIco(2);
+    if (ths[4]) ths[4].innerHTML = 'KAR MARJI'+sortIco(3);
+    if (ths[5]) ths[5].innerHTML = 'SATIŞ FİYATI'+sortIco(4);
+  } else {
+    // İlk render — tam HTML yaz
+    box.innerHTML = '<div class="fl-wrap">'+
+      '<div class="fl-topbar">'+
+        '<div class="fl-title">💲 MALZEME FİYAT LİSTESİ</div>'+
+        '<div class="fl-search-wrap"><span class="fl-search-ico">🔍</span>'+
+          '<input class="fl-search" type="text" placeholder="Malzeme ara..." value="'+flEsc(flSearch)+'" oninput="window.flSearchChange(this.value)"/>'+
+        '</div>'+
       '</div>'+
-    '</div>'+
-    '<div class="fl-machine-tabs">'+machTabs+'</div>'+
-    statsHtml+
-    '<div class="fl-content"><div style="overflow-x:auto;">'+
-      '<table class="fl-table">'+
-        '<thead><tr>'+
-          '<th style="width:40px;">#</th>'+
-          '<th onclick="window.flSort(0)">MALZEME ADI'+sortIco(0)+'</th>'+
-          '<th onclick="window.flSort(1)" style="text-align:right;min-width:120px;">GELİŞ FİYATI'+sortIco(1)+'</th>'+
-          '<th onclick="window.flSort(2)" style="text-align:center;min-width:90px;">BİRİM'+sortIco(2)+'</th>'+
-          '<th onclick="window.flSort(3)" style="text-align:center;min-width:80px;">KAR MARJI'+sortIco(3)+'</th>'+
-          '<th onclick="window.flSort(4)" style="text-align:right;min-width:130px;">SATIŞ FİYATI'+sortIco(4)+'</th>'+
-          '<th style="width:36px;"></th>'+
-        '</tr></thead>'+
-        '<tbody>'+tbody+'</tbody>'+
-      '</table>'+
-    '</div>'+
-    addHtml+
-  '</div></div>';
+      '<div class="fl-machine-tabs">'+machTabs+'</div>'+
+      statsHtml+
+      '<div class="fl-content"><div style="overflow-x:auto;">'+
+        '<table class="fl-table">'+
+          '<thead><tr>'+
+            '<th style="width:40px;">#</th>'+
+            '<th onclick="window.flSort(0)">MALZEME ADI'+sortIco(0)+'</th>'+
+            '<th onclick="window.flSort(1)" style="text-align:right;min-width:120px;">GELİŞ FİYATI'+sortIco(1)+'</th>'+
+            '<th onclick="window.flSort(2)" style="text-align:center;min-width:90px;">BİRİM'+sortIco(2)+'</th>'+
+            '<th onclick="window.flSort(3)" style="text-align:center;min-width:80px;">KAR MARJI'+sortIco(3)+'</th>'+
+            '<th onclick="window.flSort(4)" style="text-align:right;min-width:130px;">SATIŞ FİYATI'+sortIco(4)+'</th>'+
+            '<th style="width:36px;"></th>'+
+          '</tr></thead>'+
+          '<tbody>'+tbody+'</tbody>'+
+        '</table>'+
+      '</div>'+
+      addHtml+
+    '</div></div>';
+  }
+
+  // Arama inputu odak ve cursor pozisyonunu geri yükle
+  if (searchHadFocus) {
+    var newSearch = box.querySelector('.fl-search');
+    if (newSearch) {
+      newSearch.focus();
+      try { newSearch.setSelectionRange(searchSelStart, searchSelEnd); } catch(e){}
+    }
+  }
 };
 
 window.flSwitchM = function(i){
   flActiveMachine = i;
   flSortCol = null;
+  flSearch = '';
+  // Arama inputunu temizle
+  var searchEl = document.querySelector('.fl-search');
+  if (searchEl) searchEl.value = '';
   flRenderSoon();
 };
 
