@@ -10185,475 +10185,419 @@ window.printOrimakForm = function(areaId) {
 };
 </script>
 
+<!-- ══════════════════════════════════════════════════════
+     FİYAT LİSTESİ — Sıfırdan Yazıldı
+══════════════════════════════════════════════════════ -->
 <style>
 /* ══ FİYAT LİSTESİ ══ */
-.fl-wrap{display:flex;flex-direction:column;gap:0;height:100%;background:linear-gradient(180deg,#151515 0%,#121212 100%);border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.28);}
-.fl-topbar{display:flex;align-items:center;gap:14px;padding:16px 18px 14px;border-bottom:1px solid #262626;background:linear-gradient(135deg,#1a1a1a 0%,#181818 65%,#1d1408 100%);flex-wrap:wrap;}
-.fl-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:2.5px;color:#ffbf57;flex:1;}
-.fl-search{background:#232323;border:1px solid #333;border-radius:8px;padding:7px 12px 7px 34px;color:#ddd;font-size:12px;font-family:'Barlow',sans-serif;width:230px;outline:none;transition:border-color .2s,box-shadow .2s;}
-.fl-search:focus{border-color:var(--orange);}
-.fl-search-wrap{position:relative;}
-.fl-search:focus{box-shadow:0 0 0 3px rgba(245,166,35,.08);}
-.fl-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#777;font-size:13px;pointer-events:none;}
-.fl-machine-tabs{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid #232323;flex-shrink:0;background:#161616;}
-.fl-machine-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#555;}
-.fl-mselect{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 32px 8px 14px;border:1px solid rgba(245,166,35,.35);border-radius:10px;background:linear-gradient(180deg,rgba(245,166,35,.12),rgba(245,166,35,.05));color:#ffbf57;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;min-width:160px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23f5a623' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
-.fl-mselect:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
-.fl-mselect option{background:#1a1a1a;color:#ddd;font-family:'Barlow Condensed',sans-serif;}
-.fl-content{flex:1;overflow-y:auto;padding:16px 18px 40px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0));}
-/* Tablo */
-.fl-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:780px;background:#171717;border:1px solid #252525;border-radius:12px;overflow:hidden;}
-.fl-table thead tr{background:#121212;}
-.fl-table th{padding:11px 12px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:#8d8d8d;text-align:center;white-space:nowrap;border-bottom:1px solid #242424;cursor:pointer;user-select:none;vertical-align:middle;}
+.fl-wrap{display:flex;flex-direction:column;height:100%;background:#131313;border:1px solid #222;border-radius:14px;overflow:hidden;}
+.fl-topbar{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #242424;background:#181818;flex-wrap:wrap;}
+.fl-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:2.5px;color:#ffbf57;flex:1;min-width:160px;}
+.fl-search-wrap{position:relative;flex:1;max-width:280px;min-width:160px;}
+.fl-search{width:100%;background:#222;border:1px solid #333;border-radius:7px;padding:7px 12px 7px 32px;color:#ddd;font-size:12px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
+.fl-search:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(245,166,35,.1);}
+.fl-search::placeholder{color:#555;}
+.fl-search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#666;font-size:12px;pointer-events:none;}
+
+.fl-machine-bar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid #1e1e1e;background:#161616;flex-wrap:wrap;}
+.fl-machine-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#555;text-transform:uppercase;white-space:nowrap;}
+.fl-msel{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px 36px 8px 14px;border:1px solid rgba(245,166,35,.4);border-radius:8px;background:#1a1a1a;color:#ffbf57;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;min-width:180px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23f5a623' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.fl-msel:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
+.fl-msel option{background:#1a1a1a;color:#ddd;}
+.fl-mstat{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#555;margin-left:auto;}
+.fl-mstat span{color:#888;}
+
+.fl-body{flex:1;overflow:auto;padding:0;}
+.fl-table{width:100%;border-collapse:collapse;min-width:620px;}
+.fl-table thead tr{background:#111;position:sticky;top:0;z-index:2;}
+.fl-table th{padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#666;text-transform:uppercase;border-bottom:1px solid #222;white-space:nowrap;cursor:pointer;user-select:none;text-align:left;}
 .fl-table th:hover{color:#aaa;}
-.fl-table th.sorted{color:var(--orange);}
-.fl-table tbody tr{transition:background .12s;}
-.fl-table tbody tr:nth-child(odd){background:rgba(255,255,255,.012);}
-.fl-table tbody tr:hover{background:rgba(245,166,35,.06);}
-.fl-table td{padding:10px 12px;color:#d0d0d0;vertical-align:middle;border-bottom:1px solid #202020;text-align:center;}
-.fl-table tbody tr:last-child td{border-bottom:none;}
-.fl-table td.td-no{color:#666;font-size:11px;width:40px;}
-.fl-table td.td-isim{font-weight:600;color:#ddd;text-align:left;}
-.fl-table td.td-satis{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#92D050;letter-spacing:.5px;}
-.fl-table td.td-marj input{width:60px;}
-.fl-table td.td-price,.fl-table td.td-birim,.fl-table td.td-marj,.fl-table td.td-satis{text-align:center;}
-.fl-editable{background:rgba(255,255,255,.02);border:1px solid #2b2b2b;color:#ddd;font-size:12px;font-family:'Barlow',sans-serif;outline:none;width:100%;padding:6px 8px;border-radius:7px;transition:border-color .15s,background .15s,box-shadow .15s;}
-.fl-editable:focus{border-color:var(--orange);background:rgba(245,166,35,.05);box-shadow:0 0 0 3px rgba(245,166,35,.08);}
-.fl-editable.isim-input{font-weight:600;color:#ddd;font-size:12px;}
-.fl-editable.fiyat-input{text-align:center;width:110px;font-family:'Barlow Condensed',sans-serif;font-size:13px;}
-.fl-editable.marj-input{text-align:center;width:55px;font-family:'Barlow Condensed',sans-serif;font-size:12px;}
-.fl-editable.birim-select{text-align:center;width:92px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.6px;}
-.fl-editable.birim-select option{background:#1b1b1b;color:#f3f3f3;}
-.fl-editable.birim-select:focus option{background:#1b1b1b;color:#f3f3f3;}
-.fl-del-btn{background:none;border:none;color:#555;cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:color .15s,background .15s;}
-.fl-del-btn:hover{color:#ff6666;background:rgba(200,0,0,.1);}
-.fl-add-row{display:flex;align-items:center;gap:8px;padding:10px 0 0;}
-.fl-add-btn{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);color:#d49a2a;border-radius:8px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
-.fl-add-btn:hover{background:rgba(245,166,35,.2);}
-.fl-save-btn{background:linear-gradient(135deg,#f5a623,#ffbf57);border:none;color:#111;border-radius:8px;padding:7px 16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:opacity .15s;}
-.fl-save-btn:hover{opacity:.85;}
-.fl-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#777;letter-spacing:1px;}
-.fl-empty{text-align:center;padding:50px 20px;color:#666;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;}
-.fl-marj-wrap{display:flex;align-items:center;gap:4px;}
-.fl-marj-suffix{color:#666;font-size:10px;font-family:'Barlow Condensed',sans-serif;}
-.fl-stats{display:flex;gap:16px;padding:9px 18px;border-bottom:1px solid #222;background:#131313;flex-wrap:wrap;}
-.fl-stat-chip{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:#666;}
-.fl-stat-chip span{color:#92D050;}
+.fl-table th.fl-sort-asc::after{content:' ↑';color:var(--orange);}
+.fl-table th.fl-sort-desc::after{content:' ↓';color:var(--orange);}
+.fl-table th.fl-sorted{color:var(--orange);}
+.fl-table tbody tr{border-bottom:1px solid #1c1c1c;transition:background .1s;}
+.fl-table tbody tr:hover{background:rgba(245,166,35,.05);}
+.fl-table td{padding:9px 12px;font-size:12px;color:#ccc;vertical-align:middle;}
+.fl-table td.td-no{color:#444;font-size:11px;width:36px;text-align:center;}
+.fl-table td.td-satis{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-align:right;}
+.fl-table td.td-right{text-align:right;}
+.fl-table td.td-center{text-align:center;}
+.fl-empty-row td{text-align:center;color:#444;padding:40px;font-size:13px;font-style:italic;}
+
+/* Edit inputs */
+.fl-inp{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:5px 8px;color:#ddd;font-size:12px;font-family:'Barlow',sans-serif;outline:none;width:100%;transition:border-color .15s;}
+.fl-inp:focus{border-color:var(--orange);background:#222;}
+.fl-inp.inp-num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px;}
+.fl-sel{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:5px 4px;color:#ddd;font-size:11px;font-family:'Barlow Condensed',sans-serif;outline:none;cursor:pointer;width:70px;}
+.fl-sel:focus{border-color:var(--orange);}
+.fl-sel option{background:#1a1a1a;}
+
+.fl-del-btn{background:none;border:none;color:#444;cursor:pointer;padding:4px 6px;border-radius:4px;font-size:14px;transition:color .15s,background .15s;}
+.fl-del-btn:hover{color:#ff5555;background:rgba(255,85,85,.1);}
+
+.fl-footer{display:flex;align-items:center;gap:10px;padding:10px 18px;border-top:1px solid #1e1e1e;background:#161616;flex-wrap:wrap;}
+.fl-add-btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:8px 16px;border-radius:7px;border:1px solid rgba(146,208,80,.3);background:rgba(146,208,80,.08);color:#92D050;cursor:pointer;transition:all .15s;}
+.fl-add-btn:hover{background:rgba(146,208,80,.15);border-color:rgba(146,208,80,.5);}
+.fl-save-btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:8px 16px;border-radius:7px;border:1px solid rgba(245,166,35,.3);background:rgba(245,166,35,.08);color:var(--orange);cursor:pointer;transition:all .15s;}
+.fl-save-btn:hover{background:rgba(245,166,35,.15);border-color:rgba(245,166,35,.5);}
+.fl-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#92D050;letter-spacing:1px;}
+.fl-filter-badge{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.3);border-radius:12px;padding:2px 10px;font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;}
 </style>
 
 <script>
-// ════════════════════════════════════════════════════════
-//  MALZEMEFİYAT LİSTESİ SİSTEMİ
-// ════════════════════════════════════════════════════════
 (function(){
+'use strict';
 
-// ── Makine grupları ──
-var flActiveMachine = 0;
+/* ── Makine listesi ── */
 var FL_MACHINES = [
-  { key:'BC410PRO', label:'BC410PRO', aliases:['BC410 PRO','BC-410 PRO'] },
-  { key:'QBOX', label:'QBOX', aliases:['Q-BOX'] },
-  { key:'QSBOX', label:'QSBOX', aliases:['QS-BOX','Qs-BOX'] },
-  { key:'HCUT', label:'H-CUT', aliases:['HCUT'] },
-  { key:'ORITEQ2', label:'ORITEQ2', aliases:['ORÄ°TEQ2','ORITEQ 2'] }
+  { key:'BC410PRO',  label:'BC410 PRO' },
+  { key:'QBOX',      label:'Q-BOX'     },
+  { key:'QSBOX',     label:'QS-BOX'    },
+  { key:'HCUT',      label:'H-CUT'     },
+  { key:'ORITEQ2',   label:'ORİTEQ 2'  }
 ];
-var flSortCol = null;
-var flSortDir = 1; // 1=asc, -1=desc
-var flSearch = '';
-var flSaveTimer = null;
 
-// ── Veri yapısı: localStorage + Firebase ──
-var FL_DATA = {}; // { 'BC410 PRO': [{isim,gelisFiyat,karMarj},...], ... }
+/* ── State ── */
+var FL = {
+  activeIdx: 0,
+  data: {},       // { key: [{isim,gelisFiyat,birim,karMarj},...] }
+  search: '',
+  sortCol: null,  // 'isim'|'gelis'|'birim'|'marj'|'satis'
+  sortDir: 1,
+  saveTimer: null
+};
 
-function flNormalizeRow(row){
-  if (!row || typeof row !== 'object') return {isim:'', gelisFiyat:'', birim:'TL', karMarj:'30'};
-  if (!row.birim) row.birim = 'TL';
-  if (row.karMarj === undefined || row.karMarj === null || row.karMarj === '') row.karMarj = '30';
-  return row;
-}
+/* ── Yardımcılar ── */
+function flKey(){ return FL_MACHINES[FL.activeIdx].key; }
 
-function flMachineMetaByIndex(i){
-  return FL_MACHINES[i] || FL_MACHINES[0];
-}
-
-function flNormalizeMachineKey(machineName){
-  var raw = String(machineName || '').trim();
-  if (!raw) return FL_MACHINES[0].key;
-  var upper = raw.toUpperCase()
-    .replace(/Ä°/g,'I')
-    .replace(/İ/g,'I')
-    .replace(/[^A-Z0-9]+/g,'');
-  for (var i = 0; i < FL_MACHINES.length; i++) {
-    var meta = FL_MACHINES[i];
-    var names = [meta.key, meta.label].concat(meta.aliases || []);
-    for (var j = 0; j < names.length; j++) {
-      var candidate = String(names[j] || '').toUpperCase()
-        .replace(/Ä°/g,'I')
-        .replace(/İ/g,'I')
-        .replace(/[^A-Z0-9]+/g,'');
-      if (candidate === upper) return meta.key;
-    }
-  }
-  return raw;
-}
-
-function flNormalizeAll(){
-  var normalized = {};
-  Object.keys(FL_DATA).forEach(function(mach){
-    var key = flNormalizeMachineKey(mach);
-    var rows = Array.isArray(FL_DATA[mach]) ? FL_DATA[mach] : [];
-    if (!normalized[key]) normalized[key] = [];
-    normalized[key] = normalized[key].concat(rows.map(flNormalizeRow));
-  });
-  FL_MACHINES.forEach(function(meta){
-    if (!normalized[meta.key]) normalized[meta.key] = [];
-  });
-  FL_DATA = normalized;
-}
-
-function flKey(){ return 'orimak_fl_v1'; }
-
-function flLoad(){
-  try {
-    // Firebase'den yükle
-    if (window._db && window._fsGetDoc && window._fsDoc) {
-      window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'fiyat_listesi')).then(function(snap){
-        if (snap && snap.exists() && snap.data().data) {
-          FL_DATA = JSON.parse(snap.data().data);
-          flNormalizeAll();
-          flRenderIfActive();
-        }
-      }).catch(function(){});
-    }
-  } catch(e){}
-}
-
-function flSave(){
-  clearTimeout(flSaveTimer);
-  flSaveTimer = setTimeout(function(){
-    try {
-      if (window._db && window._fsSetDoc && window._fsDoc) {
-        window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'fiyat_listesi'), {
-          data: JSON.stringify(FL_DATA),
-          updatedAt: Date.now()
-        });
-      }
-    } catch(e){}
-  }, 800);
-}
-
-function flGetRows(mach){
-  var key = flNormalizeMachineKey(mach);
-  if (!FL_DATA[key]) FL_DATA[key] = [];
-  FL_DATA[key] = FL_DATA[key].map(flNormalizeRow);
-  return FL_DATA[key];
-}
-
-function flFmt(n, birim){
-  if (!n && n !== 0) return '—';
-  var unit = birim || 'TL';
-  var symbol = unit === 'USD' ? '$' : unit === 'EUR' ? '€' : '₺';
-  return Number(n).toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + symbol;
+function flRows(key){
+  var k = key || flKey();
+  if (!FL.data[k]) FL.data[k] = [];
+  return FL.data[k];
 }
 
 function flCalcSatis(gelis, marj){
   var g = parseFloat(String(gelis||'0').replace(',','.')) || 0;
   var m = parseFloat(String(marj||'0').replace(',','.')) || 0;
-  if (!g) return 0;
-  return g * (1 + m / 100);
+  return g > 0 ? g * (1 + m / 100) : 0;
+}
+
+function flFmt(n, birim){
+  if (!n) return '—';
+  var sym = birim==='USD'?'$':birim==='EUR'?'€':'₺';
+  return Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+sym;
 }
 
 function flEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function flRenderIfActive(){
+/* ── Firebase kaydet/yükle ── */
+function flSave(){
+  clearTimeout(FL.saveTimer);
+  FL.saveTimer = setTimeout(function(){
+    try{
+      if(window._db&&window._fsSetDoc&&window._fsDoc){
+        window._fsSetDoc(window._fsDoc(window._db,'malzeme','fiyat_listesi'),{
+          data: JSON.stringify(FL.data),
+          updatedAt: Date.now()
+        });
+      }
+    }catch(e){}
+  }, 800);
+}
+
+function flLoad(){
+  try{
+    if(window._db&&window._fsGetDoc&&window._fsDoc){
+      window._fsGetDoc(window._fsDoc(window._db,'malzeme','fiyat_listesi')).then(function(snap){
+        if(snap&&snap.exists()&&snap.data().data){
+          var raw = JSON.parse(snap.data().data);
+          /* Eski key formatlarını normalize et */
+          var norm = {};
+          FL_MACHINES.forEach(function(m){ norm[m.key] = []; });
+          Object.keys(raw).forEach(function(oldKey){
+            var upper = String(oldKey).toUpperCase().replace(/[^A-Z0-9]/g,'');
+            var matched = null;
+            FL_MACHINES.forEach(function(m){
+              var mk = m.key.toUpperCase().replace(/[^A-Z0-9]/g,'');
+              if(!matched && (mk===upper || upper.indexOf(mk)>=0 || mk.indexOf(upper)>=0)) matched = m.key;
+            });
+            var dest = matched || FL_MACHINES[0].key;
+            if(Array.isArray(raw[oldKey])) norm[dest] = norm[dest].concat(raw[oldKey]);
+          });
+          FL.data = norm;
+          flDraw();
+        }
+      }).catch(function(){});
+    }
+  }catch(e){}
+}
+
+/* ══ ANA RENDER ══ */
+function flDraw(){
   var box = document.getElementById('stContent');
+  if(!box) return;
+  /* Sayfa aktif mi? */
+  if(typeof ST_PAGES==='undefined'||typeof stActiveIdx==='undefined') return;
   var pg = ST_PAGES[stActiveIdx];
-  if (!box || !pg || pg[0] !== 'FiyatListesi.html') return;
-  flRender(box);
-}
+  if(!pg||pg[0]!=='FiyatListesi.html') return;
 
-function flRenderSoon(){
-  flRenderIfActive();
-}
+  var role = window._currentRole||'viewer';
+  var canEdit = (role!=='viewer');
+  var mkey = flKey();
+  var rows = flRows(mkey);
 
-window.flRender = function(box) {
-  var machMeta = flMachineMetaByIndex(flActiveMachine);
-  var mach = machMeta.key;
-  var role = window._currentRole || 'viewer';
-  var canEdit = (role !== 'viewer');
-
-  // Makine dropdown HTML
-  var machTabs = '<label class="fl-machine-label">MAKİNE</label>'+
-    '<select class="fl-mselect" id="flMachineSelect">'+
-    FL_MACHINES.map(function(m, i){
-      var cnt = flGetRows(m.key).length;
-      return '<option value="'+i+'"'+(i===flActiveMachine?' selected':'')+'>'+flEsc(m.label)+' ('+cnt+')</option>';
-    }).join('')+
-    '</select>';
-
-  // Satırları filtrele + sırala
-  var rows = flGetRows(mach);
-  var filtered = rows.map(function(r,i){ return {r:r, i:i}; });
-
-  if (flSearch) {
-    var q = flSearch.toLowerCase();
-    filtered = filtered.filter(function(obj){ return (obj.r.isim||'').toLowerCase().includes(q); });
+  /* Filtre + sırala */
+  var list = rows.map(function(r,i){return{r:r,i:i};});
+  if(FL.search){
+    var q=FL.search.toLowerCase();
+    list = list.filter(function(o){return (o.r.isim||'').toLowerCase().indexOf(q)>=0;});
   }
-
-  if (flSortCol !== null) {
-    filtered.sort(function(a, b){
-      var va = '', vb = '';
-      if (flSortCol === 0) { va = (a.r.isim||'').toLowerCase(); vb = (b.r.isim||'').toLowerCase(); }
-      else if (flSortCol === 1) { va = parseFloat(String(a.r.gelisFiyat||'0').replace(',','.'))||0; vb = parseFloat(String(b.r.gelisFiyat||'0').replace(',','.'))||0; }
-      else if (flSortCol === 2) { va = (a.r.birim||'').toLowerCase(); vb = (b.r.birim||'').toLowerCase(); }
-      else if (flSortCol === 3) { va = parseFloat(String(a.r.karMarj||'0').replace(',','.'))||0; vb = parseFloat(String(b.r.karMarj||'0').replace(',','.'))||0; }
-      else if (flSortCol === 4) { va = flCalcSatis(a.r.gelisFiyat, a.r.karMarj); vb = flCalcSatis(b.r.gelisFiyat, b.r.karMarj); }
-      if (va < vb) return -flSortDir; if (va > vb) return flSortDir; return 0;
+  if(FL.sortCol){
+    list.sort(function(a,b){
+      var va,vb;
+      switch(FL.sortCol){
+        case 'isim': va=(a.r.isim||'').toLowerCase(); vb=(b.r.isim||'').toLowerCase(); break;
+        case 'gelis': va=parseFloat(a.r.gelisFiyat)||0; vb=parseFloat(b.r.gelisFiyat)||0; break;
+        case 'birim': va=(a.r.birim||''); vb=(b.r.birim||''); break;
+        case 'marj': va=parseFloat(a.r.karMarj)||0; vb=parseFloat(b.r.karMarj)||0; break;
+        case 'satis': va=flCalcSatis(a.r.gelisFiyat,a.r.karMarj); vb=flCalcSatis(b.r.gelisFiyat,b.r.karMarj); break;
+        default: va=0;vb=0;
+      }
+      if(va<vb) return -FL.sortDir; if(va>vb) return FL.sortDir; return 0;
     });
   }
 
-  // İstatistik
-  var totalItems = rows.length;
-  var avgMarj = totalItems ? (rows.reduce(function(s,r){ return s + (parseFloat(String(r.karMarj||'0').replace(',','.'))||0); }, 0) / totalItems) : 0;
-  var statsHtml = '<div class="fl-stats">'+
-    '<span class="fl-stat-chip">Toplam: <span>'+totalItems+'</span></span>'+
-    '<span class="fl-stat-chip">Ort. Marj: <span>%'+avgMarj.toFixed(1)+'</span></span>'+
-    (flSearch ? '<span class="fl-stat-chip" style="color:var(--orange);">Filtre: <span>'+filtered.length+' sonuç</span></span>' : '')+
+  /* ── Mevcut DOM varsa partial update yap ── */
+  var existing = box.querySelector('.fl-wrap');
+  if(existing){
+    /* Dropdown güncelle */
+    var sel = box.querySelector('.fl-msel');
+    if(sel && parseInt(sel.value,10)!==FL.activeIdx) sel.value=String(FL.activeIdx);
+
+    /* Stats güncelle */
+    var stat = box.querySelector('.fl-mstat');
+    if(stat) stat.innerHTML = 'Toplam: <span>'+rows.length+'</span>'+(FL.search?' &nbsp;·&nbsp; Filtre: <span>'+list.length+'</span>':'');
+
+    /* Tbody güncelle */
+    var tbody = box.querySelector('.fl-table tbody');
+    if(tbody){ tbody.innerHTML = buildTbody(list, mkey, canEdit); return; }
+  }
+
+  /* ── İlk render: tam HTML ── */
+  box.innerHTML = buildFullHTML(list, rows, mkey, canEdit);
+  bindEvents(box);
+}
+
+function buildTbody(list, mkey, canEdit){
+  if(!list.length) return '<tr class="fl-empty-row"><td colspan="7">'+
+    (FL.search?'Arama sonucu bulunamadı':'Henüz malzeme eklenmedi — aşağıdan ekle')+'</td></tr>';
+
+  return list.map(function(o,dispIdx){
+    var r=o.r, ri=o.i;
+    var satis=flCalcSatis(r.gelisFiyat,r.karMarj);
+    var satisStr=satis>0?flFmt(satis,r.birim):'—';
+    var satisColor=satis>0?'#92D050':'#444';
+    if(canEdit){
+      return '<tr data-ri="'+ri+'" data-mkey="'+flEsc(mkey)+'">'+
+        '<td class="td-no">'+(dispIdx+1)+'</td>'+
+        '<td><input class="fl-inp fl-isim" value="'+flEsc(r.isim||'')+'" placeholder="Malzeme adı..." /></td>'+
+        '<td><input class="fl-inp inp-num fl-gelis" value="'+flEsc(r.gelisFiyat||'')+'" placeholder="0,00" /></td>'+
+        '<td class="td-center"><select class="fl-sel fl-birim">'+
+          '<option value="TL"'+((!r.birim||r.birim==='TL')?' selected':'')+'>TL ₺</option>'+
+          '<option value="USD"'+(r.birim==='USD'?' selected':'')+'>USD $</option>'+
+          '<option value="EUR"'+(r.birim==='EUR'?' selected':'')+'>EUR €</option>'+
+        '</select></td>'+
+        '<td><input class="fl-inp inp-num fl-marj" value="'+flEsc(r.karMarj||'30')+'" placeholder="30" /></td>'+
+        '<td class="td-satis fl-satis-cell" style="color:'+satisColor+';">'+satisStr+'</td>'+
+        '<td><button class="fl-del-btn" data-ri="'+ri+'" data-mkey="'+flEsc(mkey)+'" title="Sil">✕</button></td>'+
+      '</tr>';
+    } else {
+      return '<tr>'+
+        '<td class="td-no">'+(dispIdx+1)+'</td>'+
+        '<td>'+flEsc(r.isim||'—')+'</td>'+
+        '<td class="td-right">'+flFmt(parseFloat(String(r.gelisFiyat||'0').replace(',','.'))||0,r.birim)+'</td>'+
+        '<td class="td-center" style="color:#888;">'+flEsc(r.birim||'TL')+'</td>'+
+        '<td class="td-right" style="color:#888;">%'+flEsc(r.karMarj||'0')+'</td>'+
+        '<td class="td-satis" style="color:'+satisColor+';">'+satisStr+'</td>'+
+        '<td></td>'+
+      '</tr>';
+    }
+  }).join('');
+}
+
+function sortIcon(col){
+  if(FL.sortCol!==col) return '';
+  return FL.sortDir===1?' ↑':' ↓';
+}
+function sortCls(col){ return FL.sortCol===col?(FL.sortDir===1?'fl-sorted fl-sort-asc':'fl-sorted fl-sort-desc'):''; }
+
+function buildFullHTML(list, rows, mkey, canEdit){
+  var machOpts = FL_MACHINES.map(function(m,i){
+    return '<option value="'+i+'"'+(i===FL.activeIdx?' selected':'')+'>'+flEsc(m.label)+' ('+flRows(m.key).length+')</option>';
+  }).join('');
+
+  var footer = canEdit ?
+    '<div class="fl-footer">'+
+      '<button class="fl-add-btn" id="flAddBtn">＋ Malzeme Ekle</button>'+
+      '<button class="fl-save-btn" id="flSaveBtn">💾 Kaydet</button>'+
+      '<span class="fl-badge" id="flBadge"></span>'+
+    '</div>' : '';
+
+  return '<div class="fl-wrap">'+
+    '<div class="fl-topbar">'+
+      '<div class="fl-title">💲 MALZEME FİYAT LİSTESİ</div>'+
+      '<div class="fl-search-wrap"><span class="fl-search-ico">🔍</span>'+
+        '<input class="fl-search" id="flSearch" type="text" placeholder="Malzeme ara..." value="'+flEsc(FL.search)+'"/>'+
+      '</div>'+
+    '</div>'+
+    '<div class="fl-machine-bar">'+
+      '<span class="fl-machine-lbl">Makine:</span>'+
+      '<select class="fl-msel" id="flMsel">'+machOpts+'</select>'+
+      '<span class="fl-mstat" id="flMstat">Toplam: <span>'+rows.length+'</span>'+
+        (FL.search?' &nbsp;·&nbsp; Filtre: <span>'+list.length+'</span>':'')+
+      '</span>'+
+    '</div>'+
+    '<div class="fl-body">'+
+      '<table class="fl-table">'+
+        '<thead><tr>'+
+          '<th style="width:36px;">#</th>'+
+          '<th class="'+sortCls('isim')+'" data-sort="isim">MALZEME ADI'+sortIcon('isim')+'</th>'+
+          '<th class="'+sortCls('gelis')+'" data-sort="gelis" style="text-align:right;">GELİŞ FİYATI'+sortIcon('gelis')+'</th>'+
+          '<th class="'+sortCls('birim')+'" data-sort="birim" style="text-align:center;">BİRİM'+sortIcon('birim')+'</th>'+
+          '<th class="'+sortCls('marj')+'" data-sort="marj" style="text-align:right;">KAR MARJI %'+sortIcon('marj')+'</th>'+
+          '<th class="'+sortCls('satis')+'" data-sort="satis" style="text-align:right;">SATIŞ FİYATI'+sortIcon('satis')+'</th>'+
+          '<th style="width:36px;"></th>'+
+        '</tr></thead>'+
+        '<tbody>'+buildTbody(list,mkey,canEdit)+'</tbody>'+
+      '</table>'+
+    '</div>'+
+    footer+
   '</div>';
+}
 
-  // Tablo satırları
-  var sortIco = function(col){ return flSortCol===col ? (flSortDir===1?' ↑':' ↓') : ''; };
+/* ── Event bağlama (sadece ilk render'da bir kez) ── */
+function bindEvents(box){
+  /* Makine dropdown */
+  var msel = box.querySelector('#flMsel');
+  if(msel) msel.addEventListener('change', function(){
+    FL.activeIdx = parseInt(this.value, 10);
+    FL.search = '';
+    FL.sortCol = null;
+    var srch = box.querySelector('#flSearch');
+    if(srch) srch.value = '';
+    flDraw();
+  });
 
-  var tbody = '';
-  if (filtered.length === 0) {
-    tbody = '<tr><td colspan="7" class="fl-empty">'+
-      (flSearch ? 'Arama sonucu bulunamadı' : (canEdit ? '＋ Malzeme Ekle butonuyla başlayın' : 'Henüz malzeme eklenmemiş'))+
-    '</td></tr>';
-  } else {
-    filtered.forEach(function(obj, dispIdx){
-      var r = obj.r, ri = obj.i;
-      var satis = flCalcSatis(r.gelisFiyat, r.karMarj);
-      var satisStr = satis > 0 ? flFmt(satis, r.birim) : '—';
-      var satisColor = satis > 0 ? '#92D050' : '#333';
+  /* Arama */
+  var srch = box.querySelector('#flSearch');
+  if(srch) srch.addEventListener('input', function(){
+    FL.search = this.value;
+    /* Sadece tbody güncelle, odak kaybetme */
+    var mkey = flKey();
+    var rows = flRows(mkey);
+    var list = rows.map(function(r,i){return{r:r,i:i};});
+    if(FL.search){
+      var q=FL.search.toLowerCase();
+      list=list.filter(function(o){return (o.r.isim||'').toLowerCase().indexOf(q)>=0;});
+    }
+    var tbody = box.querySelector('.fl-table tbody');
+    if(tbody) tbody.innerHTML = buildTbody(list, mkey, window._currentRole!=='viewer');
+    var stat = box.querySelector('#flMstat');
+    if(stat) stat.innerHTML='Toplam: <span>'+rows.length+'</span>'+(FL.search?' &nbsp;·&nbsp; Filtre: <span>'+list.length+'</span>':'');
+  });
 
-      if (canEdit) {
-        tbody += '<tr>'+
-          '<td class="td-no">'+(dispIdx+1)+'</td>'+
-          '<td class="td-isim"><input class="fl-editable isim-input" value="'+flEsc(r.isim||'')+'" placeholder="Malzeme adı..." '+
-            'oninput="window.flUpdateRow(\''+mach+'\','+ri+',\'isim\',this.value)" style="width:200px;"/></td>'+
-          '<td class="td-price"><input class="fl-editable fiyat-input" value="'+flEsc(r.gelisFiyat||'')+'" placeholder="0,00" '+
-            'oninput="window.flUpdateRow(\''+mach+'\','+ri+',\'gelisFiyat\',this.value)" /></td>'+
-          '<td class="td-birim"><select class="fl-editable birim-select" onchange="window.flUpdateRow(\''+mach+'\','+ri+',\'birim\',this.value)">'+
-            '<option value="TL"'+((r.birim||'TL')==='TL'?' selected':'')+'>TL</option>'+
-            '<option value="EUR"'+((r.birim||'TL')==='EUR'?' selected':'')+'>EUR</option>'+
-            '<option value="USD"'+((r.birim||'TL')==='USD'?' selected':'')+'>USD</option>'+
-          '</select></td>'+
-          '<td class="td-marj"><div class="fl-marj-wrap">'+
-            '<input class="fl-editable marj-input" value="'+flEsc(r.karMarj||'')+'" placeholder="0" '+
-              'oninput="window.flUpdateRow(\''+mach+'\','+ri+',\'karMarj\',this.value)" />'+
-            '<span class="fl-marj-suffix">%</span>'+
-          '</div></td>'+
-          '<td class="td-satis" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
-          '<td><button class="fl-del-btn" onclick="window.flDelRow(\''+mach+'\','+ri+')" title="Sil">✕</button></td>'+
-        '</tr>';
-      } else {
-        tbody += '<tr>'+
-          '<td class="td-no">'+(dispIdx+1)+'</td>'+
-          '<td class="td-isim">'+flEsc(r.isim||'—')+'</td>'+
-          '<td class="td-price" style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;">'+flFmt(parseFloat(String(r.gelisFiyat||'0').replace(',','.'))||0, r.birim)+'</td>'+
-          '<td class="td-birim" style="color:#9a9a9a;font-family:\'Barlow Condensed\',sans-serif;font-size:12px;">'+flEsc(r.birim||'TL')+'</td>'+
-          '<td class="td-marj" style="color:#888;">%'+flEsc(r.karMarj||'0')+'</td>'+
-          '<td class="td-satis" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
-          '<td></td>'+
-        '</tr>';
+  /* Sıralama */
+  box.querySelector('.fl-table').addEventListener('click', function(e){
+    var th = e.target.closest('th[data-sort]');
+    if(!th) return;
+    var col = th.getAttribute('data-sort');
+    if(FL.sortCol===col) FL.sortDir*=-1; else{ FL.sortCol=col; FL.sortDir=1; }
+    flDraw();
+  });
+
+  /* Tablo içi değişiklikler (event delegation) */
+  box.querySelector('.fl-body').addEventListener('input', function(e){
+    var tr = e.target.closest('tr[data-ri]');
+    if(!tr) return;
+    var ri = parseInt(tr.getAttribute('data-ri'),10);
+    var mk = tr.getAttribute('data-mkey');
+    var rows2 = flRows(mk);
+    if(!rows2[ri]) return;
+    if(e.target.classList.contains('fl-isim')) rows2[ri].isim = e.target.value;
+    if(e.target.classList.contains('fl-gelis')) rows2[ri].gelisFiyat = e.target.value;
+    if(e.target.classList.contains('fl-marj')) rows2[ri].karMarj = e.target.value;
+    /* Satış fiyatını anlık güncelle */
+    var satisCell = tr.querySelector('.fl-satis-cell');
+    if(satisCell){
+      var s = flCalcSatis(rows2[ri].gelisFiyat, rows2[ri].karMarj);
+      satisCell.textContent = s>0 ? flFmt(s, rows2[ri].birim) : '—';
+      satisCell.style.color = s>0 ? '#92D050' : '#444';
+    }
+    flSave();
+  });
+
+  box.querySelector('.fl-body').addEventListener('change', function(e){
+    var tr = e.target.closest('tr[data-ri]');
+    if(!tr) return;
+    var ri = parseInt(tr.getAttribute('data-ri'),10);
+    var mk = tr.getAttribute('data-mkey');
+    var rows2 = flRows(mk);
+    if(!rows2[ri]) return;
+    if(e.target.classList.contains('fl-birim')){
+      rows2[ri].birim = e.target.value;
+      var satisCell = tr.querySelector('.fl-satis-cell');
+      if(satisCell){
+        var s = flCalcSatis(rows2[ri].gelisFiyat, rows2[ri].karMarj);
+        satisCell.textContent = s>0 ? flFmt(s, rows2[ri].birim) : '—';
+        satisCell.style.color = s>0 ? '#92D050' : '#444';
       }
-    });
-  }
-
-  var addHtml = canEdit ? '<div class="fl-add-row">'+
-    '<button class="fl-add-btn" onclick="window.flAddRow(\''+mach+'\')">＋ Malzeme Ekle</button>'+
-    '<button class="fl-save-btn" onclick="window.flSaveNow()">💾 Kaydet</button>'+
-    '<span class="fl-badge" id="flBadge"></span>'+
-  '</div>' : '';
-
-  // Mevcut arama inputunu kontrol et
-  var existingSearch = box.querySelector('.fl-search');
-  var searchHadFocus = existingSearch && (document.activeElement === existingSearch);
-  var searchSelStart = searchHadFocus ? existingSearch.selectionStart : null;
-  var searchSelEnd = searchHadFocus ? existingSearch.selectionEnd : null;
-
-  // Sadece sekme butonlarını güncelle (innerHTML sıfırlamadan)
-  var existingTabs = box.querySelector('.fl-machine-tabs');
-  var existingStats = box.querySelector('.fl-stats');
-  var existingTbody = box.querySelector('.fl-table tbody');
-  var existingTopbar = box.querySelector('.fl-topbar');
-
-  if (existingTbody) {
-    // Sadece değişen parçaları güncelle (partial update)
-    // Dropdown güncelle — seçili makineyi göster, count'ları güncelle
-    var existingSelect = box.querySelector('#flMachineSelect');
-    if (existingSelect) {
-      existingSelect.value = String(flActiveMachine);
-      // Count'ları güncelle
-      FL_MACHINES.forEach(function(m, i){
-        var opt = existingSelect.options[i];
-        if (opt) opt.text = flEsc(m.label) + ' (' + flGetRows(m.key).length + ')';
-      });
-    } else if (existingTabs) {
-      existingTabs.innerHTML = machTabs;
-    }
-    if (existingStats) {
-      existingStats.innerHTML =
-        '<span class="fl-stat-chip">Toplam: <span>'+totalItems+'</span></span>'+
-        '<span class="fl-stat-chip">Ort. Marj: <span>%'+avgMarj.toFixed(1)+'</span></span>'+
-        (flSearch ? '<span class="fl-stat-chip" style="color:var(--orange);">Filtre: <span>'+filtered.length+' sonuç</span></span>' : '');
-    }
-    existingTbody.innerHTML = tbody;
-    // Başlıkları güncelle (sıralama ikonları için)
-    var ths = box.querySelectorAll('.fl-table thead th');
-    if (ths[1]) ths[1].innerHTML = 'MALZEME ADI'+sortIco(0);
-    if (ths[2]) ths[2].innerHTML = 'GELİŞ FİYATI'+sortIco(1);
-    if (ths[3]) ths[3].innerHTML = 'BİRİM'+sortIco(2);
-    if (ths[4]) ths[4].innerHTML = 'KAR MARJI'+sortIco(3);
-    if (ths[5]) ths[5].innerHTML = 'SATIŞ FİYATI'+sortIco(4);
-  } else {
-    // İlk render — tam HTML yaz
-    box.innerHTML = '<div class="fl-wrap">'+
-      '<div class="fl-topbar">'+
-        '<div class="fl-title">💲 MALZEME FİYAT LİSTESİ</div>'+
-        '<div class="fl-search-wrap"><span class="fl-search-ico">🔍</span>'+
-        '<input class="fl-search" type="text" placeholder="Malzeme ara..." value="'+flEsc(flSearch)+'"/>'+
-        '</div>'+
-      '</div>'+
-      '<div class="fl-machine-tabs">'+machTabs+'</div>'+
-      statsHtml+
-      '<div class="fl-content"><div style="overflow-x:auto;">'+
-        '<table class="fl-table">'+
-          '<thead><tr>'+
-            '<th style="width:40px;">#</th>'+
-            '<th onclick="window.flSort(0)">MALZEME ADI'+sortIco(0)+'</th>'+
-            '<th onclick="window.flSort(1)" style="text-align:right;min-width:120px;">GELİŞ FİYATI'+sortIco(1)+'</th>'+
-            '<th onclick="window.flSort(2)" style="text-align:center;min-width:90px;">BİRİM'+sortIco(2)+'</th>'+
-            '<th onclick="window.flSort(3)" style="text-align:center;min-width:80px;">KAR MARJI'+sortIco(3)+'</th>'+
-            '<th onclick="window.flSort(4)" style="text-align:right;min-width:130px;">SATIŞ FİYATI'+sortIco(4)+'</th>'+
-            '<th style="width:36px;"></th>'+
-          '</tr></thead>'+
-          '<tbody>'+tbody+'</tbody>'+
-        '</table>'+
-      '</div>'+
-      addHtml+
-    '</div></div>';
-
-    // İlk render sonrası event listener'ları bağla
-    var searchInp = box.querySelector('.fl-search');
-    if (searchInp) {
-      searchInp.removeEventListener('input', searchInp._flHandler);
-      searchInp._flHandler = function(){ flSearch = this.value; flRenderSoon(); };
-      searchInp.addEventListener('input', searchInp._flHandler);
-    }
-    var selInp = box.querySelector('#flMachineSelect');
-    if (selInp) {
-      selInp.removeEventListener('change', selInp._flHandler);
-      selInp._flHandler = function(){ window.flSwitchM(this.value); };
-      selInp.addEventListener('change', selInp._flHandler);
-    }
-  }
-
-  // Arama inputu odak ve cursor pozisyonunu geri yükle
-  if (searchHadFocus) {
-    var newSearch = box.querySelector('.fl-search');
-    if (newSearch) {
-      newSearch.focus();
-      try { newSearch.setSelectionRange(searchSelStart, searchSelEnd); } catch(e){}
-    }
-  }
-};
-
-window.flSwitchM = function(i){
-  flActiveMachine = parseInt(i, 10);
-  flSortCol = null;
-  flSearch = '';
-  var searchEl = document.querySelector('.fl-search');
-  if (searchEl) searchEl.value = '';
-  flRenderIfActive();
-};
-
-window.flSearchChange = function(v){
-  flSearch = v;
-  flRenderSoon();
-};
-
-window.flSort = function(col){
-  if (flSortCol === col) { flSortDir *= -1; }
-  else { flSortCol = col; flSortDir = 1; }
-  flRenderSoon();
-};
-
-window.flUpdateRow = function(mach, ri, field, val){
-  var key = flNormalizeMachineKey(mach);
-  if (!FL_DATA[key] || !FL_DATA[key][ri]) return;
-  FL_DATA[key][ri][field] = val;
-  // Sadece satış fiyatı hücresini güncelle (tam render yapmadan)
-  var rows = FL_DATA[key];
-  var r = rows[ri];
-  var satis = flCalcSatis(r.gelisFiyat, r.karMarj);
-  // Tüm td.satıs hücrelerini bul — satır indexine göre
-  var trs = document.querySelectorAll('.fl-table tbody tr');
-  trs.forEach(function(tr, idx){
-    var inputs = tr.querySelectorAll('input');
-    // Bu satırın ri'sini bulmak için isim inputuna bak
-    var anyInput = inputs[0];
-    if (!anyInput) return;
-    // idx ile filtered sıra eşleştir
-    var tds = tr.querySelectorAll('td');
-    if (tds[5]) {
-      // Hesaplamayı yeniden yap
-      var isimInput = tr.querySelector('.isim-input');
-      var fiyatInput = tr.querySelector('.fiyat-input');
-      var marjInput = tr.querySelector('.marj-input');
-      var birimSelect = tr.querySelector('.birim-select');
-      if (fiyatInput && marjInput) {
-        var s = flCalcSatis(fiyatInput.value, marjInput.value);
-        tds[5].textContent = s > 0 ? flFmt(s, birimSelect ? birimSelect.value : 'TL') : '—';
-        tds[5].style.color = s > 0 ? '#92D050' : '#333';
-      }
+      flSave();
     }
   });
-  flSave();
-};
 
-window.flAddRow = function(mach){
-  var key = flNormalizeMachineKey(mach);
-  if (!FL_DATA[key]) FL_DATA[key] = [];
-  FL_DATA[key].push({isim:'', gelisFiyat:'', birim:'TL', karMarj:'30'});
-  flSave();
-  flRenderSoon();
-  // Son satıra focus
-  setTimeout(function(){
-    var inputs = document.querySelectorAll('.fl-table tbody tr:last-child .isim-input');
-    if (inputs.length) inputs[0].focus();
-  }, 60);
-};
+  /* Silme butonu */
+  box.querySelector('.fl-body').addEventListener('click', function(e){
+    var btn = e.target.closest('.fl-del-btn');
+    if(!btn) return;
+    var ri = parseInt(btn.getAttribute('data-ri'),10);
+    var mk = btn.getAttribute('data-mkey');
+    var rows2 = flRows(mk);
+    if(!rows2[ri]) return;
+    var isim = rows2[ri].isim||'bu malzeme';
+    if(!confirm('"'+isim+'" silinsin mi?')) return;
+    rows2.splice(ri, 1);
+    flSave();
+    flDraw();
+  });
 
-window.flDelRow = function(mach, ri){
-  var key = flNormalizeMachineKey(mach);
-  if (!FL_DATA[key] || !FL_DATA[key][ri]) return;
-  var isim = FL_DATA[key][ri].isim || 'bu malzeme';
-  if (!confirm('"'+isim+'" silinsin mi?')) return;
-  FL_DATA[key].splice(ri, 1);
-  flSave();
-  flRenderSoon();
-};
+  /* Ekle */
+  var addBtn = box.querySelector('#flAddBtn');
+  if(addBtn) addBtn.addEventListener('click', function(){
+    var mk = flKey();
+    flRows(mk).push({isim:'',gelisFiyat:'',birim:'TL',karMarj:'30'});
+    flSave();
+    flDraw();
+    setTimeout(function(){
+      var inputs = box.querySelectorAll('.fl-table tbody tr:last-child .fl-isim');
+      if(inputs.length) inputs[inputs.length-1].focus();
+    }, 30);
+  });
 
-window.flSaveNow = function(){
-  flSave();
-  var b = document.getElementById('flBadge');
-  if (b) { b.textContent='✓ Kaydedildi'; b.style.color='#92D050'; setTimeout(function(){if(b)b.textContent='';},2000); }
-};
+  /* Kaydet */
+  var saveBtn = box.querySelector('#flSaveBtn');
+  if(saveBtn) saveBtn.addEventListener('click', function(){
+    flSave();
+    var b = box.querySelector('#flBadge');
+    if(b){b.textContent='✓ Kaydedildi';setTimeout(function(){if(b)b.textContent='';},2000);}
+  });
+}
 
-// Başlangıçta yükle
+/* ── Dışarıdan çağrılan hook ── */
+window.flRender = function(box){ flDraw(); };
+window.flRenderIfActive = function(){ flDraw(); };
+
+/* ── Yükle ── */
 setTimeout(flLoad, 2000);
-
-// Firebase hazır olunca yükle
 window.addEventListener('firebaseReady', function(){ setTimeout(flLoad, 500); }, {once:true});
 
 })();
