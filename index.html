@@ -8413,7 +8413,11 @@ function stRender() {
       '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:700;letter-spacing:2px;color:var(--orange);">🔧 SERVİS TAKİP SİSTEMİ</div>'+
       '<div style="font-size:12px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;margin-top:3px;">Servis Planlaması, Stok ve Fatura Takibi</div></div>'+
     '</div>'+
-    '<span id="stBadge" style="font-size:11px;color:#666;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;"></span>'+
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+
+      '<button class="st-form-btn st-form-btn-servis" onclick="window.openServistTalepFormu()">📋 Servis Talep Formu</button>'+
+      '<button class="st-form-btn st-form-btn-teklif" onclick="window.openParcaTeklifFormu()">💰 Parça Teklif Formu</button>'+
+      '<span id="stBadge" style="font-size:11px;color:#666;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;"></span>'+
+    '</div>'+
   '</div>'+
   '<div style="display:flex;gap:0;border-bottom:1px solid #222;margin-bottom:20px;overflow-x:auto;flex-wrap:wrap;">'+tabs+'</div>'+
   '<div id="stContent"></div>';
@@ -9215,6 +9219,36 @@ if (window._db) setTimeout(stLoad, 1800);
 </script>
 
 <style>
+/* ══ SERVİS FORM MODALLERİ ══ */
+.oriform-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10600;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.oriform-overlay.open{display:flex;}
+.oriform-box{background:#fff;border-radius:4px;width:820px;max-width:98vw;box-shadow:0 20px 80px rgba(0,0,0,.8);font-family:Arial,sans-serif;color:#000;margin:auto;}
+/* Yazdırma stilleri */
+@media print{
+  body > *{display:none!important;}
+  .oriform-print-area{display:block!important;position:static!important;padding:0;margin:0;}
+  .oriform-box{box-shadow:none;width:100%;}
+  .oriform-toolbar,.oriform-close-btn{display:none!important;}
+  .oriform-input{border:none!important;background:transparent!important;padding:0!important;}
+  .oriform-ta{border:none!important;background:transparent!important;resize:none!important;}
+}
+.oriform-toolbar{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;gap:10px;border-radius:4px 4px 0 0;}
+.oriform-toolbar h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--orange);flex:1;margin:0;}
+.oriform-tbtn{border:none;border-radius:5px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.oriform-tbtn-pdf{background:var(--orange);color:#111;}
+.oriform-tbtn-close{background:#2a2a2a;color:#888;border:1px solid #3a3a3a;}
+.oriform-tbtn:hover{opacity:.85;}
+/* Form içi input stilleri */
+.oriform-input{border:none;border-bottom:1px solid #333;background:transparent;font-family:Arial,sans-serif;font-size:12px;color:#000;width:100%;outline:none;padding:2px 3px;}
+.oriform-input:focus{border-bottom-color:#e36400;background:rgba(245,166,35,.06);}
+.oriform-ta{border:1px solid #aaa;background:transparent;font-family:Arial,sans-serif;font-size:11px;color:#000;width:100%;outline:none;padding:4px;resize:vertical;min-height:28px;}
+.oriform-ta:focus{border-color:#e36400;}
+.oriform-no-input{font-size:12px;color:#000;}
+/* Buton servis takipte */
+.st-form-btn{border:none;border-radius:6px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+.st-form-btn-teklif{background:rgba(245,166,35,.12);color:#e36400;border:1px solid rgba(245,166,35,.3);}
+.st-form-btn-servis{background:rgba(90,160,255,.1);color:#5a9fe0;border:1px solid rgba(90,160,255,.3);}
+.st-form-btn:hover{opacity:.8;}
 /* ══ SATIŞ TAKİP PANELİ ══ */
 .sf-wrap{display:flex;flex-direction:column;height:100%;}
 .sf-toolbar{display:flex;align-items:center;gap:12px;padding:14px 22px 12px;border-bottom:1px solid #1e1e1e;flex-wrap:wrap;background:#141414;position:sticky;top:0;z-index:10;}
@@ -9770,6 +9804,382 @@ document.getElementById('ttmGrup').addEventListener('change',ttmPreview);
     };
   }
 })();
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     SERVİS TALEP FORMU MODAL
+══════════════════════════════════════════════════════ -->
+<div id="servisTalepModal" class="oriform-overlay" onclick="if(event.target===this)window.closeServisTalepFormu()">
+<div class="oriform-box">
+  <div class="oriform-toolbar">
+    <h3>📋 SERVİS TALEP FORMU</h3>
+    <button class="oriform-tbtn oriform-tbtn-pdf" onclick="window.printOrimakForm('servisFormPrint')">🖨 PDF / Yazdır</button>
+    <button class="oriform-tbtn oriform-tbtn-close" onclick="window.closeServisTalepFormu()">✕ Kapat</button>
+  </div>
+
+  <div id="servisFormPrint" style="padding:28px 32px;background:#fff;">
+    <!-- LOGO + BAŞLIK BANDI -->
+    <table width="100%" style="border-collapse:collapse;margin-bottom:18px;">
+      <tr>
+        <td width="55%" style="vertical-align:top;">
+          <div style="font-size:20px;font-weight:900;letter-spacing:3px;color:#e36400;margin-bottom:4px;">ORİMAK</div>
+          <div style="font-size:10px;color:#333;font-weight:700;letter-spacing:1px;">MAKİNA SANAYİ VE TİCARET LTD. ŞTİ.</div>
+          <div style="font-size:9px;color:#555;margin-top:6px;line-height:1.7;">
+            Mahmudiye Mah. 19. Mobilya Sk. S.S. Küçük San. Sitesi No:2/E<br>
+            İNEGÖL / BURSA / TÜRKİYE
+          </div>
+          <div style="font-size:9px;color:#555;margin-top:4px;line-height:1.7;">
+            Tel: 0 224 718 62 68 &nbsp;|&nbsp; Cep: 0 530 886 94 16<br>
+            E-Posta: servis@orimak.com &nbsp;|&nbsp; Web: www.orimak.com
+          </div>
+        </td>
+        <td width="45%" style="text-align:right;vertical-align:top;">
+          <div style="font-size:17px;font-weight:900;letter-spacing:3px;border:2px solid #e36400;padding:8px 18px;display:inline-block;color:#e36400;">SERVİS TALEP FORMU</div>
+          <div style="margin-top:10px;font-size:9px;color:#555;line-height:1.9;text-align:right;">
+            Form No: <input id="sf_formNo" class="oriform-input" style="width:80px;text-align:right;" placeholder="001"/><br>
+            Tarih: <input id="sf_tarih" class="oriform-input" type="date" style="width:130px;"/><br>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- MÜŞTERİ BİLGİLERİ -->
+    <table width="100%" style="border-collapse:collapse;border:1px solid #ccc;margin-bottom:14px;">
+      <tr style="background:#f2f2f2;">
+        <td colspan="4" style="padding:5px 8px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#555;">MÜŞTERİ BİLGİLERİ</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;width:22%;border-top:1px solid #ccc;">FİRMA İSMİ</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;" colspan="3"><input id="sf_firma" class="oriform-input" placeholder="Firma adını girin"/></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;">ADRESİ</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;" colspan="3"><input id="sf_adres" class="oriform-input" placeholder="Firma adresi"/></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;width:22%;border-top:1px solid #ccc;">İLGİLİ KİŞİ</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;width:28%;"><input id="sf_ilgili" class="oriform-input" placeholder="İsim Soyisim"/></td>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;width:22%;border-top:1px solid #ccc;border-left:1px solid #eee;">TELEFON</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><input id="sf_tel" class="oriform-input" placeholder="0 5xx xxx xx xx"/></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;">MAKİNE SERİ NO</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;" colspan="3"><input id="sf_seriNo" class="oriform-input" placeholder="Makine seri numarası"/></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;vertical-align:top;padding-top:8px;">ARIZA TANIMI</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;" colspan="3">
+          <textarea id="sf_ariza" class="oriform-ta" rows="3" placeholder="Arızayı detaylı tanımlayın..."></textarea>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SERVİS ŞARTLARI -->
+    <div style="background:#fff8f0;border:1px solid #e8c890;border-radius:3px;padding:8px 12px;margin-bottom:14px;font-size:8.5px;color:#555;line-height:1.6;">
+      <strong style="color:#e36400;">SERVİS KOŞULLARI:</strong><br>
+      Günlük Servis Bedeli = <strong><input id="sf_servisBedel" class="oriform-input" style="width:90px;display:inline-block;font-weight:700;" value="13.500 TL+KDV"/></strong> &nbsp;|&nbsp;
+      Yol = <strong><input id="sf_yolBedel" class="oriform-input" style="width:80px;display:inline-block;font-weight:700;" value="12,50 TL+KDV"/></strong><br>
+      Yol ve konaklama masrafları ayrıca faturalanır. Müşteri bu formu imzalamakla, yukarıda tanımladığı arıza için Orimak Makina'dan alacağı hizmet bedelini ödemeyi peşinen kabul ve taahhüt eder. Değişimi yapılan yedek parçalar ayrıca faturalandırılır.
+    </div>
+
+    <!-- ONAY ALANI -->
+    <table width="100%" style="border-collapse:collapse;border:1px solid #ccc;">
+      <tr style="background:#f2f2f2;">
+        <td colspan="2" style="padding:5px 8px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#555;">ONAY</td>
+      </tr>
+      <tr>
+        <td width="50%" style="padding:10px 12px;border-right:1px solid #ccc;vertical-align:top;">
+          <div style="font-size:10px;font-weight:700;color:#333;margin-bottom:30px;">MÜŞTERİ ONAYI</div>
+          <div style="font-size:9px;color:#555;">İsim: <input id="sf_musteriIsim" class="oriform-input" style="width:200px;" placeholder="Ad Soyad"/></div>
+          <div style="font-size:9px;color:#555;margin-top:8px;">İmza / Kaşe:</div>
+          <div style="height:55px;border-bottom:1px solid #ccc;margin-top:4px;"></div>
+        </td>
+        <td width="50%" style="padding:10px 12px;vertical-align:top;">
+          <div style="font-size:10px;font-weight:700;color:#e36400;margin-bottom:8px;">ORİMAK TEKNİK SERVİS</div>
+          <div style="font-size:9px;color:#555;">Yetkili: <input id="sf_yetkili" class="oriform-input" style="width:180px;" placeholder="Teknisyen adı" value="Yusuf AKBIYIK"/></div>
+          <div style="height:40px;"></div>
+          <div style="font-size:8px;color:#888;font-style:italic;line-height:1.4;">
+            Mahmudiye Mah. 19. Mobilya Sk. No:2/E İNEGÖL/BURSA<br>
+            Tel: 0 224 718 62 68 | servis@orimak.com
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div><!-- /servisFormPrint -->
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PARÇA TEKLİF FORMU MODAL
+══════════════════════════════════════════════════════ -->
+<div id="parcaTeklifModal" class="oriform-overlay" onclick="if(event.target===this)window.closeParcaTeklifFormu()">
+<div class="oriform-box">
+  <div class="oriform-toolbar">
+    <h3>💰 PARÇA TEKLİF FORMU</h3>
+    <button class="oriform-tbtn oriform-tbtn-pdf" onclick="window.printOrimakForm('parcaFormPrint')">🖨 PDF / Yazdır</button>
+    <button class="oriform-tbtn oriform-tbtn-close" onclick="window.closeParcaTeklifFormu()">✕ Kapat</button>
+  </div>
+
+  <div id="parcaFormPrint" style="padding:28px 32px;background:#fff;">
+    <!-- LOGO + BAŞLIK -->
+    <table width="100%" style="border-collapse:collapse;margin-bottom:18px;">
+      <tr>
+        <td width="55%" style="vertical-align:top;">
+          <div style="font-size:20px;font-weight:900;letter-spacing:3px;color:#e36400;margin-bottom:4px;">ORİMAK</div>
+          <div style="font-size:10px;color:#333;font-weight:700;letter-spacing:1px;">MAKİNA SANAYİ VE TİCARET LTD. ŞTİ.</div>
+          <div style="font-size:9px;color:#555;margin-top:6px;line-height:1.7;">
+            Mahmudiye Mh. 19. Mobilya Sk. No:2/E &nbsp;İNEGÖL / BURSA<br>
+            Tel: 0 224 718 62 68 &nbsp;|&nbsp; GSM: 0 530 886 82 16<br>
+            E-Mail: servis@orimak.com &nbsp;|&nbsp; Web: www.orimak.com
+          </div>
+        </td>
+        <td width="45%" style="text-align:right;vertical-align:top;">
+          <div style="font-size:17px;font-weight:900;letter-spacing:3px;border:2px solid #e36400;padding:8px 18px;display:inline-block;color:#e36400;">TEKLİF FORMU</div>
+          <div style="margin-top:10px;font-size:9px;color:#555;line-height:1.9;text-align:right;">
+            Teklif No: <input id="pf_no" class="oriform-input" style="width:70px;text-align:right;" placeholder="1"/><br>
+            Teklif Tarihi: <input id="pf_tarih" class="oriform-input" type="date" style="width:130px;"/>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- MÜŞTERİ BİLGİLERİ -->
+    <table width="100%" style="border-collapse:collapse;border:1px solid #ccc;margin-bottom:4px;">
+      <tr style="background:#f2f2f2;">
+        <td colspan="4" style="padding:5px 8px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#555;">MÜŞTERİ BİLGİLERİ</td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;width:18%;border-top:1px solid #ccc;">MÜŞTERİ ADI</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;width:32%;"><input id="pf_musteri" class="oriform-input" placeholder="Müşteri / Firma adı"/></td>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;width:18%;border-top:1px solid #ccc;border-left:1px solid #eee;">TEKLİF NO</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><input id="pf_no2" class="oriform-input" placeholder="—"/></td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;">FİRMA YETKİLİSİ</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><input id="pf_yetkili" class="oriform-input" placeholder="Yetkili kişi"/></td>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;border-left:1px solid #eee;">ÖDEME</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;">
+          <select id="pf_odeme" style="border:none;background:transparent;font-size:11px;outline:none;width:100%;">
+            <option>PEŞİN</option><option>30 GÜN</option><option>60 GÜN</option><option>HAVALE</option><option>KREDİ KARTI</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;">TELEFON</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><input id="pf_tel" class="oriform-input" placeholder="0 5xx xxx xx xx"/></td>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;border-left:1px solid #eee;">TESLİM TARİHİ</td>
+        <td style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><input id="pf_teslim" class="oriform-input" type="date" style="width:130px;"/></td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#333;border-top:1px solid #ccc;vertical-align:top;padding-top:7px;">ARIZA TANIMI</td>
+        <td colspan="3" style="padding:4px 8px;border-top:1px solid #ccc;border-left:1px solid #eee;"><textarea id="pf_ariza" class="oriform-ta" rows="2" placeholder="Arıza açıklaması (opsiyonel)"></textarea></td>
+      </tr>
+    </table>
+
+    <!-- ÜRÜN SATIR TABLOSU -->
+    <table width="100%" id="pfTable" style="border-collapse:collapse;border:1px solid #ccc;margin-bottom:2px;font-size:11px;">
+      <thead>
+        <tr style="background:#e36400;color:#fff;">
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:6%;border-right:1px solid #c85500;">NO</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;border-right:1px solid #c85500;">ÜRÜN / PARÇA ADI</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:10%;border-right:1px solid #c85500;text-align:center;">MİKTAR</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:13%;border-right:1px solid #c85500;text-align:right;">BR. FİYAT</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:14%;text-align:right;">TUTAR (₺)</th>
+        </tr>
+      </thead>
+      <tbody id="pfBody"></tbody>
+    </table>
+    <div style="text-align:right;margin-bottom:10px;">
+      <button onclick="window.pfAddRow()" style="font-size:10px;background:rgba(227,100,0,.1);border:1px solid rgba(227,100,0,.3);color:#e36400;border-radius:4px;padding:4px 10px;cursor:pointer;font-family:Barlow Condensed,sans-serif;font-weight:700;">＋ Satır Ekle</button>
+    </div>
+
+    <!-- TOPLAMLAR -->
+    <table width="100%" style="border-collapse:collapse;margin-bottom:16px;">
+      <tr>
+        <td style="width:60%;"></td>
+        <td style="padding:4px 8px;font-size:10px;font-weight:700;color:#333;border:1px solid #ccc;text-align:right;">TOPLAM TUTAR</td>
+        <td style="padding:4px 12px;font-size:11px;font-weight:700;border:1px solid #ccc;text-align:right;min-width:110px;" id="pfToplam">0,00 ₺</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style="padding:4px 8px;font-size:10px;font-weight:700;color:#333;border:1px solid #ccc;border-top:none;text-align:right;">
+          %<input id="pfKdvOran" class="oriform-input" style="width:28px;display:inline-block;text-align:center;" value="20" oninput="window.pfHesapla()"/> KDV
+        </td>
+        <td style="padding:4px 12px;font-size:11px;border:1px solid #ccc;border-top:none;text-align:right;" id="pfKdv">0,00 ₺</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style="padding:5px 8px;font-size:11px;font-weight:900;color:#e36400;border:2px solid #e36400;text-align:right;">GENEL TOPLAM</td>
+        <td style="padding:5px 12px;font-size:13px;font-weight:900;color:#e36400;border:2px solid #e36400;border-left:none;text-align:right;" id="pfGenel">0,00 ₺</td>
+      </tr>
+    </table>
+
+    <!-- ONAY ALANI -->
+    <table width="100%" style="border-collapse:collapse;border:1px solid #ccc;">
+      <tr>
+        <td width="50%" style="padding:10px 12px;border-right:1px solid #ccc;vertical-align:top;">
+          <div style="font-size:10px;font-weight:700;color:#e36400;margin-bottom:6px;">TEKLİFİ YAPAN — ORİMAK</div>
+          <div style="font-size:9px;color:#555;">Adı Soyadı: <input id="pf_yapanAdi" class="oriform-input" style="width:170px;" value="Yusuf AKBIYIK"/></div>
+          <div style="height:48px;border-bottom:1px solid #ccc;margin-top:8px;"></div>
+          <div style="font-size:8px;color:#aaa;margin-top:4px;">İmza / Kaşe</div>
+        </td>
+        <td width="50%" style="padding:10px 12px;vertical-align:top;">
+          <div style="font-size:10px;font-weight:700;color:#333;margin-bottom:6px;">MÜŞTERİ ONAYI</div>
+          <div style="font-size:9px;color:#555;">Adı Soyadı: <input id="pf_musteriOnayAdi" class="oriform-input" style="width:170px;" placeholder="Ad Soyad"/></div>
+          <div style="height:48px;border-bottom:1px solid #ccc;margin-top:8px;"></div>
+          <div style="font-size:8px;color:#aaa;margin-top:4px;">İmza / Kaşe</div>
+        </td>
+      </tr>
+    </table>
+    <div style="margin-top:10px;font-size:8px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:6px;">
+      Bu teklif <span id="pfTeklifSure">30</span> gün geçerlidir. &nbsp;|&nbsp; Orimak Makina Sanayi ve Ticaret Ltd. Şti. &nbsp;|&nbsp; servis@orimak.com
+    </div>
+  </div><!-- /parcaFormPrint -->
+</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  SERVİS TALEP FORMU
+// ════════════════════════════════════════════════════════
+window.openServistTalepFormu = function() {
+  // Bugünün tarihini varsayılan yap
+  var today = new Date().toISOString().slice(0,10);
+  var sf_tarih = document.getElementById('sf_tarih');
+  if (sf_tarih && !sf_tarih.value) sf_tarih.value = today;
+  document.getElementById('servisTalepModal').classList.add('open');
+  setTimeout(function(){ var el=document.getElementById('sf_firma'); if(el)el.focus(); }, 100);
+};
+window.closeServisTalepFormu = function() {
+  document.getElementById('servisTalepModal').classList.remove('open');
+};
+
+// ════════════════════════════════════════════════════════
+//  PARÇA TEKLİF FORMU
+// ════════════════════════════════════════════════════════
+var pfRows = [];
+
+window.openParcaTeklifFormu = function() {
+  var today = new Date().toISOString().slice(0,10);
+  var pf_tarih = document.getElementById('pf_tarih');
+  if (pf_tarih && !pf_tarih.value) pf_tarih.value = today;
+  // Başlangıçta 8 satır oluştur
+  if (pfRows.length === 0) {
+    for (var i = 0; i < 8; i++) pfRows.push({ urun:'', miktar:'', fiyat:'' });
+    pfRenderRows();
+  }
+  document.getElementById('parcaTeklifModal').classList.add('open');
+  setTimeout(function(){ var el=document.getElementById('pf_musteri'); if(el)el.focus(); }, 100);
+};
+window.closeParcaTeklifFormu = function() {
+  document.getElementById('parcaTeklifModal').classList.remove('open');
+};
+
+window.pfAddRow = function() {
+  pfRows.push({ urun:'', miktar:'', fiyat:'' });
+  pfRenderRows();
+};
+
+function pfRenderRows() {
+  var tbody = document.getElementById('pfBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  pfRows.forEach(function(r, i) {
+    var tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #eee';
+    var bg = i%2===0 ? '#fff' : '#fafafa';
+    tr.style.background = bg;
+    tr.innerHTML =
+      '<td style="padding:3px 8px;text-align:center;font-size:10px;color:#aaa;border-right:1px solid #eee;">'+(i+1)+'</td>'+
+      '<td style="padding:3px 8px;border-right:1px solid #eee;">'+
+        '<input class="oriform-input pf-urun" data-idx="'+i+'" value="'+pfEsc(r.urun)+'" placeholder="Parça / ürün adı" oninput="pfUpdate('+i+',\'urun\',this.value)"/>'+
+      '</td>'+
+      '<td style="padding:3px 8px;border-right:1px solid #eee;text-align:center;">'+
+        '<input class="oriform-input pf-miktar" data-idx="'+i+'" value="'+pfEsc(r.miktar)+'" placeholder="1" style="text-align:center;width:60px;" oninput="pfUpdate('+i+',\'miktar\',this.value)"/>'+
+      '</td>'+
+      '<td style="padding:3px 8px;border-right:1px solid #eee;text-align:right;">'+
+        '<input class="oriform-input pf-fiyat" data-idx="'+i+'" value="'+pfEsc(r.fiyat)+'" placeholder="0,00" style="text-align:right;width:90px;" oninput="pfUpdate('+i+',\'fiyat\',this.value)"/>'+
+      '</td>'+
+      '<td style="padding:3px 8px;text-align:right;font-weight:700;font-size:11px;" id="pfTutar_'+i+'">—</td>';
+    tbody.appendChild(tr);
+  });
+  pfHesapla();
+}
+
+function pfEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+window.pfUpdate = function(i, alan, val) {
+  pfRows[i][alan] = val;
+  pfHesapla();
+};
+
+window.pfHesapla = function() {
+  var toplam = 0;
+  pfRows.forEach(function(r, i) {
+    var m = parseFloat(String(r.miktar).replace(',','.')) || 0;
+    var f = parseFloat(String(r.fiyat).replace(',','.')) || 0;
+    var t = m * f;
+    toplam += t;
+    var el = document.getElementById('pfTutar_'+i);
+    if (el) el.textContent = t > 0 ? pfFmt(t)+' ₺' : '—';
+  });
+  var kdvOran = parseFloat((document.getElementById('pfKdvOran')||{}).value||'20') / 100;
+  var kdv = toplam * kdvOran;
+  var genel = toplam + kdv;
+  var tEl = document.getElementById('pfToplam');
+  var kEl = document.getElementById('pfKdv');
+  var gEl = document.getElementById('pfGenel');
+  if (tEl) tEl.textContent = pfFmt(toplam)+' ₺';
+  if (kEl) kEl.textContent = pfFmt(kdv)+' ₺';
+  if (gEl) gEl.textContent = pfFmt(genel)+' ₺';
+};
+
+function pfFmt(n) {
+  return n.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// ════════════════════════════════════════════════════════
+//  ORTAK — PDF/YAZDIR
+// ════════════════════════════════════════════════════════
+window.printOrimakForm = function(areaId) {
+  var area = document.getElementById(areaId);
+  if (!area) return;
+
+  // Inputların değerlerini span'a yaz (print için)
+  var clone = area.cloneNode(true);
+  clone.querySelectorAll('input[type="text"], input[type="date"], input:not([type])').forEach(function(inp) {
+    var span = document.createElement('span');
+    span.textContent = inp.value || '';
+    span.style.cssText = inp.style.cssText + ';border:none;background:transparent;';
+    inp.parentNode.replaceChild(span, inp);
+  });
+  clone.querySelectorAll('textarea').forEach(function(ta) {
+    var span = document.createElement('div');
+    span.textContent = ta.value || '';
+    span.style.cssText = 'font-size:11px;line-height:1.5;white-space:pre-wrap;';
+    ta.parentNode.replaceChild(span, ta);
+  });
+  clone.querySelectorAll('select').forEach(function(sel) {
+    var span = document.createElement('span');
+    span.textContent = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+    sel.parentNode.replaceChild(span, sel);
+  });
+  // Ekle butonunu gizle
+  clone.querySelectorAll('button').forEach(function(b){ b.style.display='none'; });
+
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Orimak Form</title><style>'+
+    'body{margin:0;padding:20px;font-family:Arial,sans-serif;font-size:12px;}'+
+    'table{border-collapse:collapse;}'+
+    '@page{size:A4;margin:10mm;}'+
+    '@media print{body{padding:0;}}'+
+    '</style></head><body>');
+  win.document.write(clone.outerHTML);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.focus();
+  setTimeout(function(){ win.print(); }, 600);
+};
 </script>
 </body>
 </html>
