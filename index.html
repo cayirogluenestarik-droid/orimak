@@ -10186,7 +10186,7 @@ window.printOrimakForm = function(areaId) {
 /* Tablo */
 .fl-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:780px;background:#171717;border:1px solid #252525;border-radius:12px;overflow:hidden;}
 .fl-table thead tr{background:#121212;}
-.fl-table th{padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#777;text-align:left;white-space:nowrap;border-bottom:1px solid #242424;cursor:pointer;user-select:none;}
+.fl-table th{padding:11px 12px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:#8d8d8d;text-align:center;white-space:nowrap;border-bottom:1px solid #242424;cursor:pointer;user-select:none;vertical-align:middle;}
 .fl-table th:hover{color:#aaa;}
 .fl-table th.sorted{color:var(--orange);}
 .fl-table tbody tr{transition:background .12s;}
@@ -10204,6 +10204,8 @@ window.printOrimakForm = function(areaId) {
 .fl-editable.fiyat-input{text-align:right;width:110px;font-family:'Barlow Condensed',sans-serif;font-size:13px;}
 .fl-editable.marj-input{text-align:center;width:55px;font-family:'Barlow Condensed',sans-serif;font-size:12px;}
 .fl-editable.birim-select{text-align:center;width:92px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.6px;}
+.fl-editable.birim-select option{background:#1b1b1b;color:#f3f3f3;}
+.fl-editable.birim-select:focus option{background:#1b1b1b;color:#f3f3f3;}
 .fl-del-btn{background:none;border:none;color:#555;cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:color .15s,background .15s;}
 .fl-del-btn:hover{color:#ff6666;background:rgba(200,0,0,.1);}
 .fl-add-row{display:flex;align-items:center;gap:8px;padding:10px 0 0;}
@@ -10229,6 +10231,13 @@ window.printOrimakForm = function(areaId) {
 // ── Makine grupları ──
 var FL_MACHINES = ['BC410 PRO','Q-BOX','Qs-BOX','H-CUT','ORİTEQ2'];
 var flActiveMachine = 0;
+FL_MACHINES = [
+  { key:'BC410PRO', label:'BC410PRO', aliases:['BC410 PRO','BC-410 PRO'] },
+  { key:'QBOX', label:'QBOX', aliases:['Q-BOX'] },
+  { key:'QSBOX', label:'QSBOX', aliases:['QS-BOX','Qs-BOX'] },
+  { key:'HCUT', label:'H-CUT', aliases:['HCUT'] },
+  { key:'ORITEQ2', label:'ORITEQ2', aliases:['ORÄ°TEQ2','ORITEQ 2'] }
+];
 var flSortCol = null;
 var flSortDir = 1; // 1=asc, -1=desc
 var flSearch = '';
@@ -10244,11 +10253,43 @@ function flNormalizeRow(row){
   return row;
 }
 
+function flMachineMetaByIndex(i){
+  return FL_MACHINES[i] || FL_MACHINES[0];
+}
+
+function flNormalizeMachineKey(machineName){
+  var raw = String(machineName || '').trim();
+  if (!raw) return FL_MACHINES[0].key;
+  var upper = raw.toUpperCase()
+    .replace(/Ä°/g,'I')
+    .replace(/İ/g,'I')
+    .replace(/[^A-Z0-9]+/g,'');
+  for (var i = 0; i < FL_MACHINES.length; i++) {
+    var meta = FL_MACHINES[i];
+    var names = [meta.key, meta.label].concat(meta.aliases || []);
+    for (var j = 0; j < names.length; j++) {
+      var candidate = String(names[j] || '').toUpperCase()
+        .replace(/Ä°/g,'I')
+        .replace(/İ/g,'I')
+        .replace(/[^A-Z0-9]+/g,'');
+      if (candidate === upper) return meta.key;
+    }
+  }
+  return raw;
+}
+
 function flNormalizeAll(){
+  var normalized = {};
   Object.keys(FL_DATA).forEach(function(mach){
-    if (!Array.isArray(FL_DATA[mach])) FL_DATA[mach] = [];
-    FL_DATA[mach] = FL_DATA[mach].map(flNormalizeRow);
+    var key = flNormalizeMachineKey(mach);
+    var rows = Array.isArray(FL_DATA[mach]) ? FL_DATA[mach] : [];
+    if (!normalized[key]) normalized[key] = [];
+    normalized[key] = normalized[key].concat(rows.map(flNormalizeRow));
   });
+  FL_MACHINES.forEach(function(meta){
+    if (!normalized[meta.key]) normalized[meta.key] = [];
+  });
+  FL_DATA = normalized;
 }
 
 function flKey(){ return 'orimak_fl_v1'; }
@@ -10283,9 +10324,10 @@ function flSave(){
 }
 
 function flGetRows(mach){
-  if (!FL_DATA[mach]) FL_DATA[mach] = [];
-  FL_DATA[mach] = FL_DATA[mach].map(flNormalizeRow);
-  return FL_DATA[mach];
+  var key = flNormalizeMachineKey(mach);
+  if (!FL_DATA[key]) FL_DATA[key] = [];
+  FL_DATA[key] = FL_DATA[key].map(flNormalizeRow);
+  return FL_DATA[key];
 }
 
 function flFmt(n, birim){
@@ -10313,15 +10355,16 @@ function flRenderIfActive(){
 }
 
 window.flRender = function(box) {
-  var mach = FL_MACHINES[flActiveMachine];
+  var machMeta = flMachineMetaByIndex(flActiveMachine);
+  var mach = machMeta.key;
   var role = window._currentRole || 'viewer';
-  var canEdit = (role === 'admin' || role === 'manager');
+  var canEdit = (role !== 'viewer');
 
   // Makine sekme HTML
   var machTabs = FL_MACHINES.map(function(m, i){
-    var cnt = (FL_DATA[m]||[]).length;
-    return '<button class="fl-mtab'+(i===flActiveMachine?' active':'')+'" onclick="window.flSwitchM('+i+')">'+
-      m+' <span style="font-size:10px;background:#1a1a1a;padding:1px 6px;border-radius:8px;color:#666;">'+cnt+'</span></button>';
+    var cnt = flGetRows(m.key).length;
+    return '<button type="button" class="fl-mtab'+(i===flActiveMachine?' active':'')+'" onclick="window.flSwitchM('+i+')">'+
+      flEsc(m.label)+' <span style="font-size:10px;background:#1a1a1a;padding:1px 6px;border-radius:8px;color:#666;">'+cnt+'</span></button>';
   }).join('');
 
   // Satırları filtrele + sırala
@@ -10386,7 +10429,7 @@ window.flRender = function(box) {
               'oninput="window.flUpdateRow(\''+mach+'\','+ri+',\'karMarj\',this.value)" />'+
             '<span class="fl-marj-suffix">%</span>'+
           '</div></td>'+
-          '<td style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
+          '<td style="text-align:right;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
           '<td><button class="fl-del-btn" onclick="window.flDelRow(\''+mach+'\','+ri+')" title="Sil">✕</button></td>'+
         '</tr>';
       } else {
@@ -10396,7 +10439,7 @@ window.flRender = function(box) {
           '<td style="text-align:right;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;">'+flFmt(parseFloat(String(r.gelisFiyat||'0').replace(',','.'))||0, r.birim)+'</td>'+
           '<td style="text-align:center;color:#9a9a9a;font-family:\'Barlow Condensed\',sans-serif;font-size:12px;">'+flEsc(r.birim||'TL')+'</td>'+
           '<td style="text-align:center;color:#888;">%'+flEsc(r.karMarj||'0')+'</td>'+
-          '<td style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
+          '<td style="text-align:right;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:900;color:'+satisColor+';">'+satisStr+'</td>'+
           '<td></td>'+
         '</tr>';
       }
@@ -10426,7 +10469,7 @@ window.flRender = function(box) {
           '<th onclick="window.flSort(1)" style="text-align:right;min-width:120px;">GELİŞ FİYATI'+sortIco(1)+'</th>'+
           '<th onclick="window.flSort(2)" style="text-align:center;min-width:90px;">BİRİM'+sortIco(2)+'</th>'+
           '<th onclick="window.flSort(3)" style="text-align:center;min-width:80px;">KAR MARJI'+sortIco(3)+'</th>'+
-          '<th onclick="window.flSort(4)" style="min-width:130px;">SATIŞ FİYATI'+sortIco(4)+'</th>'+
+          '<th onclick="window.flSort(4)" style="text-align:right;min-width:130px;">SATIŞ FİYATI'+sortIco(4)+'</th>'+
           '<th style="width:36px;"></th>'+
         '</tr></thead>'+
         '<tbody>'+tbody+'</tbody>'+
@@ -10454,10 +10497,11 @@ window.flSort = function(col){
 };
 
 window.flUpdateRow = function(mach, ri, field, val){
-  if (!FL_DATA[mach] || !FL_DATA[mach][ri]) return;
-  FL_DATA[mach][ri][field] = val;
+  var key = flNormalizeMachineKey(mach);
+  if (!FL_DATA[key] || !FL_DATA[key][ri]) return;
+  FL_DATA[key][ri][field] = val;
   // Sadece satış fiyatı hücresini güncelle (tam render yapmadan)
-  var rows = FL_DATA[mach];
+  var rows = FL_DATA[key];
   var r = rows[ri];
   var satis = flCalcSatis(r.gelisFiyat, r.karMarj);
   // Tüm td.satıs hücrelerini bul — satır indexine göre
@@ -10486,8 +10530,9 @@ window.flUpdateRow = function(mach, ri, field, val){
 };
 
 window.flAddRow = function(mach){
-  if (!FL_DATA[mach]) FL_DATA[mach] = [];
-  FL_DATA[mach].push({isim:'', gelisFiyat:'', birim:'TL', karMarj:'30'});
+  var key = flNormalizeMachineKey(mach);
+  if (!FL_DATA[key]) FL_DATA[key] = [];
+  FL_DATA[key].push({isim:'', gelisFiyat:'', birim:'TL', karMarj:'30'});
   flSave();
   flRenderIfActive();
   // Son satıra focus
@@ -10498,10 +10543,11 @@ window.flAddRow = function(mach){
 };
 
 window.flDelRow = function(mach, ri){
-  if (!FL_DATA[mach] || !FL_DATA[mach][ri]) return;
-  var isim = FL_DATA[mach][ri].isim || 'bu malzeme';
+  var key = flNormalizeMachineKey(mach);
+  if (!FL_DATA[key] || !FL_DATA[key][ri]) return;
+  var isim = FL_DATA[key][ri].isim || 'bu malzeme';
   if (!confirm('"'+isim+'" silinsin mi?')) return;
-  FL_DATA[mach].splice(ri, 1);
+  FL_DATA[key].splice(ri, 1);
   flSave();
   flRenderIfActive();
 };
