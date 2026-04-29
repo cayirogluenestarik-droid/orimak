@@ -1242,7 +1242,9 @@ async function yeniPartiBaslat() {
         ...sheet,
         rows: sheet.rows.map(row => {
           const temiz = { ...row };
-          delete temiz.yetkili; delete temiz.gelis; delete temiz.gelenAdet;
+          delete temiz.yetkili; delete temiz.yetkiliKisi;
+          delete temiz.gelis;   delete temiz.gelisKisi;
+          delete temiz.gelenAdet;
           delete temiz.makine; delete temiz.sipTarihi; delete temiz.terminTarihi;
           delete temiz.teslimTarihi;
           return temiz;
