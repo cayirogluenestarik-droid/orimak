@@ -8855,7 +8855,24 @@ window.stKatChange = function(rowIdx, colIdx, sel) {
   stBadge('✓ Kategori guncellendi');
 };
 
-window.stSwitchPage = function(i) { stActiveIdx = i; stSearchQuery = ''; stRender(); };
+window.stSwitchPage = function(i) {
+  stActiveIdx = i;
+  stSearchQuery = '';
+  // Tab butonlarının stilini güncelle (tam render yerine)
+  var stTabs = document.querySelectorAll('.st-mtab');
+  stTabs.forEach(function(btn, idx) {
+    var isActive = idx === i;
+    btn.classList.toggle('active', isActive);
+    btn.style.background = isActive ? 'rgba(245,166,35,.1)' : 'transparent';
+    btn.style.color = isActive ? 'var(--orange)' : '#888';
+    btn.style.borderBottom = '2px solid ' + (isActive ? 'var(--orange)' : 'transparent');
+  });
+  // Sadece içeriği yeniden render et
+  if (ST_PAGES[i] && ST_PAGES[i][0] === 'Servis Plan.html') {
+    if (typeof stAutoOnayAll === 'function') stAutoOnayAll();
+  }
+  stRenderContent();
+};
 window.stBack = function() {
   document.getElementById('stPanel').style.display = 'none';
   var btn = document.getElementById('tabBtn-st');
