@@ -8036,6 +8036,9 @@ function snRender() {
   snRenderContent();
 }
 
+// Sıralama yönü — 'desc' veya 'asc'
+var snSortDir = 'desc';
+
 function snRenderContent() {
   var box = document.getElementById('snContent');
   if (!box) return;
@@ -8043,65 +8046,160 @@ function snRenderContent() {
   var cols = SN_COLS[m];
   var rows = SN_DATA[m] || [];
 
-  var th = '<th style="background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;width:36px;">#</th>'+
-    cols.map(function(c){
-      return '<th style="background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;white-space:nowrap;">'+c[1]+'</th>';
-    }).join('')+
-    '<th style="background:#0e0e0e;width:50px;"></th>';
+  // Sıralama: seriNo'ya göre
+  var sorted = rows.map(function(r, i){ return {r:r, i:i}; });
+  sorted.sort(function(a, b){
+    var sa = (a.r.seriNo||'').trim();
+    var sb = (b.r.seriNo||'').trim();
+    var na = parseFloat(sa), nb = parseFloat(sb);
+    var cmp = (!isNaN(na)&&!isNaN(nb)) ? na-nb : sa.localeCompare(sb,'tr');
+    return snSortDir==='desc' ? -cmp : cmp;
+  });
 
-  var body = rows.map(function(r,i){
-    var tds = cols.map(function(c){
-      return '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;color:#ccc;font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="'+snEsc(r[c[0]]||'')+'">'+snEsc(r[c[0]]||'')+'</td>';
+  // ── Tablo başlığı (SERİ NO tıklanabilir) ──
+  var thStyle = 'background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:9px 12px;text-align:left;white-space:nowrap;';
+  var sortIco = snSortDir==='desc' ? '↓' : '↑';
+  var th = '<th style="'+thStyle+'width:36px;">#</th>'+
+    '<th style="'+thStyle+'cursor:pointer;color:#00c8c8;" onclick="snToggleSort()">SERİ NO '+sortIco+'</th>'+
+    cols.filter(function(c){return c[0]!=='seriNo';}).map(function(c){
+      return '<th style="'+thStyle+'">'+c[1]+'</th>';
+    }).join('')+
+    '<th style="'+thStyle+'width:120px;text-align:center;">İŞLEMLER</th>';
+
+  // ── Satırlar ──
+  var body = sorted.map(function(obj, dispIdx){
+    var r = obj.r, origIdx = obj.i;
+    var tdStyle = 'padding:8px 12px;border-bottom:1px solid #1a1a1a;color:#ccc;font-size:12px;';
+    var seriTd = '<td style="'+tdStyle+'font-weight:700;color:#00c8c8;white-space:nowrap;">'+snEsc(r.seriNo||'—')+'</td>';
+    var restTds = cols.filter(function(c){return c[0]!=='seriNo';}).map(function(c){
+      return '<td style="'+tdStyle+'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;" title="'+snEsc(r[c[0]]||'')+'">'+snEsc(r[c[0]]||'')+'</td>';
     }).join('');
-    return '<tr style="cursor:pointer;" onclick="snFillForm('+i+')" onmouseover="this.style.background=\'rgba(0,200,200,.04)\'" onmouseout="this.style.background=\'\'">'+
-      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;color:#444;font-size:11px;">'+(i+1)+'</td>'+
-      tds+
-      '<td style="padding:7px 10px;border-bottom:1px solid #1a1a1a;text-align:center;">'+
-        '<button onclick="event.stopPropagation();snDel('+i+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;" title="Sil">✕</button>'+
+    return '<tr onmouseover="this.style.background=\'rgba(0,200,200,.04)\'" onmouseout="this.style.background=\'\'">'+
+      '<td style="'+tdStyle+'color:#444;">'+(dispIdx+1)+'</td>'+
+      seriTd+restTds+
+      '<td style="'+tdStyle+'text-align:center;white-space:nowrap;">'+
+        '<button onclick="snEditRow('+origIdx+')" style="background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);color:#e0a020;border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;margin-right:4px;">✏️ Düzenle</button>'+
+        '<button onclick="snDel('+origIdx+')" style="background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3);color:#ff6666;border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;">✕ Sil</button>'+
       '</td></tr>';
   }).join('');
 
   if (!body) body = '<tr><td colspan="99" style="padding:32px;text-align:center;color:#444;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz kayıt yok</td></tr>';
 
-  // Form alanları
+  // ── Yeni kayıt form alanları ──
   var form = cols.map(function(c){
     var inp;
-    if (c[0]==='makine' || c[0]==='model') {
-      var opts = {};
-      rows.forEach(function(r){ if(r[c[0]]) opts[r[c[0]]]=1; });
-      var optList = Object.keys(opts).sort();
+    if (c[0]==='makine'||c[0]==='model') {
+      var opts = {}; rows.forEach(function(r){ if(r[c[0]]) opts[r[c[0]]]=1; });
       inp = '<select id="snF_'+c[0]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+
-        '<option value="">— Seç veya yaz —</option>'+
-        optList.map(function(o){return '<option value="'+snEsc(o)+'">'+snEsc(o)+'</option>';}).join('')+
-        '</select>';
+        '<option value="">— Seç —</option>'+
+        Object.keys(opts).sort().map(function(o){return '<option>'+snEsc(o)+'</option>';}).join('')+'</select>';
     } else if (c[0]==='yon') {
       inp = '<select id="snF_'+c[0]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;"><option value=""></option><option>SAĞ MAKİNE</option><option>SOL MAKİNE</option></select>';
     } else {
-      inp = '<input id="snF_'+c[0]+'" type="text" placeholder="'+c[1]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />';
+      inp = '<input id="snF_'+c[0]+'" type="text" placeholder="'+c[1]+'" autocomplete="off" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;"/>';
     }
-    return '<div style="flex:1;min-width:140px;max-width:240px;">'+
-      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+c[1]+'</div>'+
-      inp+'</div>';
+    return '<div style="flex:1;min-width:130px;max-width:220px;"><div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+c[1]+'</div>'+inp+'</div>';
   }).join('');
 
-  box.innerHTML = '<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
-    '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;">'+rows.length+' kayıt</span>'+
-    '<input id="snSearch" type="text" placeholder="Ara..." oninput="snFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:240px;"/>'+
+  box.innerHTML =
+    // ── Düzenleme Modal ──
+    '<div id="snEditModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:20000;align-items:center;justify-content:center;" onclick="if(event.target===this)snCloseEdit()">'+
+      '<div style="background:#181818;border:1px solid #2a2a2a;border-top:3px solid #00c8c8;border-radius:12px;width:620px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.9);">'+
+        '<div style="padding:16px 22px 13px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;">'+
+          '<span style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:900;letter-spacing:2px;color:#00c8c8;">✏️ SERİ NO DÜZENLE</span>'+
+          '<button onclick="snCloseEdit()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;">✕</button>'+
+        '</div>'+
+        '<div id="snEditBody" style="padding:20px 22px;display:flex;flex-wrap:wrap;gap:12px;overflow-y:auto;flex:1;"></div>'+
+        '<div style="padding:13px 22px;border-top:1px solid #252525;display:flex;justify-content:flex-end;gap:10px;">'+
+          '<button onclick="snCloseEdit()" style="padding:9px 18px;background:#252525;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;">İptal</button>'+
+          '<button onclick="snSaveEdit()" style="padding:9px 22px;background:#00c8c8;color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;">💾 Kaydet</button>'+
+        '</div>'+
+      '</div>'+
     '</div>'+
-    '<div style="overflow-x:auto;margin-bottom:24px;border-radius:8px;border:1px solid #1e1e1e;max-height:400px;overflow-y:auto;">'+
-      '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody id="snTbody">'+body+'</tbody></table>'+
+    // ── Üst bar ──
+    '<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'+
+      '<span style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:#666;letter-spacing:1px;">'+rows.length+' kayıt</span>'+
+      '<input id="snSearch" type="text" placeholder="Ara (seri no, firma, il...)" oninput="snFilter()" style="background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;width:260px;"/>'+
+      '<span style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:#555;">Sıralama: Seri No başlığına tıkla</span>'+
     '</div>'+
-    '<div style="background:#161616;border:1px solid #222;border-top:2px solid #00c8c8;border-radius:10px;padding:20px;">'+
-      '<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:#00c8c8;margin-bottom:16px;">＋ YENİ KAYIT EKLE — '+m+'</div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">'+form+'</div>'+
+    // ── Tablo (geniş, min-width arttırıldı) ──
+    '<div style="overflow-x:auto;margin-bottom:20px;border-radius:8px;border:1px solid #1e1e1e;max-height:460px;overflow-y:auto;min-width:0;">'+
+      '<table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody id="snTbody">'+body+'</tbody></table>'+
+    '</div>'+
+    // ── Yeni kayıt formu ──
+    '<div style="background:#161616;border:1px solid #222;border-top:2px solid #00c8c8;border-radius:10px;padding:18px 20px;">'+
+      '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#00c8c8;margin-bottom:14px;">＋ YENİ KAYIT — '+m+'</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">'+form+'</div>'+
       '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
-        '<button onclick="snClear()" style="padding:9px 18px;background:#1e1e1e;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;">TEMİZLE</button>'+
-        '<button onclick="snSave()" style="padding:9px 24px;background:#00c8c8;color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">💾 KAYDET</button>'+
+        '<button onclick="snClear()" style="padding:8px 16px;background:#1e1e1e;border:1px solid #333;color:#888;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;">TEMİZLE</button>'+
+        '<button onclick="snSave()" style="padding:8px 22px;background:#00c8c8;color:#111;border:none;border-radius:6px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;">💾 KAYDET</button>'+
       '</div>'+
     '</div>';
 }
 
-window.snSwitchM = function(i) { snActiveMachine = i; snRender(); };
+// ── Sıralama toggle ──
+window.snToggleSort = function() {
+  snSortDir = snSortDir==='desc' ? 'asc' : 'desc';
+  snRenderContent();
+  var q = (document.getElementById('snSearch')||{}).value||'';
+  if (q) snFilter();
+};
+
+// ── Düzenleme modal aç ──
+var _snEditIdx = -1;
+window.snEditRow = function(origIdx) {
+  var m = SN_MACHINES[snActiveMachine];
+  var cols = SN_COLS[m];
+  var r = (SN_DATA[m]||[])[origIdx];
+  if (!r) return;
+  _snEditIdx = origIdx;
+  var body = document.getElementById('snEditBody');
+  if (!body) return;
+  body.innerHTML = cols.map(function(c){
+    var val = snEsc(r[c[0]]||'');
+    var inp;
+    if (c[0]==='yon') {
+      inp = '<select id="snE_'+c[0]+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;">'+
+        ['','SAĞ MAKİNE','SOL MAKİNE'].map(function(o){return '<option'+(o===r[c[0]]?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+    } else {
+      inp = '<input id="snE_'+c[0]+'" type="text" value="'+val+'" autocomplete="off" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;"/>';
+    }
+    return '<div style="flex:1;min-width:160px;max-width:260px;">'+
+      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#666;font-family:Barlow Condensed,sans-serif;margin-bottom:5px;text-transform:uppercase;">'+c[1]+'</div>'+
+      inp+'</div>';
+  }).join('');
+  var modal = document.getElementById('snEditModal');
+  if (modal) modal.style.display = 'flex';
+  setTimeout(function(){ var f=body.querySelector('input'); if(f)f.focus(); }, 80);
+};
+
+window.snCloseEdit = function() {
+  var m = document.getElementById('snEditModal');
+  if (m) m.style.display = 'none';
+  _snEditIdx = -1;
+};
+
+window.snSaveEdit = function() {
+  if (_snEditIdx < 0) return;
+  var m = SN_MACHINES[snActiveMachine];
+  var cols = SN_COLS[m];
+  var r = (SN_DATA[m]||[])[_snEditIdx];
+  if (!r) return;
+  cols.forEach(function(c){
+    var el = document.getElementById('snE_'+c[0]);
+    if (el) r[c[0]] = el.value.trim();
+  });
+  snCloseEdit();
+  snFireSave();
+  snRenderContent();
+  var q = (document.getElementById('snSearch')||{}).value||'';
+  if (q) snFilter();
+  snBadge('✓ Güncellendi');
+};
+
+
+window.snSwitchM = function(i) { snActiveMachine = i; snSortDir = 'desc'; snRender(); };
+
 window.snBack = function() {
   document.getElementById('snPanel').style.display = 'none';
   var btn = document.getElementById('tabBtn-sn');
