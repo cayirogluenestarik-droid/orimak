@@ -783,6 +783,23 @@ function applySayfaKisitlama(sayfalar) {
     if (gorunur && ilkGorunen === -1) ilkGorunen = i;
   });
   if (ilkGorunen >= 0) switchTab(ilkGorunen);
+
+  // Özel panel sekmeleri — Servis Takip, Seri No, Yedek Parça
+  const ozelPaneller = [
+    { isim: 'SERVİS TAKİP', tabId: 'tabBtn-st' },
+    { isim: 'SERİ NO',      tabId: 'tabBtn-sn' },
+    { isim: 'YEDEK PARÇA',  tabId: 'tabBtn-yp' },
+  ];
+  const role = window._currentRole || 'viewer';
+  const canSeeSpecial = (role === 'admin' || role === 'manager');
+  ozelPaneller.forEach(function(p) {
+    const btn = document.getElementById(p.tabId);
+    if (!btn) return;
+    // Rol yetersizse zaten gizli; rolü yeterliyse sayfa kısıtlamasına bak
+    if (canSeeSpecial) {
+      btn.style.display = sayfalar.includes(p.isim) ? '' : 'none';
+    }
+  });
 }
 window.applySayfaKisitlama = applySayfaKisitlama;
 
@@ -838,7 +855,12 @@ async function renderUserList() {
     list.innerHTML = '';
     users.forEach(u => {
       const sayfalar = u.sayfalar ? u.sayfalar.split(',').map(s => s.trim()) : [];
-      const tumSayfalar = SHEETS.map(s => s.name);
+      // Normal SHEETS sayfaları + özel paneller (yönetici rolleri için)
+      const tumSayfalar = [
+        ...SHEETS.filter(s => s.type !== 'siparis' && s.type !== 'teslim' && s.type !== 'satis').map(s => s.name),
+        ...SHEETS.filter(s => s.type === 'siparis' || s.type === 'teslim' || s.type === 'satis').map(s => s.name),
+        'SERVİS TAKİP', 'SERİ NO', 'YEDEK PARÇA'
+      ];
       const erisimText = u.rol === 'admin'
         ? 'Tüm sayfalar'
         : sayfalar.length === 0
@@ -877,10 +899,20 @@ async function renderUserList() {
             Erişebileceği Sayfalar <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;">(boşsa tümüne erişir)</span>
           </label>
           <div class="sayfa-grid">
-            ${tumSayfalar.map(s => `
+            ${tumSayfalar.slice(0, -3).map(s => `
               <label class="sayfa-cb">
                 <input type="checkbox" data-uid="${u.id}" data-sayfa="${s}" ${sayfalar.length === 0 || sayfalar.includes(s) ? 'checked' : ''}>
                 ${s}
+              </label>`).join('')}
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#555;text-transform:uppercase;margin:10px 0 6px;">
+            Özel Paneller (Sadece Admin/Manager Rolünde Görünür)
+          </div>
+          <div class="sayfa-grid">
+            ${['SERVİS TAKİP','SERİ NO','YEDEK PARÇA'].map(s => `
+              <label class="sayfa-cb" style="border-color:#2a3a2a;">
+                <input type="checkbox" data-uid="${u.id}" data-sayfa="${s}" ${sayfalar.length === 0 || sayfalar.includes(s) ? 'checked' : ''}>
+                🔧 ${s}
               </label>`).join('')}
           </div>
           <div style="display:flex;gap:8px;margin-top:12px;">
@@ -913,7 +945,10 @@ async function saveUserEdit(uid, username) {
   const secili = [];
   checkboxes.forEach(cb => { if (cb.checked) secili.push(cb.dataset.sayfa); });
   // Tüm sayfalar seçiliyse boş bırak (tümüne erişim)
-  const tumSayfalar = SHEETS.map(s => s.name);
+  const tumSayfalar = [
+    ...SHEETS.map(s => s.name),
+    'SERVİS TAKİP', 'SERİ NO', 'YEDEK PARÇA'
+  ];
   const sayfalarVal = secili.length === tumSayfalar.length ? '' : secili.join(',');
 
   try {
@@ -7895,6 +7930,9 @@ function ypAddTab() {
 }
 
 window.ypSwitchTo = function() {
+  // Sayfa kısıtlaması kontrolü
+  var sayfalar = window._currentSayfalar || [];
+  if (sayfalar.length > 0 && !sayfalar.includes('YEDEK PARÇA')) return;
   // Diğer sekmeleri kapat
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.tab-machine-child').forEach(function(b){ b.classList.remove('active'); });
@@ -8174,6 +8212,9 @@ function snAddTab() {
 }
 
 window.snSwitchTo = function() {
+  // Sayfa kısıtlaması kontrolü
+  var sayfalar = window._currentSayfalar || [];
+  if (sayfalar.length > 0 && !sayfalar.includes('SERİ NO')) return;
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -9015,6 +9056,9 @@ function stAddTab() {
 }
 
 window.stSwitchTo = function() {
+  // Sayfa kısıtlaması kontrolü
+  var sayfalar = window._currentSayfalar || [];
+  if (sayfalar.length > 0 && !sayfalar.includes('SERVİS TAKİP')) return;
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   var snp = document.getElementById('snPanel'); if (snp) snp.style.display='none';
