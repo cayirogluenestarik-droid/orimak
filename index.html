@@ -9279,6 +9279,11 @@ if (window._db) setTimeout(stLoad, 1800);
 .oriform-stamp-block img{height:76px;width:auto;opacity:.95;filter:drop-shadow(0 4px 10px rgba(0,0,0,.08));}
 .oriform-stamp-title{font-size:10px;font-weight:700;letter-spacing:1.1px;color:#7a4b1b;}
 .oriform-stamp-sub{font-size:8px;color:#8f7758;letter-spacing:.4px;}
+#parcaFormPrint td:first-child .oriform-stamp-block{
+  background:url("file:///C:/Users/uretim/Desktop/1.png") center 14px/150px auto no-repeat;
+  padding-top:88px;
+}
+#parcaFormPrint td:first-child .oriform-stamp-block img{display:none;}
 @media (max-width:900px){
   .oriform-overlay{padding:10px;}
   .oriform-box{width:100%;max-width:100%;}
@@ -10229,9 +10234,24 @@ window.printOrimakForm = function(areaId) {
   var win = window.open('','_blank','width=920,height=720');
   if (!win) { alert('Popup engelleyicisini devre dışı bırakın.'); return; }
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Orimak Form</title>'+
-    '<style>body{margin:0;padding:16px;font-family:Arial,sans-serif;font-size:11px;}'+
-    'table{border-collapse:collapse;} img{max-width:100%;}'+
-    '@page{size:A4;margin:10mm;} @media print{body{padding:0;}}</style>'+
+    '<style>'+
+    'html,body{margin:0;padding:0;background:#fff8f0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}'+
+    'body{padding:16px;font-family:Arial,sans-serif;font-size:11px;color:#2c241b;}'+
+    '*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;box-sizing:border-box;}'+
+    'table{border-collapse:collapse;} img{max-width:100%;display:block;}'+
+    '.oriform-page{padding:22px 24px;background:linear-gradient(180deg,#fffaf4 0%,#f7ecdd 100%) !important;color:#2c241b;}'+
+    '.oriform-scroll{overflow:visible !important;max-width:100%;}'+
+    '.oriform-scroll table{min-width:0 !important;width:100%;background:rgba(255,252,247,.96) !important;box-shadow:0 8px 24px rgba(62,36,13,.06) !important;}'+
+    '.oriform-stamp-block{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:118px;text-align:center;}'+
+    '.oriform-stamp-block img{height:76px !important;width:auto !important;opacity:.95;filter:drop-shadow(0 4px 10px rgba(0,0,0,.08));}'+
+    '.oriform-stamp-title{font-size:10px;font-weight:700;letter-spacing:1.1px;color:#7a4b1b;}'+
+    '.oriform-stamp-sub{font-size:8px;color:#8f7758;letter-spacing:.4px;}'+
+    '#parcaFormPrint td:first-child .oriform-stamp-block{background:url("file:///C:/Users/uretim/Desktop/1.png") center 14px/150px auto no-repeat;padding-top:88px;}'+
+    '#parcaFormPrint td:first-child .oriform-stamp-block img{display:none !important;}'+
+    'span,div,td{color:inherit;}'+
+    '@page{size:A4;margin:10mm;}'+
+    '@media print{html,body{background:#fff8f0 !important;}body{padding:0;}button{display:none !important;}}'+
+    '</style>'+
     '</head><body>');
   win.document.write(clone.outerHTML);
   win.document.write('</body></html>');
