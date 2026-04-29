@@ -9279,11 +9279,6 @@ if (window._db) setTimeout(stLoad, 1800);
 .oriform-stamp-block img{height:76px;width:auto;opacity:.95;filter:drop-shadow(0 4px 10px rgba(0,0,0,.08));}
 .oriform-stamp-title{font-size:10px;font-weight:700;letter-spacing:1.1px;color:#7a4b1b;}
 .oriform-stamp-sub{font-size:8px;color:#8f7758;letter-spacing:.4px;}
-#parcaFormPrint td:first-child .oriform-stamp-block{
-  background:url("file:///C:/Users/uretim/Desktop/1.png") center 14px/150px auto no-repeat;
-  padding-top:88px;
-}
-#parcaFormPrint td:first-child .oriform-stamp-block img{display:none;}
 @media (max-width:900px){
   .oriform-overlay{padding:10px;}
   .oriform-box{width:100%;max-width:100%;}
@@ -10092,6 +10087,28 @@ window.openServistTalepFormu = function() {
   var today = new Date().toISOString().slice(0,10);
   var el = document.getElementById('sf_tarih');
   if (el && !el.value) el.value = today;
+  var yolBedel = document.getElementById('sf_yolBedel');
+  if (yolBedel && !document.getElementById('sf_konaklamaBedel')) {
+    var konaklamaWrap = document.createElement('span');
+    konaklamaWrap.innerHTML = 'KONAKLAMA = <input id="sf_konaklamaBedel" class="oriform-input" style="width:120px;font-size:8.5px;" value="Faturaya Dahil Değil"/>';
+    var inlineFields = yolBedel.closest('.oriform-inline-fields');
+    if (inlineFields) inlineFields.appendChild(konaklamaWrap);
+  }
+  var servisNotKutusu = document.querySelector('#servisFormPrint > div[style*="background:#fafafa"]');
+  if (servisNotKutusu && !document.getElementById('sf_yolKonaklamaNotu')) {
+    var sabitNot = servisNotKutusu.querySelector('div[style*="margin-top:6px"]');
+    if (sabitNot) {
+      var textarea = document.createElement('textarea');
+      textarea.id = 'sf_yolKonaklamaNotu';
+      textarea.className = 'oriform-ta';
+      textarea.style.marginTop = '6px';
+      textarea.style.minHeight = '74px';
+      textarea.style.fontSize = '8.5px';
+      textarea.style.lineHeight = '1.6';
+      textarea.value = sabitNot.textContent.trim();
+      sabitNot.parentNode.replaceChild(textarea, sabitNot);
+    }
+  }
   document.getElementById('servisTalepModal').classList.add('open');
   setTimeout(function(){ var f=document.getElementById('sf_firma'); if(f)f.focus(); }, 100);
 };
@@ -10111,6 +10128,14 @@ window.openParcaTeklifFormu = function() {
   if (el && !el.value) { el.value = today; }
   var el2 = document.getElementById('pf_tarih2');
   if (el2 && !el2.value) { el2.value = today; }
+  var teklifYapanKase = document.querySelector('#parcaFormPrint td:first-child .oriform-stamp-block img');
+  if (teklifYapanKase) {
+    teklifYapanKase.src = 'file:///C:/Users/uretim/Desktop/1.png';
+    teklifYapanKase.alt = 'Orimak Kaşe';
+    teklifYapanKase.style.height = '90px';
+    teklifYapanKase.style.width = 'auto';
+    teklifYapanKase.style.opacity = '0.95';
+  }
   if (!pfInitDone) {
     pfRows = [];
     for (var i=0; i<14; i++) pfRows.push({urun:'',miktar:'',fiyat:'',pb:'TL'});
@@ -10246,8 +10271,6 @@ window.printOrimakForm = function(areaId) {
     '.oriform-stamp-block img{height:76px !important;width:auto !important;opacity:.95;filter:drop-shadow(0 4px 10px rgba(0,0,0,.08));}'+
     '.oriform-stamp-title{font-size:10px;font-weight:700;letter-spacing:1.1px;color:#7a4b1b;}'+
     '.oriform-stamp-sub{font-size:8px;color:#8f7758;letter-spacing:.4px;}'+
-    '#parcaFormPrint td:first-child .oriform-stamp-block{background:url("file:///C:/Users/uretim/Desktop/1.png") center 14px/150px auto no-repeat;padding-top:88px;}'+
-    '#parcaFormPrint td:first-child .oriform-stamp-block img{display:none !important;}'+
     'span,div,td{color:inherit;}'+
     '@page{size:A4;margin:10mm;}'+
     '@media print{html,body{background:#fff8f0 !important;}body{padding:0;}button{display:none !important;}}'+
