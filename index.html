@@ -10372,11 +10372,7 @@ function flRenderIfActive(){
 }
 
 function flRenderSoon(){
-  if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(function(){ flRenderIfActive(); });
-  } else {
-    setTimeout(flRenderIfActive, 0);
-  }
+  flRenderIfActive();
 }
 
 window.flRender = function(box) {
@@ -10576,10 +10572,9 @@ window.flSwitchM = function(i){
   flActiveMachine = parseInt(i, 10);
   flSortCol = null;
   flSearch = '';
-  // Arama inputunu temizle
   var searchEl = document.querySelector('.fl-search');
   if (searchEl) searchEl.value = '';
-  flRenderSoon();
+  flRenderIfActive();
 };
 
 window.flSearchChange = function(v){
