@@ -759,15 +759,24 @@ function reapplySession() {
       if (pBtn)   pBtn.style.display   = 'inline-flex';
       if (aBtn)   aBtn.style.display   = 'inline-flex';
       if (vBadge) vBadge.style.display = 'inline';
+      const toBtn1 = document.getElementById('topluOnayBtn');
+      if (toBtn1) toBtn1.style.display = 'inline-flex';
     } else if (role === 'manager') {
       if (pBtn) pBtn.style.display = 'inline-flex';
       if (aBtn) aBtn.style.display = 'inline-flex';
+      const toBtn2 = document.getElementById('topluOnayBtn');
+      if (toBtn2) toBtn2.style.display = 'inline-flex';
+    } else if (role === 'operator') {
+      const toBtn3 = document.getElementById('topluOnayBtn');
+      if (toBtn3) toBtn3.style.display = 'inline-flex';
     }
 
     if (role === 'viewer' || role === 'operator') {
       if (addBtn) addBtn.style.display = 'none';
       const gmWrap = document.getElementById('globalMakineWrap');
       if (gmWrap) gmWrap.style.display = 'none';
+      const toBtn = document.getElementById('topluOnayBtn');
+      if (toBtn) toBtn.style.display = 'none';
       // Operator/viewer: özel panelleri gizle
       setTimeout(function() {
         ['tabBtn-st','tabBtn-sn','tabBtn-yp'].forEach(function(id){
@@ -2588,6 +2597,7 @@ function showAdminMsg(text, type) {
     <input id="globalMakine" type="number" min="0" step="1" placeholder="0" style="width:60px;background:#1e1e1e;border:1px solid #444;color:#eee;border-radius:4px;padding:4px 8px;font-size:13px;font-weight:700;text-align:center;font-family:'Barlow Condensed',sans-serif;outline:none;" onkeydown="if(event.key==='Enter')applyGlobalMakine()" />
     <button onclick="applyGlobalMakine()" style="background:var(--orange);border:none;color:#111;border-radius:4px;padding:4px 12px;font-size:11px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;cursor:pointer;">UYGULA</button>
   </div>
+  <button id="topluOnayBtn" onclick="window.openTopluOnay&&window.openTopluOnay()" style="display:none;align-items:center;gap:6px;background:rgba(146,208,80,.08);border:1px solid rgba(146,208,80,.3);border-radius:6px;padding:5px 12px;color:#92D050;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .2s;white-space:nowrap;">✅ TOPLU ONAY</button>
   <button id="addRowBtn" class="add-row-btn" onclick="openModal()">＋ Yeni Satır Ekle</button>
 </div>
 <div class="legend" id="legendBar">
@@ -6626,6 +6636,11 @@ function switchTab(idx) {
     const canMakine = (role === 'admin' || role === 'manager') && !isSpecialPage;
     gmWrap.style.display = canMakine ? 'flex' : 'none';
   }
+  const toBtn = document.getElementById('topluOnayBtn');
+  if (toBtn) {
+    const canOnay = (role === 'admin' || role === 'manager' || role === 'operator') && !isSpecialPage;
+    toBtn.style.display = canOnay ? 'inline-flex' : 'none';
+  }
   refreshGlobalMakineInput(idx);
   closeSidebar();
   updatePageTitleBar(idx);
@@ -10019,223 +10034,118 @@ document.getElementById('ttmGrup').addEventListener('change',ttmPreview);
 // ════════════════════════════════════════════════════
 (function(){
 
-function addTopluOnayBtn(){
-  var tb=document.getElementById('toolBar');
-  if(!tb||document.getElementById('topluOnayBtn'))return;
-  var btn=document.createElement('button');
-  btn.id='topluOnayBtn';
-  btn.innerHTML='✅ TOPLU ONAY';
-  btn.style.cssText='display:none;align-items:center;gap:6px;background:rgba(146,208,80,.08);border:1px solid rgba(146,208,80,.3);border-radius:6px;padding:5px 12px;color:#92D050;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .2s;white-space:nowrap;';
-  btn.onmouseenter=function(){this.style.background='rgba(146,208,80,.18)';this.style.borderColor='rgba(146,208,80,.5)';};
-  btn.onmouseleave=function(){this.style.background='rgba(146,208,80,.08)';this.style.borderColor='rgba(146,208,80,.3)';};
-  btn.onclick=function(){window.openTopluOnay&&window.openTopluOnay();};
-  var addRowBtn=document.getElementById('addRowBtn');
-  if(addRowBtn)tb.insertBefore(btn,addRowBtn);
-  else tb.appendChild(btn);
-}
-
-function toUpdateBtn(idx){
-  var btn=document.getElementById('topluOnayBtn'); if(!btn)return;
-  var role=window._currentRole||'viewer';
-  var isSpecial=SHEETS[idx]&&(SHEETS[idx].type==='siparis'||SHEETS[idx].type==='teslim'||SHEETS[idx].type==='satis');
-  if(role==='viewer'||isSpecial){btn.style.display='none';return;}
-  btn.style.display='inline-flex';
-}
-
-/* ── toSatirlar: state veya SHEETS'ten satırları toplar ── */
-function toSatirlar(kapsam,grupSec){
-  var si=typeof activeSheet!=='undefined'?activeSheet:-1;
-  if(si<0)return[];
-  /* Önce state'den dene, yoksa SHEETS'ten oku */
-  var rows=[];
-  if(state&&state[si]&&state[si].rows&&state[si].rows.length>0){
-    rows=state[si].rows;
-  } else if(typeof SHEETS!=='undefined'&&SHEETS[si]&&SHEETS[si].rows){
-    rows=SHEETS[si].rows.map(function(r){
-      var g=(Object.keys(r).filter(function(k){return r[k]&&String(r[k]).trim()&&k!=='_id';}).length===1&&!r['3'])||false;
-      return Object.assign({},r,{
-        _group:g,
-        _yetkili:r.yetkili||'',
-        _gelis:r.gelis||''
-      });
-    });
-  }
-  if(!rows.length)return[];
-  var currentGroup=null; var result=[];
-  rows.forEach(function(r,ri){
-    if(r._group){currentGroup=r['2']||'';return;}
-    if(!r['3']&&!r['2'])return;
-    if(kapsam==='grup'&&currentGroup!==grupSec)return;
-    result.push({ri:ri,r:r,group:currentGroup});
+function toSatirlar(kapsam, grupSec){
+  var si = typeof activeSheet !== 'undefined' ? activeSheet : -1;
+  if(si < 0) return [];
+  var rows = (state && state[si] && state[si].rows) ? state[si].rows : [];
+  var currentGroup = null;
+  var result = [];
+  rows.forEach(function(r, ri){
+    if(r._group){ currentGroup = r['2'] || ''; return; }
+    if(!r['3'] && !r['2']) return;
+    if(kapsam === 'grup' && currentGroup !== grupSec) return;
+    result.push({ri: ri, r: r, group: currentGroup});
   });
   return result;
 }
 
 function toPreview(){
-  var el=document.getElementById('tomPreview'); if(!el)return;
-  var kapsam=document.getElementById('tomKapsam').value;
-  var grupSec=document.getElementById('tomGrup')?document.getElementById('tomGrup').value:'';
-  var n=toSatirlar(kapsam,grupSec).length;
-  var role=window._currentRole||'viewer';
-  var secimler=[];
-  if((role==='admin'||role==='manager')&&document.getElementById('tomChkYetkili').checked)
+  var el = document.getElementById('tomPreview'); if(!el) return;
+  var kapsam = document.getElementById('tomKapsam').value;
+  var grupSec = document.getElementById('tomGrup') ? document.getElementById('tomGrup').value : '';
+  var n = toSatirlar(kapsam, grupSec).length;
+  var role = window._currentRole || 'viewer';
+  var secimler = [];
+  if((role==='admin'||role==='manager') && document.getElementById('tomChkYetkili').checked)
     secimler.push('<span style="color:#F5A623;">Yetkili Onayı</span>');
   if(document.getElementById('tomChkGelis').checked)
     secimler.push('<span style="color:#92D050;">Geliş Onayı</span>');
-  if(secimler.length===0){el.textContent='';return;}
-  el.innerHTML='<span style="color:#F5A623;">'+n+'</span> satıra '+secimler.join(' + ')+' uygulanacak.';
+  if(secimler.length === 0){ el.textContent = ''; return; }
+  el.innerHTML = '<span style="color:#F5A623;">' + n + '</span> satıra ' + secimler.join(' + ') + ' uygulanacak.';
 }
-window.toPreview=toPreview;
+window.toPreview = toPreview;
 
-window.openTopluOnay=function(){
-  var si=typeof activeSheet!=='undefined'?activeSheet:-1;
-  if(si<0||!SHEETS[si])return;
-  var role=window._currentRole||'viewer';
-  var yetkiliRow=document.getElementById('tomYetkiliRow');
-  if(yetkiliRow)yetkiliRow.style.display=(role==='admin'||role==='manager')?'':'none';
-  document.getElementById('tomKapsam').value='hepsi';
-  document.getElementById('tomGrupWrap').style.display='none';
-  var gs=document.getElementById('tomGrup'); gs.innerHTML='';
-  /* Grupları state'den yoksa SHEETS'ten al */
-  var gruplar=[];
-  var srcRows=(state&&state[si]&&(state[si].rows||[]).length>0)?state[si].rows:(SHEETS[si].rows||[]);
+window.openTopluOnay = function(){
+  var si = typeof activeSheet !== 'undefined' ? activeSheet : -1;
+  if(si < 0 || !SHEETS[si]) return;
+  var role = window._currentRole || 'viewer';
+  var yetkiliRow = document.getElementById('tomYetkiliRow');
+  if(yetkiliRow) yetkiliRow.style.display = (role==='admin'||role==='manager') ? '' : 'none';
+  document.getElementById('tomKapsam').value = 'hepsi';
+  document.getElementById('tomGrupWrap').style.display = 'none';
+  var gs = document.getElementById('tomGrup'); gs.innerHTML = '';
+  var gruplar = [];
+  var srcRows = (state && state[si] && state[si].rows) ? state[si].rows : [];
   srcRows.forEach(function(r){
-    var isGrp=r._group||(Object.keys(r).filter(function(k){return r[k]&&String(r[k]).trim()&&k!=='_id';}).length===1&&!r['3']);
-    if(isGrp&&r['2']&&gruplar.indexOf(r['2'])<0)gruplar.push(r['2']);
+    if(r._group && r['2'] && gruplar.indexOf(r['2']) < 0) gruplar.push(r['2']);
   });
-  gruplar.forEach(function(g){var o=document.createElement('option');o.value=g;o.textContent=g;gs.appendChild(o);});
-  var gopt=document.querySelector('#tomKapsam option[value="grup"]');
-  if(gopt)gopt.style.display=gruplar.length?'':'none';
-  document.getElementById('tomChkYetkili').checked=false;
-  document.getElementById('tomChkGelis').checked=false;
-  document.getElementById('tomYetkiliVal').value='Onaylandı';
-  document.getElementById('tomGelisVal').value='Onaylandı';
-  var dataRows=srcRows.filter(function(r){
-    var isGrp=r._group||(Object.keys(r).filter(function(k){return r[k]&&String(r[k]).trim()&&k!=='_id';}).length===1&&!r['3']);
-    return !isGrp&&(r['3']||r['2']);
-  });
-  document.getElementById('tomInfo').innerHTML='<strong>Aktif sayfa:</strong> '+(SHEETS[si].name||'')+' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> '+dataRows.length+' satır';
-  document.getElementById('tomPreview').textContent='';
+  gruplar.forEach(function(g){ var o = document.createElement('option'); o.value = g; o.textContent = g; gs.appendChild(o); });
+  var gopt = document.querySelector('#tomKapsam option[value="grup"]');
+  if(gopt) gopt.style.display = gruplar.length ? '' : 'none';
+  document.getElementById('tomChkYetkili').checked = false;
+  document.getElementById('tomChkGelis').checked = false;
+  document.getElementById('tomYetkiliVal').value = 'Onaylandı';
+  document.getElementById('tomGelisVal').value = 'Onaylandı';
+  var dataRows = srcRows.filter(function(r){ return !r._group && (r['3'] || r['2']); });
+  document.getElementById('tomInfo').innerHTML = '<strong>Aktif sayfa:</strong> ' + (SHEETS[si].name||'') + ' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> ' + dataRows.length + ' satır';
+  document.getElementById('tomPreview').textContent = '';
   document.getElementById('topluOnayModal').classList.add('open');
 };
 
-window.closeTopluOnay=function(){document.getElementById('topluOnayModal').classList.remove('open');};
+window.closeTopluOnay = function(){ document.getElementById('topluOnayModal').classList.remove('open'); };
 
-window.applyTopluOnay=function(){
-  var si=typeof activeSheet!=='undefined'?activeSheet:-1;
-  if(si<0||!SHEETS[si])return;
-  var role=window._currentRole||'viewer';
-  var kapsam=document.getElementById('tomKapsam').value;
-  var grupSec=document.getElementById('tomGrup').value;
-  var satirlar=toSatirlar(kapsam,grupSec);
-  if(satirlar.length===0){alert('Uygulanacak satır bulunamadı.');return;}
-  var uygulanacak=[];
-  if((role==='admin'||role==='manager')&&document.getElementById('tomChkYetkili').checked)
-    uygulanacak.push({key:'yetkili',val:document.getElementById('tomYetkiliVal').value,label:'Yetkili Onayı'});
+window.applyTopluOnay = function(){
+  var si = typeof activeSheet !== 'undefined' ? activeSheet : -1;
+  if(si < 0 || !state || !state[si]) return;
+  var role = window._currentRole || 'viewer';
+  var kapsam = document.getElementById('tomKapsam').value;
+  var grupSec = document.getElementById('tomGrup').value;
+  var satirlar = toSatirlar(kapsam, grupSec);
+  if(satirlar.length === 0){ alert('Uygulanacak satır bulunamadı.'); return; }
+  var uygulanacak = [];
+  if((role==='admin'||role==='manager') && document.getElementById('tomChkYetkili').checked)
+    uygulanacak.push({key:'yetkili', val:document.getElementById('tomYetkiliVal').value, label:'Yetkili Onayı'});
   if(document.getElementById('tomChkGelis').checked)
-    uygulanacak.push({key:'gelis',val:document.getElementById('tomGelisVal').value,label:'Geliş Onayı'});
-  if(uygulanacak.length===0){alert('Lütfen en az bir onay türü seçin.');return;}
-  var kLabel=kapsam==='hepsi'?'tüm satırlar':kapsam==='grup'?'"'+grupSec+'" grubu':'seçili satırlar';
-  var msg=uygulanacak.map(function(u){return u.label+': '+u.val;}).join('\n');
-  if(!confirm(satirlar.length+' satıra aşağıdaki onaylar uygulanacak ('+kLabel+'):\n\n'+msg+'\n\nDevam edilsin mi?'))return;
-  var kisi=window._currentUser||'?';
-  var tarih=new Date().toLocaleDateString('tr-TR');
-  /* state yoksa oluştur */
-  if(!state)window.state={};
-  if(!state[si])state[si]={rows:[]};
+    uygulanacak.push({key:'gelis', val:document.getElementById('tomGelisVal').value, label:'Geliş Onayı'});
+  if(uygulanacak.length === 0){ alert('Lütfen en az bir onay türü seçin.'); return; }
+  var kLabel = kapsam==='hepsi' ? 'tüm satırlar' : kapsam==='grup' ? '"'+grupSec+'" grubu' : 'seçili satırlar';
+  var msg = uygulanacak.map(function(u){ return u.label + ': ' + u.val; }).join('\n');
+  if(!confirm(satirlar.length + ' satıra aşağıdaki onaylar uygulanacak (' + kLabel + '):\n\n' + msg + '\n\nDevam edilsin mi?')) return;
+  var kisi = window._currentUser || '?';
+  var tarih = new Date().toLocaleDateString('tr-TR');
   satirlar.forEach(function(item){
-    var ri=item.ri;
-    /* state satırını güncelle */
-    if(state[si].rows[ri]){
-      uygulanacak.forEach(function(u){
-        if(u.key==='yetkili'){
-          state[si].rows[ri]._yetkili=u.val;
-          state[si].rows[ri]._yetkiliKisi=u.val==='Onaylandı'?(kisi+'\u00b7'+tarih):'';
-          state[si].rows[ri].yetkili=u.val;
-          state[si].rows[ri].yetkiliKisi=state[si].rows[ri]._yetkiliKisi;
+    var r = state[si].rows[item.ri];
+    if(!r) return;
+    uygulanacak.forEach(function(u){
+      if(u.key === 'yetkili'){
+        r._yetkili = u.val;
+        r._yetkiliKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
+        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
+          SHEETS[si].rows[item.ri].yetkili = u.val;
+          SHEETS[si].rows[item.ri].yetkiliKisi = r._yetkiliKisi;
         }
-        if(u.key==='gelis'){
-          state[si].rows[ri]._gelis=u.val;
-          state[si].rows[ri]._gelisKisi=u.val==='Onaylandı'?(kisi+'\u00b7'+tarih):'';
-          state[si].rows[ri].gelis=u.val;
-          state[si].rows[ri].gelisKisi=state[si].rows[ri]._gelisKisi;
-        }
-      });
-    }
-    /* SHEETS satırını güncelle */
-    if(SHEETS[si]&&SHEETS[si].rows&&SHEETS[si].rows[ri]){
-      uygulanacak.forEach(function(u){
-        if(u.key==='yetkili'){
-          SHEETS[si].rows[ri].yetkili=u.val;
-          SHEETS[si].rows[ri].yetkiliKisi=u.val==='Onaylandı'?(kisi+'\u00b7'+tarih):'';
-        }
-        if(u.key==='gelis'){
-          SHEETS[si].rows[ri].gelis=u.val;
-          SHEETS[si].rows[ri].gelisKisi=u.val==='Onaylandı'?(kisi+'\u00b7'+tarih):'';
-        }
-      });
-    }
-    /* DOM'daki select'leri doğrudan güncelle */
-    var trEl=document.getElementById('row-'+si+'-'+ri);
-    if(trEl){
-      var sels=trEl.querySelectorAll('.onay-select');
-      uygulanacak.forEach(function(u){
-        if(u.key==='yetkili'&&sels[0]){
-          sels[0].value=u.val;
-          var kisiEl=trEl.querySelector('[data-yetkili-kisi]');
-          if(kisiEl)kisiEl.textContent=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
-        }
-        if(u.key==='gelis'&&sels[1]){
-          sels[1].value=u.val;
-          var kisiEl2=trEl.querySelector('[data-gelis-kisi]');
-          if(kisiEl2)kisiEl2.textContent=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
-        }
-      });
-      /* Satır rengini güncelle */
-      if(typeof getRowClass==='function'){
-        var stateRow=state[si].rows[ri]||{};
-        trEl.className='data-row '+getRowClass(stateRow);
       }
-    }
+      if(u.key === 'gelis'){
+        r._gelis = u.val;
+        r._gelisKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
+        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
+          SHEETS[si].rows[item.ri].gelis = u.val;
+          SHEETS[si].rows[item.ri].gelisKisi = r._gelisKisi;
+        }
+      }
+    });
   });
-  /* Firebase'e kaydet */
-  if(typeof apiUpdate==='function'&&typeof isOnline!=='undefined'&&isOnline){
-    apiUpdate(si,0,0,'');
-  } else if(typeof fbSaveAll==='function'&&typeof isOnline!=='undefined'&&isOnline){
-    fbSaveAll();
-  }
-  /* İstatistikleri güncelle */
-  if(typeof updateStats==='function')updateStats(si);
+  if(typeof apiUpdate === 'function' && typeof isOnline !== 'undefined' && isOnline) apiUpdate(si, 0, 0, '');
+  else if(typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
+  if(typeof rebuildTable === 'function') rebuildTable(si);
+  if(typeof updateStats === 'function') updateStats(si);
   window.closeTopluOnay();
-  var n=document.createElement('div');
-  n.style.cssText='position:fixed;bottom:24px;right:24px;background:#1a2a1a;border:1px solid rgba(146,208,80,.4);border-left:3px solid #92D050;border-radius:8px;padding:14px 20px;font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:#92D050;letter-spacing:1px;z-index:99999;';
-  n.textContent='\u2713 '+satirlar.length+' sat\u0131ra onay uyguland\u0131';
+  var n = document.createElement('div');
+  n.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1a2a1a;border:1px solid rgba(146,208,80,.4);border-left:3px solid #92D050;border-radius:8px;padding:14px 20px;font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:#92D050;letter-spacing:1px;z-index:99999;';
+  n.textContent = '\u2713 ' + satirlar.length + ' sat\u0131ra onay uyguland\u0131';
   document.body.appendChild(n);
-  setTimeout(function(){n.style.opacity='0';n.style.transition='opacity .5s';setTimeout(function(){n.remove();},500);},2500);
+  setTimeout(function(){ n.style.opacity='0'; n.style.transition='opacity .5s'; setTimeout(function(){ n.remove(); }, 500); }, 2500);
 };
-
-(function hookSwitchTab(){
-  var _orig=window.switchTab;
-  if(!_orig||_orig._toHooked)return;
-  window.switchTab=function(idx){_orig.apply(this,arguments);toUpdateBtn(idx);};
-  window.switchTab._toHooked=true;
-})();
-
-var _origBUI2=window.buildUI;
-if(_origBUI2){window.buildUI=function(){_origBUI2.apply(this,arguments);addTopluOnayBtn();if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);};}
-
-var _origReapply2=window.reapplySession;
-if(_origReapply2){
-  window.reapplySession=function(){
-    _origReapply2.apply(this,arguments);
-    var btn=document.getElementById('topluOnayBtn'); if(!btn)return;
-    var role=window._currentRole||'viewer';
-    if(role==='viewer')btn.style.display='none';
-    else if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);
-  };
-}
-
-if(document.getElementById('toolBar'))setTimeout(function(){addTopluOnayBtn();if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);},300);
 
 })();
 
