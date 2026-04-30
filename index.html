@@ -2105,6 +2105,10 @@ function openRowEdit(si, ri) {
   document.getElementById('re_sip').value     = toISODate(r._sipTarihi || r.sipTarihi || '');
   document.getElementById('re_termin').value  = toISODate(r._terminTarihi || r.terminTarihi || '');
   document.getElementById('re_teslim').value  = toISODate(r._teslimTarihi || r.teslimTarihi || '');
+  // Sipariş ve termin tarihi sadece manager/admin girebilir
+  const canEditTarih = (roleCheck === 'admin' || roleCheck === 'manager');
+  document.getElementById('re_sip').disabled    = !canEditTarih;
+  document.getElementById('re_termin').disabled = !canEditTarih;
   document.getElementById('rowEditOverlay').classList.add('open');
   checkTeslimatUyari();
 }
@@ -6942,23 +6946,32 @@ function makeRow(si, ri, row) {
         gelisWrap.appendChild(gelisKisiEl);
         td.appendChild(gelisWrap);
       } else if (c.type === 'date') {
-        const inp = document.createElement('input');
-        inp.type = 'date'; inp.className = 'date-input';
-        // Tarihi ISO formatına çevir (gelen veri DD.MM.YYYY veya YYYY-MM-DD olabilir)
         const rawVal = row[c.field] || '';
-        if (rawVal) {
-          // DD.MM.YYYY → YYYY-MM-DD
-          const m = rawVal.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-          inp.value = m ? m[3]+'-'+m[2]+'-'+m[1] : rawVal;
+        const role = window._currentRole || 'viewer';
+        // sipTarihi ve terminTarihi sadece manager ve admin girebilir
+        const isKisitli = (c.field === 'sipTarihi' || c.field === 'terminTarihi');
+        const canEdit = !isKisitli || (role === 'admin' || role === 'manager');
+        if (canEdit) {
+          const inp = document.createElement('input');
+          inp.type = 'date'; inp.className = 'date-input';
+          if (rawVal) {
+            const m = rawVal.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+            inp.value = m ? m[3]+'-'+m[2]+'-'+m[1] : rawVal;
+          }
+          inp.onchange = () => {
+            const parts = inp.value.split('-');
+            const displayVal = parts.length === 3 ? parts[2]+'.'+parts[1]+'.'+parts[0] : inp.value;
+            state[si].rows[ri][c.field] = displayVal;
+            if (isOnline) apiUpdate(si, ri, c.col, displayVal);
+          };
+          td.appendChild(inp);
+        } else {
+          // Sadece göster
+          const span = document.createElement('span');
+          span.textContent = rawVal || '—';
+          span.style.cssText = 'font-size:12px;color:#aaa;';
+          td.appendChild(span);
         }
-        inp.onchange = () => {
-          // YYYY-MM-DD → DD.MM.YYYY olarak sakla
-          const parts = inp.value.split('-');
-          const displayVal = parts.length === 3 ? parts[2]+'.'+parts[1]+'.'+parts[0] : inp.value;
-          state[si].rows[ri][c.field] = displayVal;
-          if (isOnline) apiUpdate(si, ri, c.col, displayVal);
-        };
-        td.appendChild(inp);
       } else if (c.type === 'teslimat') {
         const g = parseFloat(row._gelenAdet || row.gelenAdet);
         const a = parseFloat(row['5']);
