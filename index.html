@@ -10363,7 +10363,8 @@ var FL = {
   search: '',
   sortCol: null,  // 'isim'|'gelis'|'birim'|'marj'|'satis'
   sortDir: 1,
-  saveTimer: null
+  saveTimer: null,
+  loaded: false   // fiyat listesi bir kez yüklendi mi? tekrar sıfırlanmasın
 };
 
 /* ── Yardımcılar ── */
@@ -10405,12 +10406,15 @@ function flSave(){
 }
 
 function flLoad(){
+  /* Fiyat listesi zaten yuklendiyse tekrar Firebase'den cekme;
+     yeni arsiv/parti olusturulunca sifirlanmasin. */
+  if(FL.loaded) return;
   try{
     if(window._db&&window._fsGetDoc&&window._fsDoc){
       window._fsGetDoc(window._fsDoc(window._db,'malzeme','fiyat_listesi')).then(function(snap){
         if(snap&&snap.exists()&&snap.data().data){
           var raw = JSON.parse(snap.data().data);
-          /* Eski key formatlarını normalize et */
+          /* Eski key formatlarini normalize et */
           var norm = {};
           FL_MACHINES.forEach(function(m){ norm[m.key] = []; });
           Object.keys(raw).forEach(function(oldKey){
@@ -10424,6 +10428,7 @@ function flLoad(){
             if(Array.isArray(raw[oldKey])) norm[dest] = norm[dest].concat(raw[oldKey]);
           });
           FL.data = norm;
+          FL.loaded = true; /* bir kez yuklendi, artik sifirlanmayacak */
           window.flRender(null);
         }
       }).catch(function(){});
