@@ -1448,7 +1448,13 @@ function renderSiparisRows() {
 
     // Satır rengi — diğer sayfalarla aynı mantık
     function getSiparisRowClass(r, teslim) {
-      if (teslim || r.gelisOnay === 'Onaylandı') return 'status-gelis';
+      if (teslim || r.gelisOnay === 'Onaylandı') {
+        // Gelen adet sipariş adetinden farklıysa yeşil gösterme
+        const ga = parseFloat(teslim ? teslim.gelisAdet : '');
+        const sa = parseFloat(r.sipAdet);
+        if (!isNaN(ga) && !isNaN(sa) && ga !== sa) return 'status-eksik';
+        return 'status-gelis';
+      }
       // Termin geçmişse ve teslim yoksa kırmızı
       const terminD = parseTerminDate(r.terminTarihi || '');
       if (terminD) {
