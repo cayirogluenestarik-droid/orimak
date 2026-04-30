@@ -9496,6 +9496,8 @@ if (window._db) setTimeout(stLoad, 1800);
 /* ══ TOPLU TARİH MODAL ══ */
 #topluTarihModal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10200;display:none;align-items:center;justify-content:center;padding:16px;}
 #topluTarihModal.open{display:flex;}
+#topluOnayModal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10200;display:none;align-items:center;justify-content:center;padding:16px;}
+#topluOnayModal.open{display:flex;}
 .ttm-box{background:#181818;border:1px solid #2a2a2a;border-top:3px solid var(--orange);border-radius:12px;width:520px;max-width:98vw;box-shadow:0 32px 90px rgba(0,0,0,.85);display:flex;flex-direction:column;}
 .ttm-head{padding:18px 24px 14px;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;}
 .ttm-head h2{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:2.5px;color:var(--orange);}
@@ -9639,7 +9641,7 @@ if (window._db) setTimeout(stLoad, 1800);
 </div>
 
 <!-- ══ TOPLU ONAY MODAL ══ -->
-<div id="topluOnayModal" onclick="if(event.target===this)closeTopluOnay()" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10200;display:none;align-items:center;justify-content:center;padding:16px;">
+<div id="topluOnayModal" onclick="if(event.target===this)closeTopluOnay()">
   <div class="ttm-box">
     <div class="ttm-head">
       <h2>✅ TOPLU ONAY</h2>
@@ -10067,7 +10069,7 @@ window.toPreview = toPreview;
 
 window.openTopluOnay = function(){
   var si = typeof activeSheet !== 'undefined' ? activeSheet : -1;
-  if(si < 0 || !state || !state[si]) return;
+  if(si < 0 || !SHEETS[si]) return;
   var role = window._currentRole || 'viewer';
   var yetkiliRow = document.getElementById('tomYetkiliRow');
   if(yetkiliRow) yetkiliRow.style.display = (role==='admin'||role==='manager') ? '' : 'none';
@@ -10075,7 +10077,7 @@ window.openTopluOnay = function(){
   document.getElementById('tomGrupWrap').style.display = 'none';
   var gs = document.getElementById('tomGrup'); gs.innerHTML = '';
   var gruplar = [];
-  var srcRows = (state[si] && state[si].rows) ? state[si].rows : [];
+  var srcRows = (state && state[si] && state[si].rows) ? state[si].rows : [];
   srcRows.forEach(function(r){
     if(r._group && r['2'] && gruplar.indexOf(r['2']) < 0) gruplar.push(r['2']);
   });
@@ -10087,8 +10089,7 @@ window.openTopluOnay = function(){
   document.getElementById('tomYetkiliVal').value = 'Onaylandı';
   document.getElementById('tomGelisVal').value = 'Onaylandı';
   var dataRows = srcRows.filter(function(r){ return !r._group && (r['3'] || r['2']); });
-  var sayfaAdi = (SHEETS && SHEETS[si] && SHEETS[si].name) ? SHEETS[si].name : (state[si].name || '');
-  document.getElementById('tomInfo').innerHTML = '<strong>Aktif sayfa:</strong> ' + sayfaAdi + ' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> ' + dataRows.length + ' satır';
+  document.getElementById('tomInfo').innerHTML = '<strong>Aktif sayfa:</strong> ' + (SHEETS[si].name||'') + ' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> ' + dataRows.length + ' satır';
   document.getElementById('tomPreview').textContent = '';
   document.getElementById('topluOnayModal').classList.add('open');
 };
@@ -10121,28 +10122,23 @@ window.applyTopluOnay = function(){
       if(u.key === 'yetkili'){
         r._yetkili = u.val;
         r._yetkiliKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
+        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
+          SHEETS[si].rows[item.ri].yetkili = u.val;
+          SHEETS[si].rows[item.ri].yetkiliKisi = r._yetkiliKisi;
+        }
       }
       if(u.key === 'gelis'){
         r._gelis = u.val;
         r._gelisKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
+        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
+          SHEETS[si].rows[item.ri].gelis = u.val;
+          SHEETS[si].rows[item.ri].gelisKisi = r._gelisKisi;
+        }
       }
     });
   });
-  /* state → SHEETS senkronizasyonu */
-  if(SHEETS && SHEETS[si]){
-    SHEETS[si].rows = state[si].rows.map(function(r){
-      var clean = {};
-      Object.keys(r).forEach(function(k){ if(!k.startsWith('_')) clean[k] = r[k]; });
-      clean.yetkili     = r._yetkili     !== undefined ? r._yetkili     : (r.yetkili     || '');
-      clean.yetkiliKisi = r._yetkiliKisi !== undefined ? r._yetkiliKisi : (r.yetkiliKisi || '');
-      clean.gelis       = r._gelis       !== undefined ? r._gelis       : (r.gelis       || '');
-      clean.gelisKisi   = r._gelisKisi   !== undefined ? r._gelisKisi   : (r.gelisKisi   || '');
-      clean.gelenAdet   = r._gelenAdet   !== undefined ? r._gelenAdet   : (r.gelenAdet   || '');
-      clean.makine      = r._makine      !== undefined ? r._makine      : (r.makine      || '');
-      return clean;
-    });
-  }
-  if(typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
+  if(typeof apiUpdate === 'function' && typeof isOnline !== 'undefined' && isOnline) apiUpdate(si, 0, 0, '');
+  else if(typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
   if(typeof rebuildTable === 'function') rebuildTable(si);
   if(typeof updateStats === 'function') updateStats(si);
   window.closeTopluOnay();
