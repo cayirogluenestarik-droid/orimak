@@ -1414,7 +1414,7 @@ function buildSiparisPanel(si) {
           <th>SİPARİŞİ OLUŞTURAN</th><th>YETKİLİ ONAYI</th>
           <th>OLUŞTURMA TARİHİ</th><th>TERMİN TARİHİ</th>
           <th>GELİŞ TARİHİ</th><th>GELİŞ ONAYI</th>
-          <th>GELEN ADET</th><th>SİPARİŞ DURUMU</th><th>NOTLAR</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
+          <th>GELEN ADET</th><th>TESLİM DURUMU</th><th>SİPARİŞ DURUMU</th><th>NOTLAR</th><th>TESLİM ALAN</th><th>İŞLEMLER</th>
         </tr></thead>
         <tbody id="siparisBody"></tbody>
       </table>
@@ -1429,7 +1429,7 @@ function renderSiparisRows() {
   const rows = getSiparisRows();
   tbody.innerHTML = '';
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz sipariş yok — ＋ Yeni Sipariş ile ekleyin</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;padding:32px;color:#555;font-family:Barlow Condensed,sans-serif;letter-spacing:2px;">Henüz sipariş yok — ＋ Yeni Sipariş ile ekleyin</td></tr>';
     return;
   }
   rows.forEach((r, i) => {
@@ -1507,6 +1507,24 @@ function renderSiparisRows() {
     tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
     tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })));
     tr.appendChild(mkTd(String(gelisAdet||''), 'text-align:center;'));
+
+    // Gelen adet vs sipariş adeti karşılaştırması
+    const sipAdetNum = parseFloat(r.sipAdet);
+    const gelisAdetNum = parseFloat(gelisAdet);
+    let teslimUyariHtml = '—';
+    if (!isNaN(sipAdetNum) && !isNaN(gelisAdetNum)) {
+      if (gelisAdetNum < sipAdetNum) {
+        const eksik = sipAdetNum - gelisAdetNum;
+        teslimUyariHtml = `<span class="teslimat-eksik" style="display:inline-block;white-space:nowrap;">⚠ Eksik Teslim Edildi (${eksik} adet)</span>`;
+      } else if (gelisAdetNum > sipAdetNum) {
+        const fazla = gelisAdetNum - sipAdetNum;
+        teslimUyariHtml = `<span class="teslimat-fazla" style="display:inline-block;white-space:nowrap;">↑ Fazla Teslim Edildi (${fazla} adet)</span>`;
+      } else {
+        teslimUyariHtml = `<span class="teslimat-ok" style="display:inline-block;">✓ Tam Teslim</span>`;
+      }
+    }
+    tr.appendChild(mkTd(teslimUyariHtml, 'text-align:center;'));
+
     tr.appendChild(mkTd(`<span class="sp-durum ${durumClass}">${durum}</span>`));
     tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#888;'));
     tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#888;'));
