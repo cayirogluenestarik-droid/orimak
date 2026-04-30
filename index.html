@@ -279,7 +279,7 @@ tr.group-hidden{display:none !important;}
 .rowedit-body{padding:20px 24px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .rowedit-field{display:flex;flex-direction:column;gap:5px;}
 .rowedit-field.full{grid-column:1/-1;}
-.rowedit-field label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;font-family:'Barlow Condensed',sans-serif;}
+.rowedit-field label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;font-family:'Barlow Condensed',sans-serif;}
 .rowedit-field input,.rowedit-field select{background:#222;border:1px solid #3a3a3a;border-radius:5px;padding:8px 10px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;}
 .rowedit-field input:focus,.rowedit-field select:focus{border-color:var(--orange);}
 .rowedit-field select option{background:#1a1a1a;}
@@ -291,7 +291,7 @@ tr.group-hidden{display:none !important;}
 .btn-edit-row:hover{background:rgba(90,160,255,.25);}
 .onay-select{width:100%;min-width:110px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.5);font-family:'Barlow',sans-serif;font-size:11.5px;font-weight:500;cursor:pointer;outline:none;color:inherit;padding:5px 4px;border-radius:4px;}
 .onay-select:focus{background:white;}.onay-select option{color:#1a1a1a;background:white;}
-.onaylayan-kisi{font-size:10px;color:#888;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+.onaylayan-kisi{font-size:10px;color:#ddd;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
 
 .row-actions{display:flex;gap:4px;justify-content:center;}
 .btn-del{background:rgba(192,0,0,.12);border:1px solid rgba(192,0,0,.3);color:#c00;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
@@ -317,7 +317,7 @@ tr.group-hidden{display:none !important;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group.full{grid-column:span 2;}
-.form-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#888;font-family:'Barlow Condensed',sans-serif;}
+.form-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#bbb;font-family:'Barlow Condensed',sans-serif;}
 .form-input,.form-select{background:#2a2a2a;border:1px solid #444;border-radius:5px;padding:9px 12px;color:#eee;font-size:13px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s;width:100%;}
 .form-input:focus,.form-select:focus{border-color:var(--orange);}
 .form-select option{background:#2a2a2a;}
@@ -1508,9 +1508,9 @@ function renderSiparisRows() {
     yetkiliDiv.appendChild(yetkiliKisiSip);
     yetkiliTd.appendChild(yetkiliDiv);
     tr.appendChild(yetkiliTd);
-    tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(r.olusturmaTarihi||'', 'font-size:11px;color:#ddd;'));
     tr.appendChild(mkTd(r.terminTarihi||'', 'font-size:11px;' + (isTerminYakin(r.terminTarihi)?'color:#f5a623;font-weight:700;':'')));
-    tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(gelisTarihi, 'font-size:11px;color:#ddd;'));
     tr.appendChild(mkTdEl(mkSiparisSelect(['','Onaylandı','Beklemede'], r.gelisOnay, v => { rows[i].gelisOnay=v; saveSiparisRows(); renderSiparisRows(); })));
     tr.appendChild(mkTd(String(gelisAdet||''), 'text-align:center;'));
 
@@ -1532,8 +1532,8 @@ function renderSiparisRows() {
     tr.appendChild(mkTd(teslimUyariHtml, 'text-align:center;'));
 
     tr.appendChild(mkTd(`<span class="sp-durum ${durumClass}">${durum}</span>`));
-    tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#888;'));
-    tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#888;'));
+    tr.appendChild(mkTd(r.notlar||'', 'font-size:11px;color:#ddd;'));
+    tr.appendChild(mkTd(teslimAlan, 'font-size:11px;color:#ddd;'));
 
     const tdAct = document.createElement('td');
     const actDiv = document.createElement('div');
@@ -6891,7 +6891,7 @@ function makeRow(si, ri, row) {
           // Viewer / operator: sadece göster
           const span = document.createElement('span');
           span.textContent = row._makine || '—';
-          span.style.cssText = 'font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:600;color:#aaa;';
+          span.style.cssText = 'font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:600;color:#ddd;';
           td.appendChild(span);
         }
       } else if (c.type === 'gelen') {
@@ -6969,7 +6969,7 @@ function makeRow(si, ri, row) {
           // Sadece göster
           const span = document.createElement('span');
           span.textContent = rawVal || '—';
-          span.style.cssText = 'font-size:12px;color:#aaa;';
+          span.style.cssText = 'font-size:12px;color:#ddd;';
           td.appendChild(span);
         }
       } else if (c.type === 'teslimat') {
