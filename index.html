@@ -9623,6 +9623,62 @@ if (window._db) setTimeout(stLoad, 1800);
   </div>
 </div>
 
+<!-- ══ TOPLU ONAY MODAL ══ -->
+<div id="topluOnayModal" onclick="if(event.target===this)closeTopluOnay()" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10200;display:none;align-items:center;justify-content:center;padding:16px;">
+  <div class="ttm-box">
+    <div class="ttm-head">
+      <h2>✅ TOPLU ONAY</h2>
+      <button class="admin-close" onclick="closeTopluOnay()">✕</button>
+    </div>
+    <div class="ttm-body">
+      <div class="ttm-info" id="tomInfo">Aktif sayfadaki kayıtlara toplu onay verin.</div>
+      <div class="ttm-section">
+        <div class="ttm-section-title">Kapsam</div>
+        <div class="ttm-fields">
+          <div class="ttm-field full">
+            <label>Hangi satırlara uygulansın?</label>
+            <select id="tomKapsam" onchange="document.getElementById('tomGrupWrap').style.display=this.value==='grup'?'':'none';toPreview();">
+              <option value="hepsi">Tüm satırlar</option>
+              <option value="grup">Belirli bir grup</option>
+            </select>
+          </div>
+          <div class="ttm-field full" id="tomGrupWrap" style="display:none;">
+            <label>Grup seç</label>
+            <select id="tomGrup" onchange="toPreview()"></select>
+          </div>
+        </div>
+      </div>
+      <div class="ttm-section">
+        <div class="ttm-section-title">Uygulanacak onaylar</div>
+        <div class="ttm-fields">
+          <div class="ttm-field full" id="tomYetkiliRow">
+            <label class="ttm-checkbox-row"><input type="checkbox" id="tomChkYetkili" onchange="toPreview()"/><span>🔐 Yetkili Onayı</span></label>
+            <select id="tomYetkiliVal" onchange="toPreview()" style="background:#1e1e1e;border:1px solid #303030;border-radius:6px;padding:8px 12px;color:#ddd;font-size:13px;font-family:Barlow,sans-serif;outline:none;width:100%;margin-top:4px;">
+              <option value="Onaylandı">Onaylandı</option>
+              <option value="Beklemede">Beklemede</option>
+              <option value="">— Temizle —</option>
+            </select>
+          </div>
+          <div class="ttm-field full">
+            <label class="ttm-checkbox-row"><input type="checkbox" id="tomChkGelis" onchange="toPreview()"/><span>🚚 Geliş Onayı</span></label>
+            <select id="tomGelisVal" onchange="toPreview()" style="background:#1e1e1e;border:1px solid #303030;border-radius:6px;padding:8px 12px;color:#ddd;font-size:13px;font-family:Barlow,sans-serif;outline:none;width:100%;margin-top:4px;">
+              <option value="Onaylandı">Onaylandı</option>
+              <option value="Onay Bekleniyor">Onay Bekleniyor</option>
+              <option value="">— Temizle —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="tomPreview" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#aaa;letter-spacing:.5px;padding:4px 0;"></div>
+    </div>
+    <div class="ttm-foot">
+      <button class="ttm-btn ttm-btn-cancel" onclick="closeTopluOnay()">İptal</button>
+      <button class="ttm-btn ttm-btn-save" onclick="applyTopluOnay()">✅ Uygula</button>
+    </div>
+  </div>
+</div>
+
+
 <script>
 // ════════════════════════════════════════════════════
 //  SATIŞ TAKİP PANELİ
@@ -9957,6 +10013,162 @@ document.getElementById('ttmGrup').addEventListener('change',ttmPreview);
     };
   }
 })();
+
+// ════════════════════════════════════════════════════
+//  TOPLU ONAY
+// ════════════════════════════════════════════════════
+(function(){
+
+function addTopluOnayBtn(){
+  var tb=document.getElementById('toolBar');
+  if(!tb||document.getElementById('topluOnayBtn'))return;
+  var btn=document.createElement('button');
+  btn.id='topluOnayBtn';
+  btn.innerHTML='✅ TOPLU ONAY';
+  btn.style.cssText='display:none;align-items:center;gap:6px;background:rgba(146,208,80,.08);border:1px solid rgba(146,208,80,.3);border-radius:6px;padding:5px 12px;color:#92D050;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .2s;white-space:nowrap;';
+  btn.onmouseenter=function(){this.style.background='rgba(146,208,80,.18)';this.style.borderColor='rgba(146,208,80,.5)';};
+  btn.onmouseleave=function(){this.style.background='rgba(146,208,80,.08)';this.style.borderColor='rgba(146,208,80,.3)';};
+  btn.onclick=function(){window.openTopluOnay&&window.openTopluOnay();};
+  var addRowBtn=document.getElementById('addRowBtn');
+  if(addRowBtn)tb.insertBefore(btn,addRowBtn);
+  else tb.appendChild(btn);
+}
+
+function toUpdateBtn(idx){
+  var btn=document.getElementById('topluOnayBtn'); if(!btn)return;
+  var role=window._currentRole||'viewer';
+  var isSpecial=SHEETS[idx]&&(SHEETS[idx].type==='siparis'||SHEETS[idx].type==='teslim'||SHEETS[idx].type==='satis');
+  if(role==='viewer'||isSpecial){btn.style.display='none';return;}
+  btn.style.display='inline-flex';
+}
+
+function toSatirlar(kapsam,grupSec){
+  if(typeof activeSheet==='undefined'||!state||!state[activeSheet])return[];
+  var rows=state[activeSheet].rows||[];
+  var currentGroup=null; var result=[];
+  rows.forEach(function(r,ri){
+    if(r._group){currentGroup=r['2']||'';return;}
+    if(!r['3']&&!r['2'])return;
+    if(kapsam==='grup'&&currentGroup!==grupSec)return;
+    result.push({ri:ri,r:r,group:currentGroup});
+  });
+  return result;
+}
+
+function toPreview(){
+  var el=document.getElementById('tomPreview'); if(!el)return;
+  var kapsam=document.getElementById('tomKapsam').value;
+  var grupSec=document.getElementById('tomGrup')?document.getElementById('tomGrup').value:'';
+  var n=toSatirlar(kapsam,grupSec).length;
+  var role=window._currentRole||'viewer';
+  var secimler=[];
+  if((role==='admin'||role==='manager')&&document.getElementById('tomChkYetkili').checked)
+    secimler.push('<span style="color:#F5A623;">Yetkili Onayı</span>');
+  if(document.getElementById('tomChkGelis').checked)
+    secimler.push('<span style="color:#92D050;">Geliş Onayı</span>');
+  if(secimler.length===0){el.textContent='';return;}
+  el.innerHTML='<span style="color:#F5A623;">'+n+'</span> satıra '+secimler.join(' + ')+' uygulanacak.';
+}
+window.toPreview=toPreview;
+
+window.openTopluOnay=function(){
+  var si=typeof activeSheet!=='undefined'?activeSheet:-1;
+  if(si<0||!SHEETS[si])return;
+  var role=window._currentRole||'viewer';
+  var yetkiliRow=document.getElementById('tomYetkiliRow');
+  if(yetkiliRow)yetkiliRow.style.display=(role==='admin'||role==='manager')?'':'none';
+  document.getElementById('tomKapsam').value='hepsi';
+  document.getElementById('tomGrupWrap').style.display='none';
+  var gs=document.getElementById('tomGrup'); gs.innerHTML='';
+  if(state&&state[si]){
+    var gruplar=[];
+    (state[si].rows||[]).forEach(function(r){if(r._group&&r['2']&&!gruplar.includes(r['2']))gruplar.push(r['2']);});
+    gruplar.forEach(function(g){var o=document.createElement('option');o.value=g;o.textContent=g;gs.appendChild(o);});
+    var gopt=document.querySelector('#tomKapsam option[value="grup"]');
+    if(gopt)gopt.style.display=gruplar.length?'':'none';
+  }
+  document.getElementById('tomChkYetkili').checked=false;
+  document.getElementById('tomChkGelis').checked=false;
+  document.getElementById('tomYetkiliVal').value='Onaylandı';
+  document.getElementById('tomGelisVal').value='Onaylandı';
+  var rows=state&&state[si]?(state[si].rows||[]).filter(function(r){return!r._group&&(r['3']||r['2']);}):[];
+  document.getElementById('tomInfo').innerHTML='<strong>Aktif sayfa:</strong> '+(SHEETS[si].name||'')+' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> '+rows.length+' satır';
+  document.getElementById('tomPreview').textContent='';
+  document.getElementById('topluOnayModal').classList.add('open');
+};
+
+window.closeTopluOnay=function(){document.getElementById('topluOnayModal').classList.remove('open');};
+
+window.applyTopluOnay=function(){
+  var si=typeof activeSheet!=='undefined'?activeSheet:-1;
+  if(si<0||!state||!state[si])return;
+  var role=window._currentRole||'viewer';
+  var kapsam=document.getElementById('tomKapsam').value;
+  var grupSec=document.getElementById('tomGrup').value;
+  var satirlar=toSatirlar(kapsam,grupSec);
+  if(satirlar.length===0){alert('Uygulanacak satır bulunamadı.');return;}
+  var uygulanacak=[];
+  if((role==='admin'||role==='manager')&&document.getElementById('tomChkYetkili').checked)
+    uygulanacak.push({key:'yetkili',val:document.getElementById('tomYetkiliVal').value,label:'Yetkili Onayı'});
+  if(document.getElementById('tomChkGelis').checked)
+    uygulanacak.push({key:'gelis',val:document.getElementById('tomGelisVal').value,label:'Geliş Onayı'});
+  if(uygulanacak.length===0){alert('Lütfen en az bir onay türü seçin.');return;}
+  var kLabel=kapsam==='hepsi'?'tüm satırlar':kapsam==='grup'?'"'+grupSec+'" grubu':'seçili satırlar';
+  var msg=uygulanacak.map(function(u){return u.label+': '+u.val;}).join('\n');
+  if(!confirm(satirlar.length+' satıra aşağıdaki onaylar uygulanacak ('+kLabel+'):\n\n'+msg+'\n\nDevam edilsin mi?'))return;
+  var kisi=window._currentUser||'?';
+  var tarih=new Date().toLocaleDateString('tr-TR');
+  satirlar.forEach(function(item){
+    var r=state[si].rows[item.ri];
+    uygulanacak.forEach(function(u){
+      if(u.key==='yetkili'){
+        r._yetkili=u.val;
+        r._yetkiliKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        if(SHEETS[si].rows[item.ri]){SHEETS[si].rows[item.ri].yetkili=u.val;SHEETS[si].rows[item.ri].yetkiliKisi=r._yetkiliKisi;}
+      }
+      if(u.key==='gelis'){
+        r._gelis=u.val;
+        r._gelisKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        if(SHEETS[si].rows[item.ri]){SHEETS[si].rows[item.ri].gelis=u.val;SHEETS[si].rows[item.ri].gelisKisi=r._gelisKisi;}
+      }
+    });
+  });
+  if(typeof fbSaveAll==='function'&&typeof isOnline!=='undefined'&&isOnline)fbSaveAll();
+  if(typeof rebuildTable==='function')rebuildTable(si);
+  if(typeof updateStats==='function')updateStats(si);
+  window.closeTopluOnay();
+  var n=document.createElement('div');
+  n.style.cssText='position:fixed;bottom:24px;right:24px;background:#1a2a1a;border:1px solid rgba(146,208,80,.4);border-left:3px solid #92D050;border-radius:8px;padding:14px 20px;font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;color:#92D050;letter-spacing:1px;z-index:99999;';
+  n.textContent='\u2713 '+satirlar.length+' sat\u0131ra onay uyguland\u0131';
+  document.body.appendChild(n);
+  setTimeout(function(){n.style.opacity='0';n.style.transition='opacity .5s';setTimeout(function(){n.remove();},500);},2500);
+};
+
+(function hookSwitchTab(){
+  var _orig=window.switchTab;
+  if(!_orig||_orig._toHooked)return;
+  window.switchTab=function(idx){_orig.apply(this,arguments);toUpdateBtn(idx);};
+  window.switchTab._toHooked=true;
+})();
+
+var _origBUI2=window.buildUI;
+if(_origBUI2){window.buildUI=function(){_origBUI2.apply(this,arguments);addTopluOnayBtn();if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);};}
+
+var _origReapply2=window.reapplySession;
+if(_origReapply2){
+  window.reapplySession=function(){
+    _origReapply2.apply(this,arguments);
+    var btn=document.getElementById('topluOnayBtn'); if(!btn)return;
+    var role=window._currentRole||'viewer';
+    if(role==='viewer')btn.style.display='none';
+    else if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);
+  };
+}
+
+if(document.getElementById('toolBar'))setTimeout(function(){addTopluOnayBtn();if(typeof activeSheet!=='undefined')toUpdateBtn(activeSheet);},300);
+
+})();
+
 </script>
 
 <!-- ══════════════════════════════════════════════════════
