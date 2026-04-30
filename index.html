@@ -1493,7 +1493,7 @@ function renderSiparisRows() {
     const tdAct = document.createElement('td');
     const actDiv = document.createElement('div');
     actDiv.className = 'row-actions';
-    if (window._currentRole !== 'viewer') {
+    if (window._currentRole === 'admin' || window._currentRole === 'manager') {
       const editBtn = document.createElement('button');
       editBtn.className = 'btn-edit-row'; editBtn.title = 'Düzenle'; editBtn.textContent = '✏️';
       editBtn.onclick = () => editSiparis(i);
@@ -6898,8 +6898,8 @@ function makeRow(si, ri, row) {
       } else if (c.type === 'actions') {
         const div = document.createElement('div');
         div.className = 'row-actions';
-        // Düzenleme butonu — viewer hariç herkese
-        if (window._currentRole !== 'viewer') {
+        // Düzenleme butonu — sadece admin ve manager görebilir
+        if (window._currentRole === 'admin' || window._currentRole === 'manager') {
           const editBtn = document.createElement('button');
           editBtn.className = 'btn-edit-row'; editBtn.title = 'Satırı Düzenle'; editBtn.textContent = '✏️';
           editBtn.onclick = () => openRowEdit(si, ri);
