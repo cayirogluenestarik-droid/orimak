@@ -2078,8 +2078,41 @@ function openRowEdit(si, ri) {
   document.getElementById('re_termin').value  = toISODate(r._terminTarihi || r.terminTarihi || '');
   document.getElementById('re_teslim').value  = toISODate(r._teslimTarihi || r.teslimTarihi || '');
   document.getElementById('rowEditOverlay').classList.add('open');
+  checkTeslimatUyari();
 }
 window.openRowEdit = openRowEdit;
+
+function checkTeslimatUyari() {
+  if (_rowEditSi === null) return;
+  const si = _rowEditSi, ri = _rowEditRi;
+  const r = state[si].rows[ri];
+  const adet = parseFloat(document.getElementById('re_adet').value);
+  const makine = parseFloat(document.getElementById('re_makine').value);
+  const gelen = parseFloat(document.getElementById('re_gelen').value);
+  const gereken = (!isNaN(adet) && !isNaN(makine)) ? adet * makine : adet;
+  const wrap = document.getElementById('re_teslim_uyari_wrap');
+  const uyari = document.getElementById('re_teslim_uyari');
+  if (!wrap || !uyari) return;
+  if (isNaN(gelen) || isNaN(gereken)) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  if (gelen < gereken) {
+    uyari.textContent = '⚠ Eksik Teslim Edildi — Beklenen: ' + gereken + ', Gelen: ' + gelen + ' (Eksik: ' + (gereken - gelen) + ')';
+    uyari.style.background = 'rgba(192,0,0,.18)';
+    uyari.style.color = '#ff6666';
+    uyari.style.border = '1px solid rgba(192,0,0,.4)';
+  } else if (gelen > gereken) {
+    uyari.textContent = '↑ Fazla Teslim Edildi — Beklenen: ' + gereken + ', Gelen: ' + gelen + ' (Fazla: ' + (gelen - gereken) + ')';
+    uyari.style.background = 'rgba(90,160,255,.18)';
+    uyari.style.color = '#7ab8f5';
+    uyari.style.border = '1px solid rgba(90,160,255,.4)';
+  } else {
+    uyari.textContent = '✓ Tam Teslim Edildi — ' + gereken + ' adet';
+    uyari.style.background = 'rgba(146,208,80,.15)';
+    uyari.style.color = '#92D050';
+    uyari.style.border = '1px solid rgba(146,208,80,.3)';
+  }
+}
+window.checkTeslimatUyari = checkTeslimatUyari;
 
 function closeRowEdit() {
   document.getElementById('rowEditOverlay').classList.remove('open');
@@ -2391,11 +2424,11 @@ function showAdminMsg(text, type) {
       </div>
       <div class="rowedit-field">
         <label>Adet</label>
-        <input type="text" id="re_adet" placeholder="Adet"/>
+        <input type="text" id="re_adet" placeholder="Adet" oninput="checkTeslimatUyari()"/>
       </div>
       <div class="rowedit-field">
         <label>Makine Sayısı</label>
-        <input type="number" id="re_makine" placeholder="0" min="0"/>
+        <input type="number" id="re_makine" placeholder="0" min="0" oninput="checkTeslimatUyari()"/>
       </div>
       <div class="rowedit-field">
         <label>Yetkili Onayi</label>
@@ -2415,7 +2448,10 @@ function showAdminMsg(text, type) {
       </div>
       <div class="rowedit-field">
         <label>Gelen Adet</label>
-        <input type="number" id="re_gelen" placeholder="0" min="0"/>
+        <input type="number" id="re_gelen" placeholder="0" min="0" oninput="checkTeslimatUyari()"/>
+      </div>
+      <div class="rowedit-field full" id="re_teslim_uyari_wrap" style="display:none;">
+        <div id="re_teslim_uyari" style="padding:8px 14px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;"></div>
       </div>
       <div class="rowedit-field">
         <label>Sipariş Tarihi</label>
