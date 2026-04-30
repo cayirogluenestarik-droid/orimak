@@ -710,6 +710,13 @@ function onLoggedIn(u) {
     if (addBtn) addBtn.style.display = 'none';
     const gmWrap = document.getElementById('globalMakineWrap');
     if (gmWrap) gmWrap.style.display = 'none';
+    // Operator/viewer: özel panelleri gizle
+    setTimeout(function() {
+      ['tabBtn-st','tabBtn-sn','tabBtn-yp'].forEach(function(id){
+        var b = document.getElementById(id);
+        if (b) b.style.display = 'none';
+      });
+    }, 400);
   }
 
   // Sayfa kısıtlaması — UI hazır olunca uygula
@@ -761,6 +768,13 @@ function reapplySession() {
       if (addBtn) addBtn.style.display = 'none';
       const gmWrap = document.getElementById('globalMakineWrap');
       if (gmWrap) gmWrap.style.display = 'none';
+      // Operator/viewer: özel panelleri gizle
+      setTimeout(function() {
+        ['tabBtn-st','tabBtn-sn','tabBtn-yp'].forEach(function(id){
+          var b = document.getElementById(id);
+          if (b) b.style.display = 'none';
+        });
+      }, 400);
     }
 
     // Sayfa kısıtlaması
@@ -795,10 +809,13 @@ function applySayfaKisitlama(sayfalar) {
   ozelPaneller.forEach(function(p) {
     const btn = document.getElementById(p.tabId);
     if (!btn) return;
-    // Rol yetersizse zaten gizli; rolü yeterliyse sayfa kısıtlamasına bak
-    if (canSeeSpecial) {
-      btn.style.display = sayfalar.includes(p.isim) ? '' : 'none';
+    // Operator veya viewer: özel panelleri tamamen gizle
+    if (!canSeeSpecial) {
+      btn.style.display = 'none';
+      return;
     }
+    // Admin / manager: sayfa kısıtlamasına bak
+    btn.style.display = (sayfalar.length === 0 || sayfalar.includes(p.isim)) ? '' : 'none';
   });
 }
 window.applySayfaKisitlama = applySayfaKisitlama;
@@ -7932,7 +7949,9 @@ function ypAddTab() {
 }
 
 window.ypSwitchTo = function() {
-  // Sayfa kısıtlaması kontrolü
+  // Rol ve sayfa kısıtlaması kontrolü
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('YEDEK PARÇA')) return;
   // Diğer sekmeleri kapat
@@ -8312,7 +8331,9 @@ function snAddTab() {
 }
 
 window.snSwitchTo = function() {
-  // Sayfa kısıtlaması kontrolü
+  // Rol ve sayfa kısıtlaması kontrolü
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('SERİ NO')) return;
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
@@ -9184,7 +9205,9 @@ function stAddTab() {
 }
 
 window.stSwitchTo = function() {
-  // Sayfa kısıtlaması kontrolü
+  // Rol ve sayfa kısıtlaması kontrolü
+  var role = window._currentRole || 'viewer';
+  if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('SERVİS TAKİP')) return;
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
