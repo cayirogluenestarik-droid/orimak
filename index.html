@@ -1264,6 +1264,10 @@ async function yeniPartiBaslat() {
           delete temiz.gelenAdet;
           delete temiz.makine; delete temiz.sipTarihi; delete temiz.terminTarihi;
           delete temiz.teslimTarihi;
+          // Malzeme adı (3), kodu (2) ve adet (5) her zaman korunur
+          if (row['2'] !== undefined) temiz['2'] = row['2'];
+          if (row['3'] !== undefined) temiz['3'] = row['3'];
+          if (row['5'] !== undefined) temiz['5'] = row['5'];
           return temiz;
         })
       };
@@ -2129,10 +2133,24 @@ async function saveRowEdit() {
   if (_rowEditSi === null) return;
   const si = _rowEditSi, ri = _rowEditRi;
   const r = state[si].rows[ri];
-  r['3']           = document.getElementById('re_ad').value.trim();
-  r['2']           = document.getElementById('re_kod').value.trim();
+  const sheet = SHEETS[si];
+  const isSiparisTeslim = sheet && (sheet.type === 'siparis' || sheet.type === 'teslim');
+
+  const yeniAd  = document.getElementById('re_ad').value.trim();
+  const yeniKod = document.getElementById('re_kod').value.trim();
+  const yeniAdet = document.getElementById('re_adet').value.trim();
+
+  // Sipariş/teslim sayfası değilse: malzeme adı, kodu ve adet boş bırakılmışsa ESKİ değeri koru
+  if (!isSiparisTeslim) {
+    r['3'] = yeniAd  || r['3'] || '';
+    r['2'] = yeniKod || r['2'] || '';
+    r['5'] = yeniAdet || r['5'] || '';
+  } else {
+    r['3'] = yeniAd;
+    r['2'] = yeniKod;
+    r['5'] = yeniAdet;
+  }
   r['4']           = document.getElementById('re_olcu').value.trim();
-  r['5']           = document.getElementById('re_adet').value.trim();
   r._makine        = document.getElementById('re_makine').value;
   const prevYetkili = r._yetkili;
   r._yetkili       = document.getElementById('re_yetkili').value;
