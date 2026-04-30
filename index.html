@@ -10121,23 +10121,28 @@ window.applyTopluOnay = function(){
       if(u.key === 'yetkili'){
         r._yetkili = u.val;
         r._yetkiliKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
-        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
-          SHEETS[si].rows[item.ri].yetkili = u.val;
-          SHEETS[si].rows[item.ri].yetkiliKisi = r._yetkiliKisi;
-        }
       }
       if(u.key === 'gelis'){
         r._gelis = u.val;
         r._gelisKisi = u.val === 'Onaylandı' ? (kisi + ' \u00b7 ' + tarih) : '';
-        if(SHEETS[si] && SHEETS[si].rows && SHEETS[si].rows[item.ri]){
-          SHEETS[si].rows[item.ri].gelis = u.val;
-          SHEETS[si].rows[item.ri].gelisKisi = r._gelisKisi;
-        }
       }
     });
   });
-  if(typeof apiUpdate === 'function' && typeof isOnline !== 'undefined' && isOnline) apiUpdate(si, 0, 0, '');
-  else if(typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
+  /* state → SHEETS senkronizasyonu */
+  if(SHEETS && SHEETS[si]){
+    SHEETS[si].rows = state[si].rows.map(function(r){
+      var clean = {};
+      Object.keys(r).forEach(function(k){ if(!k.startsWith('_')) clean[k] = r[k]; });
+      clean.yetkili     = r._yetkili     !== undefined ? r._yetkili     : (r.yetkili     || '');
+      clean.yetkiliKisi = r._yetkiliKisi !== undefined ? r._yetkiliKisi : (r.yetkiliKisi || '');
+      clean.gelis       = r._gelis       !== undefined ? r._gelis       : (r.gelis       || '');
+      clean.gelisKisi   = r._gelisKisi   !== undefined ? r._gelisKisi   : (r.gelisKisi   || '');
+      clean.gelenAdet   = r._gelenAdet   !== undefined ? r._gelenAdet   : (r.gelenAdet   || '');
+      clean.makine      = r._makine      !== undefined ? r._makine      : (r.makine      || '');
+      return clean;
+    });
+  }
+  if(typeof fbSaveAll === 'function' && typeof isOnline !== 'undefined' && isOnline) fbSaveAll();
   if(typeof rebuildTable === 'function') rebuildTable(si);
   if(typeof updateStats === 'function') updateStats(si);
   window.closeTopluOnay();
