@@ -10043,8 +10043,28 @@ function toUpdateBtn(idx){
 }
 
 function toSatirlar(kapsam,grupSec){
-  if(typeof activeSheet==='undefined'||!state||!state[activeSheet])return[];
-  var rows=state[activeSheet].rows||[];
+  if(typeof activeSheet==='undefined')return[];
+  // state[activeSheet] kullan, yoksa SHEETS[activeSheet] üzerinden oluştur
+  var rows=[];
+  if(state&&state[activeSheet]&&(state[activeSheet].rows||[]).length>0){
+    rows=state[activeSheet].rows;
+  } else if(typeof SHEETS!=='undefined'&&SHEETS[activeSheet]&&SHEETS[activeSheet].rows){
+    // state henüz oluşturulmadıysa veya boşsa SHEETS'ten oku
+    var sheetRows=SHEETS[activeSheet].rows||[];
+    var no=0;
+    sheetRows.forEach(function(row){
+      var g=(Object.keys(row).filter(function(k){return row[k]&&String(row[k]).trim()&&k!=='_id';}).length===1&&!row['3']);
+      if(!g&&(row['3']||row['2']))no++;
+      rows.push(Object.assign({},row,{
+        _group:g,
+        _rowNo:g?null:(row['1']||no),
+        _yetkili:row.yetkili||'',
+        _yetkiliKisi:row.yetkiliKisi||'',
+        _gelis:row.gelis||'',
+        _gelisKisi:row.gelisKisi||''
+      }));
+    });
+  }
   var currentGroup=null; var result=[];
   rows.forEach(function(r,ri){
     if(r._group){currentGroup=r['2']||'';return;}
@@ -10080,18 +10100,24 @@ window.openTopluOnay=function(){
   document.getElementById('tomKapsam').value='hepsi';
   document.getElementById('tomGrupWrap').style.display='none';
   var gs=document.getElementById('tomGrup'); gs.innerHTML='';
-  if(state&&state[si]){
-    var gruplar=[];
-    (state[si].rows||[]).forEach(function(r){if(r._group&&r['2']&&!gruplar.includes(r['2']))gruplar.push(r['2']);});
-    gruplar.forEach(function(g){var o=document.createElement('option');o.value=g;o.textContent=g;gs.appendChild(o);});
-    var gopt=document.querySelector('#tomKapsam option[value="grup"]');
-    if(gopt)gopt.style.display=gruplar.length?'':'none';
-  }
+  // Grupları state'den yoksa SHEETS'ten al
+  var gruplar=[];
+  var sourceRows=(state&&state[si]&&(state[si].rows||[]).length>0)?state[si].rows:(SHEETS[si].rows||[]);
+  sourceRows.forEach(function(r){
+    var isGroup=r._group||(Object.keys(r).filter(function(k){return r[k]&&String(r[k]).trim()&&k!=='_id';}).length===1&&!r['3']);
+    if(isGroup&&r['2']&&gruplar.indexOf(r['2'])<0)gruplar.push(r['2']);
+  });
+  gruplar.forEach(function(g){var o=document.createElement('option');o.value=g;o.textContent=g;gs.appendChild(o);});
+  var gopt=document.querySelector('#tomKapsam option[value="grup"]');
+  if(gopt)gopt.style.display=gruplar.length?'':'none';
   document.getElementById('tomChkYetkili').checked=false;
   document.getElementById('tomChkGelis').checked=false;
   document.getElementById('tomYetkiliVal').value='Onaylandı';
   document.getElementById('tomGelisVal').value='Onaylandı';
-  var rows=state&&state[si]?(state[si].rows||[]).filter(function(r){return!r._group&&(r['3']||r['2']);}):[];
+  var rows=sourceRows.filter(function(r){
+    var isGroup=r._group||(Object.keys(r).filter(function(k){return r[k]&&String(r[k]).trim()&&k!=='_id';}).length===1&&!r['3']);
+    return !isGroup&&(r['3']||r['2']);
+  });
   document.getElementById('tomInfo').innerHTML='<strong>Aktif sayfa:</strong> '+(SHEETS[si].name||'')+' &nbsp;&middot;&nbsp; <strong>Toplam:</strong> '+rows.length+' satır';
   document.getElementById('tomPreview').textContent='';
   document.getElementById('topluOnayModal').classList.add('open');
@@ -10101,7 +10127,7 @@ window.closeTopluOnay=function(){document.getElementById('topluOnayModal').class
 
 window.applyTopluOnay=function(){
   var si=typeof activeSheet!=='undefined'?activeSheet:-1;
-  if(si<0||!state||!state[si])return;
+  if(si<0)return;
   var role=window._currentRole||'viewer';
   var kapsam=document.getElementById('tomKapsam').value;
   var grupSec=document.getElementById('tomGrup').value;
@@ -10119,17 +10145,53 @@ window.applyTopluOnay=function(){
   var kisi=window._currentUser||'?';
   var tarih=new Date().toLocaleDateString('tr-TR');
   satirlar.forEach(function(item){
-    var r=state[si].rows[item.ri];
     uygulanacak.forEach(function(u){
-      if(u.key==='yetkili'){
-        r._yetkili=u.val;
-        r._yetkiliKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
-        if(SHEETS[si].rows[item.ri]){SHEETS[si].rows[item.ri].yetkili=u.val;SHEETS[si].rows[item.ri].yetkiliKisi=r._yetkiliKisi;}
+      // 1) state güncelle
+      if(state&&state[si]&&state[si].rows&&state[si].rows[item.ri]){
+        var r=state[si].rows[item.ri];
+        if(u.key==='yetkili'){
+          r._yetkili=u.val;
+          r._yetkiliKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        }
+        if(u.key==='gelis'){
+          r._gelis=u.val;
+          r._gelisKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        }
       }
-      if(u.key==='gelis'){
-        r._gelis=u.val;
-        r._gelisKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
-        if(SHEETS[si].rows[item.ri]){SHEETS[si].rows[item.ri].gelis=u.val;SHEETS[si].rows[item.ri].gelisKisi=r._gelisKisi;}
+      // 2) SHEETS güncelle
+      if(typeof SHEETS!=='undefined'&&SHEETS[si]&&SHEETS[si].rows&&SHEETS[si].rows[item.ri]){
+        var sr=SHEETS[si].rows[item.ri];
+        if(u.key==='yetkili'){
+          sr.yetkili=u.val;
+          sr.yetkiliKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        }
+        if(u.key==='gelis'){
+          sr.gelis=u.val;
+          sr.gelisKisi=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        }
+      }
+      // 3) DOM'daki select elementlerini direkt güncelle
+      var trEl=document.getElementById('row-'+si+'-'+item.ri);
+      if(trEl){
+        if(u.key==='yetkili'){
+          var ysel=trEl.querySelector('.onay-select[data-type="yetkili"],select[data-field="yetkili"]');
+          if(!ysel){
+            // class veya data attribute olmadan, sırasıyla ilk onay-select
+            var allSels=trEl.querySelectorAll('.onay-select');
+            if(allSels.length>0)ysel=allSels[0];
+          }
+          if(ysel){ysel.value=u.val;}
+          var ykisi=trEl.querySelector('.onaylayan-kisi');
+          if(ykisi)ykisi.textContent=u.val==='Onaylandı'?(kisi+' \u00b7 '+tarih):'';
+        }
+        if(u.key==='gelis'){
+          var gsel=trEl.querySelector('.onay-select[data-type="gelis"],select[data-field="gelis"]');
+          if(!gsel){
+            var allSels2=trEl.querySelectorAll('.onay-select');
+            if(allSels2.length>1)gsel=allSels2[1];
+          }
+          if(gsel){gsel.value=u.val;}
+        }
       }
     });
   });
