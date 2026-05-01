@@ -2673,6 +2673,128 @@ function showAdminMsg(text, type) {
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════
+     PARTS QUOTE FORM (ENGLISH)
+════════════════════════════════════════════════════ -->
+<div id="partsQuoteModal" class="oriform-overlay" onclick="if(event.target===this)window.closePartsQuoteForm()">
+<div class="oriform-box">
+  <div class="oriform-toolbar">
+    <h3>💰 PARTS QUOTE FORM</h3>
+    <button class="oriform-tbtn oriform-tbtn-pdf" onclick="window.printOrimakForm('partsFormPrint')">🖨 PDF / Print</button>
+    <button class="oriform-tbtn oriform-tbtn-close" onclick="window.closePartsQuoteForm()">✕ Close</button>
+  </div>
+  <div id="partsFormPrint" class="oriform-page">
+
+    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;margin-bottom:14px;">
+      <tr>
+        <td style="width:38%;vertical-align:middle;">
+          <div style="font-size:20px;font-weight:900;color:#e36400;font-family:Barlow Condensed,sans-serif;letter-spacing:3px;">ORIMAK</div>
+          <div style="font-size:9px;color:#333;font-weight:700;margin-top:4px;letter-spacing:.5px;">MACHINERY INDUSTRY AND TRADE LTD.</div>
+          <div style="font-size:8.5px;color:#555;line-height:1.6;margin-top:4px;">
+            Mahmudiye Mh.19.Mobilya Sk. No:2/E INEGOL/BURSA<br>
+            PHONE: 0 224 718 62 68 &nbsp; MOBILE: 0 530 886 82 16<br>
+            E-MAIL: servis@orimak.com &nbsp; WEB: www.orimak.com
+          </div>
+        </td>
+        <td style="text-align:right;vertical-align:top;">
+          <div style="font-size:17px;font-weight:900;letter-spacing:2px;border:2px solid #333;padding:8px 18px;display:inline-block;">QUOTE FORM</div>
+          <div style="margin-top:10px;font-size:10px;line-height:1.9;text-align:right;">
+            QUOTE NO: <input id="pqf_no" class="oriform-input" style="width:70px;text-align:right;" placeholder="1"/><br>
+            QUOTE DATE: <input id="pqf_date" class="oriform-input" type="date" style="width:130px;"/>
+          </div>
+        </td>
+      </tr>
+    </table></div>
+
+    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;border:1.5px solid #555;margin-bottom:4px;font-size:11px;">
+      <tr>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:20%;">CUSTOMER NAME</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:30%;"><input id="pqf_customer" class="oriform-input" style="width:100%;"/></td>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:18%;">QUOTE NO:</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;"><input id="pqf_no2" class="oriform-input" style="width:80px;" oninput="document.getElementById('pqf_no').value=this.value"/></td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">CONTACT PERSON</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;"><input id="pqf_contact" class="oriform-input" style="width:100%;"/></td>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">QUOTE DATE</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;"><input id="pqf_date2" class="oriform-input" type="date" style="width:130px;" oninput="document.getElementById('pqf_date').value=this.value"/></td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">PHONE</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;"><input id="pqf_phone" class="oriform-input" style="width:100%;"/></td>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">PAYMENT</td>
+        <td style="padding:4px 8px;border-bottom:1px solid #ccc;">
+          <select id="pqf_payment" style="border:none;border-bottom:1px solid #999;background:transparent;font-size:11px;outline:none;width:100%;padding:1px 0;">
+            <option>CASH</option><option>30 DAYS</option><option>60 DAYS</option><option>WIRE TRANSFER</option><option>CREDIT CARD</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-right:1px solid #ccc;vertical-align:top;padding-top:7px;">FAULT DESCRIPTION</td>
+        <td colspan="3" style="padding:5px 8px;"><textarea id="pqf_fault" class="oriform-ta" rows="2" placeholder="Fault description..."></textarea></td>
+      </tr>
+    </table></div>
+
+    <div style="font-size:9.5px;color:#555;text-align:right;margin-bottom:6px;">
+      DELIVERY DATE: <input id="pqf_delivery" class="oriform-input" type="date" style="width:130px;"/>
+    </div>
+
+    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;border:1.5px solid #555;font-size:11px;margin-bottom:3px;">
+      <thead>
+        <tr style="background:#e36400;color:#fff;">
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:6%;border-right:1px solid #c85500;text-align:center;">NO</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;border-right:1px solid #c85500;text-align:left;">PRODUCT / PART NAME</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:10%;border-right:1px solid #c85500;text-align:center;">QTY</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:14%;border-right:1px solid #c85500;text-align:right;">UNIT PRICE</th>
+          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:14%;text-align:right;">AMOUNT</th>
+        </tr>
+      </thead>
+      <tbody id="pqfBody"></tbody>
+    </table></div>
+    <div style="text-align:left;margin-bottom:8px;">
+      <button onclick="window.pqfAddRow()" style="font-size:10px;background:rgba(227,100,0,.1);border:1px solid rgba(227,100,0,.3);color:#e36400;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:Barlow Condensed,sans-serif;font-weight:700;">+ Add Row</button>
+    </div>
+
+    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;margin-bottom:14px;">
+      <tr>
+        <td style="width:55%;"></td>
+        <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;text-align:right;background:#f5f5f5;">SUBTOTAL</td>
+        <td style="padding:4px 12px;font-size:11px;font-weight:700;border:1px solid #555;border-left:none;text-align:right;min-width:110px;" id="pqfSubtotal">0.00</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;border-top:none;text-align:right;background:#f5f5f5;">
+          %<input id="pqfVatRate" class="oriform-input" style="width:24px;text-align:center;font-size:10px;" value="20" oninput="window.pqfCalculate()"/> VAT
+        </td>
+        <td style="padding:4px 12px;font-size:11px;border:1px solid #555;border-top:none;border-left:none;text-align:right;" id="pqfVat">0.00</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style="padding:5px 10px;font-size:11px;font-weight:900;border:2px solid #e36400;text-align:right;color:#e36400;">GRAND TOTAL</td>
+        <td style="padding:5px 12px;font-size:13px;font-weight:900;border:2px solid #e36400;border-left:none;text-align:right;color:#e36400;" id="pqfGrandTotal">0.00</td>
+      </tr>
+    </table></div>
+
+    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;border:1.5px solid #555;font-size:10px;">
+      <tr>
+        <td width="40%" style="padding:10px 12px;border-right:1px solid #ccc;text-align:center;vertical-align:middle;">
+          <div style="font-weight:700;color:#333;margin-bottom:6px;">PREPARED BY</div>
+          <div style="height:70px;border-bottom:1px dashed #bbb;margin-top:10px;"></div>
+          <div style="font-size:8px;color:#aaa;margin-top:3px;">SIGNATURE / STAMP</div>
+        </td>
+        <td width="30%" style="padding:10px 12px;border-right:1px solid #ccc;vertical-align:top;">
+          <div style="font-weight:700;color:#333;margin-bottom:6px;">CUSTOMER APPROVAL</div>
+          <div style="font-size:9px;color:#555;">NAME - SURNAME: <input id="pqf_custApprName" class="oriform-input" style="width:120px;" placeholder=""/></div>
+          <div style="height:50px;border-bottom:1px dashed #bbb;margin-top:10px;"></div>
+          <div style="font-size:8px;color:#aaa;margin-top:3px;">SIGNATURE</div>
+        </td>
+        <td width="30%" style="padding:8px 12px;text-align:center;vertical-align:middle;"></td>
+      </tr>
+    </table></div>
+  </div>
+</div>
+</div>
+
 <script>
 document.getElementById('headerDate').textContent = new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric'});
 
@@ -8543,7 +8665,7 @@ function stRender() {
     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+
       '<button class="st-form-btn st-form-btn-servis" onclick="window.openServistTalepFormu()">📋 Servis Talep Formu</button>'+
       '<button class="st-form-btn st-form-btn-teklif" onclick="window.openParcaTeklifFormu()">💰 Parça Teklif Formu</button>'+
-      '<button class="st-form-btn st-form-btn-teklif" onclick="window.openPartsQuoteForm()" style="background:rgba(90,160,255,.12);color:#5aa0ff;border:1px solid rgba(90,160,255,.3);">💰 Parts Quote Form</button>'+
+      '<button class="st-form-btn" onclick="window.openPartsQuoteForm()" style="background:rgba(90,160,255,.12);color:#5aa0ff;border:1px solid rgba(90,160,255,.3);border-radius:6px;padding:7px 14px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;">💰 Parts Quote Form</button>'+
       '<span id="stBadge" style="font-size:11px;color:#666;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;"></span>'+
     '</div>'+
   '</div>'+
@@ -10387,135 +10509,6 @@ window.applyTopluOnay = function(){
 <script>
 // ════════════════════════════════════════════════════════
 //  SERVİS TALEP FORMU
-<!-- ══════════════════════════════════════════════════════════
-     PARTS QUOTE FORM MODAL (ENGLISH)
-══════════════════════════════════════════════════════════ -->
-<div id="partsQuoteModal" class="oriform-overlay" onclick="if(event.target===this)window.closePartsQuoteForm()">
-<div class="oriform-box">
-  <div class="oriform-toolbar">
-    <h3>💰 PARTS QUOTE FORM</h3>
-    <button class="oriform-tbtn oriform-tbtn-pdf" onclick="window.printOrimakForm('partsFormPrint')">🖨 PDF / Print</button>
-    <button class="oriform-tbtn oriform-tbtn-close" onclick="window.closePartsQuoteForm()">✕ Close</button>
-  </div>
-  <div id="partsFormPrint" class="oriform-page">
-
-    <!-- HEADER BAND -->
-    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;margin-bottom:14px;">
-      <tr>
-        <td style="width:38%;vertical-align:middle;">
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAADUCAYAAABam3+dAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABhaVRYdFNuaXBNZXRhZGF0YQAAAAAAeyJjbGlwUG9pbnRzIjpbeyJ4IjowLCJ5IjowfSx7IngiOjcyMSwieSI6MH0seyJ4Ijo3MjEsInkiOjIxMn0seyJ4IjowLCJ5IjoyMTJ9XX0y3pnMAAAYcUlEQVR4Xu3dPYwd13kG4Luy/KMl7LgI1RgICSONySIOIDpAgIAyEKSwiwSCacEVqcKFaBUpRCpNQLEJIFFACklUZ4tFCkeCk8ZsTbemCje0kSpU4UZsEkeSASc2s+/ujLmkyN07d868Pw+w8B1SXs6dO3fmnW++c2br7o4VAACwtseq/wUAANYkRAMAQENCNAAANCREAwBAQ0I0AAA0JEQDAEBDQjQAADQkRAMAQENCNAAANCREAwBAQ0I0AAA0JEQDAEBDQjQAADQkRAMAQENCNAAANCREAwBAQ0I0AAA0JEQDAEBDQjQAADQkRAMAQENCNAAANCREAwBAQ0I0AAA0JEQDAEBDQjQAADQkRAMAQENCNAAA" style="height:52px;width:auto;" alt="Orimak Logo"/>
-          <div style="font-size:9px;color:#333;font-weight:700;margin-top:4px;letter-spacing:.5px;">MACHINERY INDUSTRY AND TRADE LTD.</div>
-          <div style="font-size:8.5px;color:#555;line-height:1.6;margin-top:4px;">
-            Mahmudiye Mh.19.Mobilya Sk. No:2/E İNEGÖL/BURSA<br>
-            PHONE: 0 224 718 62 68 &nbsp; MOBILE: 0 530 886 82 16<br>
-            E-MAIL: servis@orimak.com &nbsp; WEB: www.orimak.com
-          </div>
-        </td>
-        <td style="text-align:right;vertical-align:top;">
-          <div style="font-size:17px;font-weight:900;letter-spacing:2px;border:2px solid #333;padding:8px 18px;display:inline-block;">QUOTE FORM</div>
-          <div style="margin-top:10px;font-size:10px;line-height:1.9;text-align:right;">
-            QUOTE NO: <input id="pqf_no" class="oriform-input" style="width:70px;text-align:right;" placeholder="1"/><br>
-            QUOTE DATE: <input id="pqf_date" class="oriform-input" type="date" style="width:130px;"/>
-          </div>
-        </td>
-      </tr>
-    </table></div>
-
-    <!-- CUSTOMER INFO -->
-    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;border:1.5px solid #555;margin-bottom:4px;font-size:11px;">
-      <tr>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:20%;">CUSTOMER NAME</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:30%;"><input id="pqf_customer" class="oriform-input" style="width:100%;"/></td>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;width:18%;">QUOTE NO:</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;"><input id="pqf_no2" class="oriform-input" style="width:80px;" oninput="document.getElementById('pqf_no').value=this.value"/></td>
-      </tr>
-      <tr>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">CONTACT PERSON</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;"><input id="pqf_contact" class="oriform-input" style="width:100%;"/></td>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">QUOTE DATE</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;"><input id="pqf_date2" class="oriform-input" type="date" style="width:130px;" oninput="document.getElementById('pqf_date').value=this.value"/></td>
-      </tr>
-      <tr>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">PHONE</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;border-right:1px solid #ccc;"><input id="pqf_phone" class="oriform-input" style="width:100%;"/></td>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-bottom:1px solid #ccc;border-right:1px solid #ccc;">PAYMENT</td>
-        <td style="padding:4px 8px;border-bottom:1px solid #ccc;">
-          <select id="pqf_payment" style="border:none;border-bottom:1px solid #999;background:transparent;font-size:11px;outline:none;width:100%;padding:1px 0;">
-            <option>CASH</option><option>30 DAYS</option><option>60 DAYS</option><option>WIRE TRANSFER</option><option>CREDIT CARD</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:5px 8px;font-weight:700;background:#f0f0f0;border-right:1px solid #ccc;vertical-align:top;padding-top:7px;">FAULT DESCRIPTION</td>
-        <td colspan="3" style="padding:5px 8px;"><textarea id="pqf_fault" class="oriform-ta" rows="2" placeholder="Fault description..."></textarea></td>
-      </tr>
-    </table></div>
-
-    <!-- DELIVERY DATE -->
-    <div style="font-size:9.5px;color:#555;text-align:right;margin-bottom:6px;">
-      DELIVERY DATE: <input id="pqf_delivery" class="oriform-input" type="date" style="width:130px;"/>
-    </div>
-
-    <!-- PRODUCT TABLE -->
-    <div class="oriform-scroll"><table width="100%" id="pqfTable" style="border-collapse:collapse;border:1.5px solid #555;font-size:11px;margin-bottom:3px;">
-      <thead>
-        <tr style="background:#e36400;color:#fff;">
-          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:6%;border-right:1px solid #c85500;text-align:center;">NO</th>
-          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;border-right:1px solid #c85500;text-align:left;">PRODUCT</th>
-          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:10%;border-right:1px solid #c85500;text-align:center;">QTY</th>
-          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:14%;border-right:1px solid #c85500;text-align:right;">UNIT PRICE</th>
-          <th style="padding:6px 8px;font-size:10px;letter-spacing:1px;width:14%;text-align:right;">AMOUNT</th>
-        </tr>
-      </thead>
-      <tbody id="pqfBody"></tbody>
-    </table></div>
-    <div style="text-align:left;margin-bottom:8px;">
-      <button onclick="window.pqfAddRow()" style="font-size:10px;background:rgba(227,100,0,.1);border:1px solid rgba(227,100,0,.3);color:#e36400;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:Barlow Condensed,sans-serif;font-weight:700;">+ Add Row</button>
-    </div>
-
-    <!-- TOTALS -->
-    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;margin-bottom:14px;">
-      <tr>
-        <td style="width:55%;"></td>
-        <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;text-align:right;background:#f5f5f5;">SUBTOTAL</td>
-        <td style="padding:4px 12px;font-size:11px;font-weight:700;border:1px solid #555;border-left:none;text-align:right;min-width:110px;" id="pqfSubtotal">0.00</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;border-top:none;text-align:right;background:#f5f5f5;">
-          %<input id="pqfVatRate" class="oriform-input" style="width:24px;text-align:center;font-size:10px;" value="20" oninput="window.pqfCalculate()"/> VAT
-        </td>
-        <td style="padding:4px 12px;font-size:11px;border:1px solid #555;border-top:none;border-left:none;text-align:right;" id="pqfVat">0.00</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td style="padding:5px 10px;font-size:11px;font-weight:900;border:2px solid #e36400;text-align:right;color:#e36400;">GRAND TOTAL</td>
-        <td style="padding:5px 12px;font-size:13px;font-weight:900;border:2px solid #e36400;border-left:none;text-align:right;color:#e36400;" id="pqfGrandTotal">0.00</td>
-      </tr>
-    </table></div>
-
-    <!-- SIGNATURES -->
-    <div class="oriform-scroll"><table width="100%" style="border-collapse:collapse;border:1.5px solid #555;font-size:10px;">
-      <tr>
-        <td width="40%" style="padding:10px 12px;border-right:1px solid #ccc;text-align:center;vertical-align:middle;">
-          <div style="font-weight:700;color:#333;margin-bottom:6px;">PREPARED BY</div>
-          <div style="height:70px;border-bottom:1px dashed #bbb;margin-top:10px;"></div>
-          <div style="font-size:8px;color:#aaa;margin-top:3px;">SIGNATURE / STAMP</div>
-        </td>
-        <td width="30%" style="padding:10px 12px;border-right:1px solid #ccc;vertical-align:top;">
-          <div style="font-weight:700;color:#333;margin-bottom:6px;">CUSTOMER APPROVAL</div>
-          <div style="font-size:9px;color:#555;">NAME - SURNAME: <input id="pqf_custApprName" class="oriform-input" style="width:120px;" placeholder=""/></div>
-          <div style="height:50px;border-bottom:1px dashed #bbb;margin-top:10px;"></div>
-          <div style="font-size:8px;color:#aaa;margin-top:3px;">SIGNATURE</div>
-        </td>
-        <td width="30%" style="padding:8px 12px;text-align:center;vertical-align:middle;"></td>
-      </tr>
-    </table></div>
-  </div>
-</div>
-</div>
-
-
 // ════════════════════════════════════════════════════════
 window.openServistTalepFormu = function() {
   var today = new Date().toISOString().slice(0,10);
@@ -10575,6 +10568,96 @@ window.openParcaTeklifFormu = function() {
 window.closeParcaTeklifFormu = function() {
   document.getElementById('parcaTeklifModal').classList.remove('open');
 };
+window.closePartsQuoteForm = function() {
+  document.getElementById('partsQuoteModal').classList.remove('open');
+};
+
+// ════════════════════════════════════════════════════════
+//  PARTS QUOTE FORM — JavaScript (English)
+// ════════════════════════════════════════════════════════
+var pqfRows = [];
+var pqfInitDone = false;
+
+window.openPartsQuoteForm = function() {
+  var today = new Date().toISOString().slice(0,10);
+  var el = document.getElementById('pqf_date');
+  if (el && !el.value) el.value = today;
+  var el2 = document.getElementById('pqf_date2');
+  if (el2 && !el2.value) el2.value = today;
+  if (!pqfInitDone) {
+    pqfRows = [];
+    for (var i = 0; i < 14; i++) pqfRows.push({product:'', qty:'', price:'', currency:'USD'});
+    pqfRenderRows();
+    pqfInitDone = true;
+  }
+  document.getElementById('partsQuoteModal').classList.add('open');
+  setTimeout(function() { var f = document.getElementById('pqf_customer'); if (f) f.focus(); }, 100);
+};
+
+window.pqfAddRow = function() {
+  pqfRows.push({product:'', qty:'', price:'', currency:'USD'});
+  pqfRenderRows();
+  setTimeout(function() {
+    var rows = document.querySelectorAll('#pqfBody tr');
+    if (rows.length) { var inp = rows[rows.length-1].querySelector('input'); if (inp) inp.focus(); }
+  }, 30);
+};
+
+function pqfEsc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function pqfCurrSym(c) {
+  if (c==='USD') return '$'; if (c==='EUR') return '€';
+  if (c==='GBP') return '£'; return '₺';
+}
+function pqfFmt(n) { return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function pqfRenderRows() {
+  var tbody = document.getElementById('pqfBody');
+  if (!tbody) return;
+  var html = '';
+  pqfRows.forEach(function(r, i) {
+    var t = (parseFloat((r.qty||'').replace(',','.')) || 0) * (parseFloat((r.price||'').replace(',','.')) || 0);
+    html += '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+';">' +
+      '<td style="padding:4px 6px;text-align:center;font-size:11px;color:#999;">'+(i+1)+'</td>' +
+      '<td style="padding:3px 6px;"><input class="oriform-input" style="width:100%;" value="'+pqfEsc(r.product)+'" placeholder="" oninput="pqfRows['+i+'].product=this.value"/></td>' +
+      '<td style="padding:3px 6px;"><input class="oriform-input" style="width:52px;text-align:center;" value="'+pqfEsc(r.qty)+'" placeholder="" oninput="pqfRows['+i+'].qty=this.value;window.pqfCalculate()"/></td>' +
+      '<td style="padding:3px 6px;text-align:right;">' +
+        '<input class="oriform-input" style="width:80px;text-align:right;" value="'+pqfEsc(r.price)+'" placeholder="" oninput="pqfRows['+i+'].price=this.value;window.pqfCalculate()"/>' +
+        '<select onchange="pqfRows['+i+'].currency=this.value;window.pqfCalculate()" style="border:none;background:transparent;font-size:10px;outline:none;margin-left:2px;">' +
+          '<option value="USD"'+(r.currency==='USD'?' selected':'')+'>USD</option>' +
+          '<option value="EUR"'+(r.currency==='EUR'?' selected':'')+'>EUR</option>' +
+          '<option value="TRY"'+(r.currency==='TRY'?' selected':'')+'>TRY</option>' +
+          '<option value="GBP"'+(r.currency==='GBP'?' selected':'')+'>GBP</option>' +
+        '</select>' +
+      '</td>' +
+      '<td style="padding:3px 6px;text-align:right;font-size:11px;" id="pqf_row_'+i+'">'+(t>0?pqfFmt(t)+' '+pqfCurrSym(r.currency||'USD'):'')+' </td>' +
+    '</tr>';
+  });
+  tbody.innerHTML = html;
+  window.pqfCalculate();
+}
+
+window.pqfCalculate = function() {
+  var subtotal = 0, mainCur = 'USD';
+  pqfRows.forEach(function(r, i) {
+    var qty = parseFloat((r.qty||'').replace(',','.')) || 0;
+    var price = parseFloat((r.price||'').replace(',','.')) || 0;
+    var t = qty * price;
+    if (i === 0) mainCur = r.currency || 'USD';
+    subtotal += t;
+    var cell = document.getElementById('pqf_row_'+i);
+    if (cell) cell.textContent = t > 0 ? pqfFmt(t)+' '+pqfCurrSym(r.currency||'USD') : '';
+  });
+  var vatRate = parseFloat((document.getElementById('pqfVatRate')||{}).value) || 0;
+  var vat = subtotal * vatRate / 100;
+  var grand = subtotal + vat;
+  var sym = pqfCurrSym(mainCur);
+  function set(id, v) { var el=document.getElementById(id); if(el) el.textContent = pqfFmt(v)+' '+sym; }
+  set('pqfSubtotal', subtotal); set('pqfVat', vat); set('pqfGrandTotal', grand);
+};
+
+
 
 window.pfAddRow = function() {
   pfRows.push({urun:'',miktar:'',fiyat:'',pb:'TL'});
@@ -10650,105 +10733,6 @@ window.pfHesapla = function() {
       : pfFmt(v)+' '+pfCurrencySymbol(currencySummary);
   };
   s('pfToplam',toplam); s('pfKdv',kdv); s('pfGenel',genel);
-};
-
-
-// ════════════════════════════════════════════════════════
-//  PARTS QUOTE FORM (ENGLISH)
-// ════════════════════════════════════════════════════════
-var pqfRows = [];
-var pqfInitDone = false;
-
-window.openPartsQuoteForm = function() {
-  var today = new Date().toISOString().slice(0,10);
-  var el = document.getElementById('pqf_date');
-  if (el && !el.value) { el.value = today; }
-  var el2 = document.getElementById('pqf_date2');
-  if (el2 && !el2.value) { el2.value = today; }
-
-  if (!pqfInitDone) {
-    pqfRows = [];
-    for (var i=0; i<14; i++) pqfRows.push({product:'',qty:'',price:'',currency:'USD'});
-    pqfRenderRows();
-    pqfInitDone = true;
-  }
-  document.getElementById('partsQuoteModal').classList.add('open');
-  setTimeout(function(){ var f=document.getElementById('pqf_customer'); if(f)f.focus(); }, 100);
-};
-
-window.closePartsQuoteForm = function() {
-  document.getElementById('partsQuoteModal').classList.remove('open');
-};
-
-window.pqfAddRow = function() {
-  pqfRows.push({product:'',qty:'',price:'',currency:'USD'});
-  pqfRenderRows();
-  setTimeout(function(){
-    var inputs = document.querySelectorAll('#pqfBody tr:last-child .pqf-product-input');
-    if(inputs.length) inputs[inputs.length-1].focus();
-  }, 30);
-};
-
-function pqfEsc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function pqfCurrencySymbol(cur) {
-  if(cur==='USD') return '$';
-  if(cur==='EUR') return '€';
-  if(cur==='TRY'||cur==='TL') return '₺';
-  if(cur==='GBP') return '£';
-  return cur||'$';
-}
-
-function pqfRenderRows() {
-  var tbody = document.getElementById('pqfBody');
-  if(!tbody) return;
-  var html = '';
-  pqfRows.forEach(function(r,i) {
-    html += '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+';">' +
-      '<td style="padding:4px 6px;text-align:center;font-size:11px;color:#999;">'+(i+1)+'</td>' +
-      '<td style="padding:3px 6px;">' +
-        '<input class="oriform-input pqf-product-input" style="width:100%;" value="'+pqfEsc(r.product)+'" placeholder="" oninput="pqfRows['+i+'].product=this.value"/>' +
-      '</td>' +
-      '<td style="padding:3px 6px;">' +
-        '<input class="oriform-input" style="width:52px;text-align:center;" value="'+pqfEsc(r.qty)+'" placeholder="" oninput="pqfRows['+i+'].qty=this.value;window.pqfCalculate()"/>' +
-      '</td>' +
-      '<td style="padding:3px 6px;text-align:right;">' +
-        '<input class="oriform-input" style="width:85px;text-align:right;" value="'+pqfEsc(r.price)+'" placeholder="" oninput="pqfRows['+i+'].price=this.value;window.pqfCalculate()"/>' +
-        '<select class="pqf-currency-select" onchange="pqfRows['+i+'].currency=this.value;window.pqfCalculate()" style="border:none;background:transparent;font-size:10px;outline:none;margin-left:2px;">' +
-          '<option value="USD"'+(r.currency==='USD'?' selected':'')+'>USD</option>' +
-          '<option value="EUR"'+(r.currency==='EUR'?' selected':'')+'>EUR</option>' +
-          '<option value="TRY"'+(r.currency==='TRY'?' selected':'')+'>TRY</option>' +
-          '<option value="GBP"'+(r.currency==='GBP'?' selected':'')+'>GBP</option>' +
-        '</select>' +
-      '</td>' +
-      '<td style="padding:3px 6px;text-align:right;font-size:11px;" class="pqf-amount-cell" id="pqf_row_'+i+'"></td>' +
-    '</tr>';
-  });
-  tbody.innerHTML = html;
-  window.pqfCalculate();
-}
-
-function pqfFmt(n) { return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-
-window.pqfCalculate = function() {
-  var subtotal = 0;
-  var currencySummary = 'USD';
-  pqfRows.forEach(function(r,i) {
-    var qty = parseFloat((r.qty||'').replace(',','.')) || 0;
-    var price = parseFloat((r.price||'').replace(',','.')) || 0;
-    var t = qty * price;
-    var cur = r.currency || 'USD';
-    if(i===0) currencySummary = cur;
-    subtotal += t;
-    var cell = document.getElementById('pqf_row_'+i);
-    if(cell) cell.textContent = t>0 ? pqfFmt(t)+' '+pqfCurrencySymbol(cur) : '';
-  });
-  var vatRate = parseFloat((document.getElementById('pqfVatRate')||{}).value) || 0;
-  var vat = subtotal * vatRate / 100;
-  var grandTotal = subtotal + vat;
-  var sym = pqfCurrencySymbol(currencySummary);
-  var s = function(id,v){ var el=document.getElementById(id); if(el) el.textContent = pqfFmt(v)+' '+sym; };
-  s('pqfSubtotal',subtotal); s('pqfVat',vat); s('pqfGrandTotal',grandTotal);
 };
 
 // ════════════════════════════════════════════════════════
