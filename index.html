@@ -9123,7 +9123,7 @@ function stRenderContent() {
     }
     return '<div style="flex:1;min-width:120px;">'+
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#555;font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+'</div>'+
-      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" oninput="'+(isFaturaDetay?'stUpdateDetayCalc()':'')+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
+      '<input id="stF_'+ci+'" type="text" placeholder="'+stEsc(h)+'" oninput="'+(isFaturaDetay?'stUpdateDetayCalc();':'')+((fname==='Faturalar.html'&&h==='Fatura Tarihi')?'stAutoFillAyFromTarih();':'')+'" style="width:100%;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#eee;font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;" />'+
     '</div>';
   }).join('');
 
@@ -9325,6 +9325,26 @@ window.stClear = function() {
   });
 };
 
+// Faturalar: Fatura Tarihi yazılırken Ay alanını otomatik doldur
+window.stAutoFillAyFromTarih = function() {
+  var pg = ST_PAGES[stActiveIdx];
+  if (!pg || pg[0] !== 'Faturalar.html') return;
+  var headers = (ST_DATA['Faturalar.html'] || {}).headers || [];
+  var tarihIdx = headers.indexOf('Fatura Tarihi');
+  var ayIdx = headers.indexOf('Ay');
+  if (tarihIdx < 0 || ayIdx < 0) return;
+  var tarihEl = document.getElementById('stF_'+tarihIdx);
+  var ayEl = document.getElementById('stF_'+ayIdx);
+  if (!tarihEl || !ayEl) return;
+  var tarih = tarihEl.value.trim();
+  var parts = tarih.split('.');
+  if (parts.length === 3 && parts[2].length === 4) {
+    var ay = parts[1].padStart(2,'0');
+    var yil = parts[2].trim();
+    ayEl.value = yil + '-' + ay;
+  }
+};
+
 window.stAdd = function() {
   var pg = ST_PAGES[stActiveIdx];
   var fname = pg[0];
@@ -9339,6 +9359,27 @@ window.stAdd = function() {
     if (v) has = true;
   });
   if (!has) { alert('Lütfen en az bir alan doldurun.'); return; }
+
+  // Faturalar: Fatura Tarihi'nden Ay otomatik doldur (DD.MM.YYYY → YYYY-MM)
+  if (fname === 'Faturalar.html') {
+    var tarihIdx = info.headers.indexOf('Fatura Tarihi');
+    var ayIdx = info.headers.indexOf('Ay');
+    if (tarihIdx >= 0 && ayIdx >= 0) {
+      var tarihVal = String(row[tarihIdx] || '').trim();
+      var ayVal = String(row[ayIdx] || '').trim();
+      if (tarihVal && !ayVal) {
+        // DD.MM.YYYY veya D.M.YYYY formatını parse et
+        var tarihParts = tarihVal.split('.');
+        if (tarihParts.length === 3) {
+          var ayNum = tarihParts[1].padStart(2,'0');
+          var yil = tarihParts[2].trim();
+          if (yil && ayNum) {
+            row[ayIdx] = yil + '-' + ayNum;
+          }
+        }
+      }
+    }
+  }
 
   // Servis Plan: SIRALAMA otomatik ata (boşsa veya yoksa) — mevcut en yüksek + 1
   if (fname === 'Servis Plan.html') {
@@ -9495,6 +9536,50 @@ window.stAddDetay = function() {
     if (v) has = true;
   });
   if (!has) { alert('Lütfen en az bir alan doldurun.'); return; }
+  // FaturaDetaylari: Fatura No'ya bakarak Faturalar tablosundan Ay otomatik doldur
+  try {
+    var _ayIdx = headers.indexOf('Ay');
+    var _fNoIdx = headers.indexOf('Fatura No');
+    if (_ayIdx >= 0 && _fNoIdx >= 0 && !String(row[_ayIdx]||'').trim()) {
+      var _fNo = String(row[_fNoIdx]||'').trim();
+      if (_fNo) {
+        // Faturalar tablosunda bu fatura no'yu bul ve tarihten ay hesapla
+        var _fatInfo = ST_DATA['Faturalar.html'] || {headers:[], data:[]};
+        var _fatTarihIdx = _fatInfo.headers.indexOf('Fatura Tarihi');
+        var _fatNoIdx = _fatInfo.headers.indexOf('Fatura No');
+        var _fatAyIdx = _fatInfo.headers.indexOf('Ay');
+        var _bulunanAy = '';
+        if (_fatNoIdx >= 0 && _fatTarihIdx >= 0) {
+          (_fatInfo.data || []).forEach(function(fr) {
+            if (_bulunanAy) return;
+            if (String(fr[_fatNoIdx]||'').trim() === _fNo) {
+              // Önce Faturalar tablosundaki Ay alanına bak
+              if (_fatAyIdx >= 0 && String(fr[_fatAyIdx]||'').trim()) {
+                _bulunanAy = String(fr[_fatAyIdx]).trim();
+              } else {
+                // Yoksa tarihten hesapla
+                var _tp = String(fr[_fatTarihIdx]||'').split('.');
+                if (_tp.length === 3) {
+                  _bulunanAy = _tp[2].trim() + '-' + _tp[1].padStart(2,'0');
+                }
+              }
+            }
+          });
+        }
+        // Faturalar'da bulunamadıysa, mevcut FaturaDetaylari'nda aynı fatura no'lu satıra bak
+        if (!_bulunanAy) {
+          (info.data || []).forEach(function(dr) {
+            if (_bulunanAy) return;
+            if (String(dr[_fNoIdx]||'').trim() === _fNo && String(dr[_ayIdx]||'').trim()) {
+              _bulunanAy = String(dr[_ayIdx]).trim();
+            }
+          });
+        }
+        if (_bulunanAy) row[_ayIdx] = _bulunanAy;
+      }
+    }
+  } catch(e) {}
+
   // Auto-calculate
   try {
     var pbIdx = headers.indexOf('Para Birimi');
