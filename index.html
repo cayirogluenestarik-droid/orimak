@@ -8903,7 +8903,24 @@ function stRenderContent() {
     sortedRows = cleanFRows;
   } else {
     var dateColIdx = stGetDateColIdx(fname, headers);
-    sortedRows = (dateColIdx >= 0) ? stSortByDate(rows, dateColIdx) : rows;
+    // Servis Plan: SIRALAMA numarasına göre azalan (en yüksek üstte) — en son eklenenler hep en üstte
+    if (fname === 'Servis Plan.html') {
+      var siraColIdx = headers.indexOf('SIRALAMA');
+      if (siraColIdx >= 0) {
+        sortedRows = rows.slice().sort(function(a, b) {
+          var sa = String(a[siraColIdx] || '').trim();
+          var sb = String(b[siraColIdx] || '').trim();
+          var ma = sa.match(/(\d+)/); var mb = sb.match(/(\d+)/);
+          var na = ma ? parseInt(ma[1], 10) : 0;
+          var nb = mb ? parseInt(mb[1], 10) : 0;
+          return nb - na; // azalan
+        });
+      } else {
+        sortedRows = (dateColIdx >= 0) ? stSortByDate(rows, dateColIdx) : rows;
+      }
+    } else {
+      sortedRows = (dateColIdx >= 0) ? stSortByDate(rows, dateColIdx) : rows;
+    }
   }
 
   // Arama filtresi
@@ -8989,6 +9006,21 @@ function stRenderContent() {
       return '<div style="flex:1;min-width:130px;">'+
         '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--orange);font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+' ⟳</div>'+
         '<input id="stF_'+ci+'" type="text" readonly placeholder="Otomatik" style="width:100%;background:#111;border:1px solid rgba(245,166,35,.3);border-radius:5px;padding:7px 10px;color:var(--orange);font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;cursor:default;font-weight:600;" />'+
+      '</div>';
+    }
+    // Servis Plan SIRALAMA: bir sonraki sırayı placeholder olarak göster, boş bırakılırsa stAdd otomatik atayacak
+    if (fname === 'Servis Plan.html' && h === 'SIRALAMA') {
+      var _maxN = 0;
+      var _spInfo = ST_DATA['Servis Plan.html'] || {data:[]};
+      (_spInfo.data || []).forEach(function(_r){
+        var _s = String(_r[ci] || '').trim();
+        var _m = _s.match(/(\d+)/);
+        if (_m) { var _n = parseInt(_m[1],10); if (!isNaN(_n) && _n > _maxN) _maxN = _n; }
+      });
+      var _next = (_maxN + 1) + '-';
+      return '<div style="flex:0;min-width:110px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--orange);font-family:Barlow Condensed,sans-serif;margin-bottom:4px;">'+stEsc(h)+' ⟳</div>'+
+        '<input id="stF_'+ci+'" type="text" placeholder="'+_next+' (otomatik)" title="Boş bırakırsanız otomatik '+_next+' olarak atanacak" style="width:100%;background:#111;border:1px solid rgba(245,166,35,.3);border-radius:5px;padding:7px 10px;color:var(--orange);font-size:12px;font-family:Barlow,sans-serif;outline:none;box-sizing:border-box;font-weight:600;" />'+
       '</div>';
     }
     return '<div style="flex:1;min-width:120px;">'+
@@ -9196,6 +9228,28 @@ window.stAdd = function() {
     if (v) has = true;
   });
   if (!has) { alert('Lütfen en az bir alan doldurun.'); return; }
+
+  // Servis Plan: SIRALAMA otomatik ata (boşsa veya yoksa) — mevcut en yüksek + 1
+  if (fname === 'Servis Plan.html') {
+    var siraIdx = info.headers.indexOf('SIRALAMA');
+    if (siraIdx >= 0) {
+      var girilenSira = String(row[siraIdx] || '').trim();
+      if (!girilenSira) {
+        var maxN = 0;
+        (info.data || []).forEach(function(r){
+          var s = String(r[siraIdx] || '').trim();
+          // "548-", "548", "36 -" gibi formatlardan sayıyı çıkar
+          var m = s.match(/(\d+)/);
+          if (m) {
+            var n = parseInt(m[1], 10);
+            if (!isNaN(n) && n > maxN) maxN = n;
+          }
+        });
+        row[siraIdx] = (maxN + 1) + '-';
+      }
+    }
+  }
+
   info.data.unshift(row);
   stFireSave();
   stClear();
