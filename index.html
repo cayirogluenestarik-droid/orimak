@@ -9368,14 +9368,11 @@ window.stAdd = function() {
       var tarihVal = String(row[tarihIdx] || '').trim();
       var ayVal = String(row[ayIdx] || '').trim();
       if (tarihVal && !ayVal) {
-        // DD.MM.YYYY veya D.M.YYYY formatını parse et
         var tarihParts = tarihVal.split('.');
         if (tarihParts.length === 3) {
           var ayNum = tarihParts[1].padStart(2,'0');
           var yil = tarihParts[2].trim();
-          if (yil && ayNum) {
-            row[ayIdx] = yil + '-' + ayNum;
-          }
+          if (yil && ayNum) row[ayIdx] = yil + '-' + ayNum;
         }
       }
     }
@@ -9536,14 +9533,14 @@ window.stAddDetay = function() {
     if (v) has = true;
   });
   if (!has) { alert('Lütfen en az bir alan doldurun.'); return; }
-  // FaturaDetaylari: Fatura No'ya bakarak Faturalar tablosundan Ay otomatik doldur
+  // Auto-calculate
   try {
+    // FaturaDetaylari: Fatura No'ya bakarak Faturalar tablosundan Ay otomatik doldur
     var _ayIdx = headers.indexOf('Ay');
     var _fNoIdx = headers.indexOf('Fatura No');
     if (_ayIdx >= 0 && _fNoIdx >= 0 && !String(row[_ayIdx]||'').trim()) {
       var _fNo = String(row[_fNoIdx]||'').trim();
       if (_fNo) {
-        // Faturalar tablosunda bu fatura no'yu bul ve tarihten ay hesapla
         var _fatInfo = ST_DATA['Faturalar.html'] || {headers:[], data:[]};
         var _fatTarihIdx = _fatInfo.headers.indexOf('Fatura Tarihi');
         var _fatNoIdx = _fatInfo.headers.indexOf('Fatura No');
@@ -9553,20 +9550,15 @@ window.stAddDetay = function() {
           (_fatInfo.data || []).forEach(function(fr) {
             if (_bulunanAy) return;
             if (String(fr[_fatNoIdx]||'').trim() === _fNo) {
-              // Önce Faturalar tablosundaki Ay alanına bak
               if (_fatAyIdx >= 0 && String(fr[_fatAyIdx]||'').trim()) {
                 _bulunanAy = String(fr[_fatAyIdx]).trim();
               } else {
-                // Yoksa tarihten hesapla
                 var _tp = String(fr[_fatTarihIdx]||'').split('.');
-                if (_tp.length === 3) {
-                  _bulunanAy = _tp[2].trim() + '-' + _tp[1].padStart(2,'0');
-                }
+                if (_tp.length === 3) _bulunanAy = _tp[2].trim() + '-' + _tp[1].padStart(2,'0');
               }
             }
           });
         }
-        // Faturalar'da bulunamadıysa, mevcut FaturaDetaylari'nda aynı fatura no'lu satıra bak
         if (!_bulunanAy) {
           (info.data || []).forEach(function(dr) {
             if (_bulunanAy) return;
@@ -9580,7 +9572,7 @@ window.stAddDetay = function() {
     }
   } catch(e) {}
 
-  // Auto-calculate
+  // Hesaplama
   try {
     var pbIdx = headers.indexOf('Para Birimi');
     var kruIdx = headers.indexOf('PB Kuru');
@@ -9638,35 +9630,100 @@ function stBadge(msg) {
 }
 
 var stSaveTimer = null;
+var ST_LS_KEY = 'orimak_servis_takip_data';
+
+function stLocalSave() {
+  try {
+    localStorage.setItem(ST_LS_KEY, JSON.stringify({data: JSON.stringify(ST_DATA), updatedAt: Date.now()}));
+  } catch(e) {}
+}
+
+function stLocalLoad() {
+  try {
+    var raw = localStorage.getItem(ST_LS_KEY);
+    if (!raw) return false;
+    var obj = JSON.parse(raw);
+    if (!obj || !obj.data) return false;
+    var saved = JSON.parse(obj.data);
+    Object.keys(saved).forEach(function(k) {
+      if (saved[k]) ST_DATA[k] = saved[k];
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
 function stFireSave() {
+  // Hemen localStorage'a kaydet (yenileme güvenliği)
+  stLocalSave();
+
   clearTimeout(stSaveTimer);
   stSaveTimer = setTimeout(function() {
-    if (!window._db || !window._fsSetDoc || !window._fsDoc) return;
+    if (!window._db || !window._fsSetDoc || !window._fsDoc) {
+      stBadge('✓ Yerel olarak kaydedildi');
+      return;
+    }
     try {
-      window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'servis_takip_data'), {
+      var p = window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'servis_takip_data'), {
         data: JSON.stringify(ST_DATA),
         updatedAt: Date.now()
       });
-      stBadge('✓ Buluta kaydedildi');
-    } catch(e) {}
-  }, 1000);
+      if (p && p.then) {
+        p.then(function(){ stBadge('✓ Buluta kaydedildi'); })
+         .catch(function(e){ console.warn('Firebase kayıt hatası:', e); stBadge('✓ Yerel kaydedildi'); });
+      } else {
+        stBadge('✓ Kaydedildi');
+      }
+    } catch(e) { console.warn('Firebase kayıt hatası:', e); stBadge('✓ Yerel kaydedildi'); }
+  }, 800);
 }
 
 function stLoad() {
+  // Önce localStorage'dan yükle (hızlı, anlık görüntü)
+  var hadLocal = stLocalLoad();
+  if (hadLocal) {
+    var pn0 = document.getElementById('stPanel');
+    if (pn0 && pn0.style.display !== 'none') { stAutoOnayAll(); stRender(); }
+  }
+
+  // Sonra Firebase'den daha güncel veri varsa üzerine yaz
   if (!window._db || !window._fsGetDoc || !window._fsDoc) return;
   try {
     window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'servis_takip_data')).then(function(snap) {
       if (snap && snap.exists() && snap.data().data) {
         var saved = JSON.parse(snap.data().data);
-        Object.keys(saved).forEach(function(k) {
-          if (saved[k]) ST_DATA[k] = saved[k];
-        });
+        // localStorage'dan daha yeni mi kontrol et
+        var fbTime = snap.data().updatedAt || 0;
+        var lsRaw = null;
+        try { lsRaw = JSON.parse(localStorage.getItem(ST_LS_KEY) || 'null'); } catch(e){}
+        var lsTime = lsRaw ? (lsRaw.updatedAt || 0) : 0;
+        // Firebase daha yeni veya local yoksa Firebase'i kullan
+        if (fbTime >= lsTime) {
+          Object.keys(saved).forEach(function(k) {
+            if (saved[k]) ST_DATA[k] = saved[k];
+          });
+          // localStorage'ı da güncelle
+          stLocalSave();
+        }
         var pn = document.getElementById('stPanel');
         if (pn && pn.style.display !== 'none') { stAutoOnayAll(); stRender(); }
       }
-    }).catch(function(){});
-  } catch(e) {}
+    }).catch(function(e){ console.warn('Firebase yükleme hatası:', e); });
+  } catch(e) { console.warn('Firebase yükleme hatası:', e); }
 }
+
+// Sayfa ilk yüklenince localStorage'dan ST_DATA'yı hemen uygula
+(function() {
+  try {
+    var raw = localStorage.getItem(ST_LS_KEY);
+    if (!raw) return;
+    var obj = JSON.parse(raw);
+    if (!obj || !obj.data) return;
+    var saved = JSON.parse(obj.data);
+    Object.keys(saved).forEach(function(k) {
+      if (saved[k]) ST_DATA[k] = saved[k];
+    });
+  } catch(e) {}
+})();
 
 function stAddTab() {
   var w = document.getElementById('tabsWrap');
