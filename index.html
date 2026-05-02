@@ -8839,7 +8839,7 @@ function stRenderContent() {
   var genelTopColIdx = headers.indexOf('Genel Toplam (TL)');
   var katColIdx = headers.indexOf('Kategori');
 
-  // Genel Rapor: aylık verileri FaturaDetaylari'ndan otomatik hesapla
+  // Genel Rapor: aylık verileri FaturaDetaylari'ndan otomatik hesapla — DASHBOARD
   if (isGenelRapor) {
     var detayInfo2 = ST_DATA['FaturaDetaylari.html'] || {headers:[], data:[]};
     var dh2 = detayInfo2.headers || [];
@@ -8849,43 +8849,141 @@ function stRenderContent() {
     var kdvIdx2 = dh2.indexOf('KDV (TL)');
     var genelIdx2 = dh2.indexOf('Genel Toplam (TL)');
     var monthly = {};
-    function parseTRY2(s){ return parseFloat(String(s||'0').replace(/[^0-9,.]/g,'').replace(',','.')) || 0; }
+    function parseTRY2(s){
+      var str = String(s||'0').trim();
+      // "10.500,00 TRY" formatını sayıya çevir
+      str = str.replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.');
+      return parseFloat(str) || 0;
+    }
     (detayInfo2.data || []).forEach(function(r) {
       var ay = String(r[ayIdx2]||'').trim();
-      if (!ay || ay === '#N/A' || ay.indexOf('1899') >= 0) return;
-      if (!monthly[ay]) monthly[ay] = {malzeme:0, servis:0, yol:0, kdv:0, genel:0};
+      if (!ay || ay === '#N/A' || ay.indexOf('1899') >= 0 || ay === '') return;
+      if (!ay.match(/^\d{4}-\d{2}$/)) return;
+      if (!monthly[ay]) monthly[ay] = {malzeme:0, servis:0, yol:0, kdv:0, genel:0, faturaSayisi:{}};
       var kat = String(r[katIdx2]||'').trim();
       var ara = parseTRY2(r[araIdx2]);
       var kdv = parseTRY2(r[kdvIdx2]);
       var gen = parseTRY2(r[genelIdx2]);
+      var fNo = String(r[0]||'').trim();
       if (kat === 'MALZEME') monthly[ay].malzeme += ara;
       else if (kat === 'SERVİS BEDELİ') monthly[ay].servis += ara;
       else if (kat === 'YOL') monthly[ay].yol += ara;
       monthly[ay].kdv += kdv;
       monthly[ay].genel += gen;
+      if (fNo) monthly[ay].faturaSayisi[fNo] = true;
     });
-    var fmt2 = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' TRY'; };
-    var aylar = Object.keys(monthly).filter(function(a){ return a.match(/^\d{4}-\d{2}$/); });
-    aylar.sort();
-    var ayColIdx = headers.indexOf('Ay');
-    var malColIdx = headers.indexOf('Malzeme Toplamı (TL)');
-    var serColIdx = headers.indexOf('Servis Toplamı (TL)');
-    var yolColIdx = headers.indexOf('Yol Toplamı (TL)');
-    var kdvColIdx = headers.indexOf('Toplam KDV (TL)');
-    var genColIdx = headers.indexOf('Genel Toplam (TL)');
-    // Rebuild rows
-    info.data = aylar.map(function(ay) {
+
+    var aylar = Object.keys(monthly).sort();
+    var fmtTRY3 = function(n){ return n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' \u20ba'; };
+    var ayIsim = {'01':'Ocak','02':'\u015eubat','03':'Mart','04':'Nisan','05':'May\u0131s','06':'Haziran','07':'Temmuz','08':'A\u011fustos','09':'Eyl\u00fcl','10':'Ekim','11':'Kas\u0131m','12':'Aral\u0131k'};
+
+    var toplamMal=0, toplamSer=0, toplamYol=0, toplamKdv=0, toplamGenel=0;
+    aylar.forEach(function(ay){ var m=monthly[ay]; toplamMal+=m.malzeme; toplamSer+=m.servis; toplamYol+=m.yol; toplamKdv+=m.kdv; toplamGenel+=m.genel; });
+
+    var grHtml = '<div style="font-family:Barlow Condensed,sans-serif;">';
+
+    // Özet kartlar
+    grHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px;">';
+    var ozet3 = [
+      {label:'TOPLAM CİRO', val:toplamGenel, color:'#F5A623', bg:'rgba(245,166,35,0.12)', border:'rgba(245,166,35,0.35)'},
+      {label:'MALZEME', val:toplamMal, color:'#5ab8f5', bg:'rgba(90,184,245,0.10)', border:'rgba(90,184,245,0.3)'},
+      {label:'SERVİS BEDELİ', val:toplamSer, color:'#92D050', bg:'rgba(146,208,80,0.10)', border:'rgba(146,208,80,0.3)'},
+      {label:'YOL', val:toplamYol, color:'#c49ef5', bg:'rgba(196,158,245,0.10)', border:'rgba(196,158,245,0.3)'},
+      {label:'TOPLAM KDV', val:toplamKdv, color:'#ff8c69', bg:'rgba(255,140,105,0.10)', border:'rgba(255,140,105,0.3)'}
+    ];
+    ozet3.forEach(function(o){
+      grHtml += '<div style="background:'+o.bg+';border:1px solid '+o.border+';border-radius:10px;padding:14px 16px;">'+
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:'+o.color+';margin-bottom:6px;">'+o.label+'</div>'+
+        '<div style="font-size:16px;font-weight:900;color:'+o.color+';">'+fmtTRY3(o.val)+'</div>'+
+      '</div>';
+    });
+    grHtml += '</div>';
+
+    // Aylık detay tablosu
+    grHtml += '<div style="overflow:auto;border-radius:10px;border:1px solid #222;margin-bottom:20px;">';
+    grHtml += '<table style="width:100%;border-collapse:collapse;min-width:700px;">';
+    grHtml += '<thead><tr style="background:#0e0e0e;">';
+    var thS3 = 'padding:10px 14px;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-align:right;border-bottom:1px solid #1e1e1e;white-space:nowrap;';
+    grHtml += '<th style="'+thS3+'text-align:left;color:#888;">AY</th>';
+    grHtml += '<th style="'+thS3+'color:#f5a623;">CİRO (KDV DAHİL)</th>';
+    grHtml += '<th style="'+thS3+'color:#5ab8f5;">MALZEME</th>';
+    grHtml += '<th style="'+thS3+'color:#92d050;">SERVİS BEDELİ</th>';
+    grHtml += '<th style="'+thS3+'color:#c49ef5;">YOL</th>';
+    grHtml += '<th style="'+thS3+'color:#ff8c69;">KDV</th>';
+    grHtml += '<th style="'+thS3+'color:#666;">FATURA</th>';
+    grHtml += '</tr></thead><tbody>';
+
+    var maxGenel3 = 0;
+    aylar.forEach(function(ay){ if(monthly[ay].genel > maxGenel3) maxGenel3 = monthly[ay].genel; });
+
+    aylar.forEach(function(ay, idx) {
       var m = monthly[ay];
-      var row = new Array(headers.length).fill('');
-      if (ayColIdx>=0) row[ayColIdx] = ay;
-      if (malColIdx>=0) row[malColIdx] = fmt2(m.malzeme);
-      if (serColIdx>=0) row[serColIdx] = fmt2(m.servis);
-      if (yolColIdx>=0) row[yolColIdx] = fmt2(m.yol);
-      if (kdvColIdx>=0) row[kdvColIdx] = fmt2(m.kdv);
-      if (genColIdx>=0) row[genColIdx] = fmt2(m.genel);
-      return row;
+      var parts = ay.split('-');
+      var ayAd = (ayIsim[parts[1]] || parts[1]) + ' ' + parts[0];
+      var fSayi = Object.keys(m.faturaSayisi).length;
+      var barPct = maxGenel3 > 0 ? Math.round((m.genel / maxGenel3) * 100) : 0;
+      var rowBg3 = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)';
+      var tdS3 = 'padding:10px 14px;border-bottom:1px solid #1a1a1a;font-family:Barlow Condensed,sans-serif;text-align:right;vertical-align:middle;';
+      grHtml += '<tr style="background:'+rowBg3+';transition:background .15s;" onmouseover="this.style.background=\'rgba(245,166,35,0.06)\'" onmouseout="this.style.background=\''+rowBg3+'\'">';
+      grHtml += '<td style="'+tdS3+'text-align:left;">'+
+        '<div style="font-size:13px;font-weight:700;color:#ddd;letter-spacing:1px;">'+ayAd+'</div>'+
+        '<div style="margin-top:5px;background:#111;border-radius:3px;height:4px;width:120px;overflow:hidden;">'+
+          '<div style="background:rgba(245,166,35,0.6);width:'+barPct+'%;height:100%;border-radius:3px;"></div>'+
+        '</div>'+
+      '</td>';
+      grHtml += '<td style="'+tdS3+'font-size:14px;font-weight:900;color:#F5A623;">'+fmtTRY3(m.genel)+'</td>';
+      grHtml += '<td style="'+tdS3+'font-size:12px;color:#5ab8f5;">'+fmtTRY3(m.malzeme)+'</td>';
+      grHtml += '<td style="'+tdS3+'font-size:12px;color:#92d050;">'+fmtTRY3(m.servis)+'</td>';
+      grHtml += '<td style="'+tdS3+'font-size:12px;color:#c49ef5;">'+fmtTRY3(m.yol)+'</td>';
+      grHtml += '<td style="'+tdS3+'font-size:12px;color:#ff8c69;">'+fmtTRY3(m.kdv)+'</td>';
+      grHtml += '<td style="'+tdS3+'font-size:12px;color:#666;">'+fSayi+' adet</td>';
+      grHtml += '</tr>';
     });
-    rows = info.data;
+
+    // Toplam satırı
+    var totS3 = 'padding:11px 14px;border-top:2px solid #333;font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:900;text-align:right;background:#161616;';
+    grHtml += '<tr>';
+    grHtml += '<td style="'+totS3+'text-align:left;color:#aaa;letter-spacing:2px;">TOPLAM</td>';
+    grHtml += '<td style="'+totS3+'color:#F5A623;">'+fmtTRY3(toplamGenel)+'</td>';
+    grHtml += '<td style="'+totS3+'color:#5ab8f5;">'+fmtTRY3(toplamMal)+'</td>';
+    grHtml += '<td style="'+totS3+'color:#92d050;">'+fmtTRY3(toplamSer)+'</td>';
+    grHtml += '<td style="'+totS3+'color:#c49ef5;">'+fmtTRY3(toplamYol)+'</td>';
+    grHtml += '<td style="'+totS3+'color:#ff8c69;">'+fmtTRY3(toplamKdv)+'</td>';
+    grHtml += '<td style="'+totS3+'color:#555;">—</td>';
+    grHtml += '</tr>';
+    grHtml += '</tbody></table></div>';
+
+    // Aylık dağılım kartları
+    if (aylar.length > 0) {
+      grHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">';
+      aylar.forEach(function(ay) {
+        var m = monthly[ay];
+        var parts = ay.split('-');
+        var ayAd = (ayIsim[parts[1]] || parts[1]) + ' ' + parts[0];
+        var total3 = m.malzeme + m.servis + m.yol;
+        var malPct3 = total3 > 0 ? Math.round(m.malzeme/total3*100) : 0;
+        var serPct3 = total3 > 0 ? Math.round(m.servis/total3*100) : 0;
+        var yolPct3 = total3 > 0 ? Math.round(m.yol/total3*100) : 0;
+        grHtml += '<div style="background:#111;border:1px solid #222;border-radius:8px;padding:14px 16px;">';
+        grHtml += '<div style="font-size:12px;font-weight:700;color:#bbb;letter-spacing:1px;margin-bottom:8px;">'+ayAd+'</div>';
+        grHtml += '<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:8px;">';
+        if(malPct3>0) grHtml += '<div style="width:'+malPct3+'%;background:#5ab8f5;"></div>';
+        if(serPct3>0) grHtml += '<div style="width:'+serPct3+'%;background:#92d050;"></div>';
+        if(yolPct3>0) grHtml += '<div style="width:'+yolPct3+'%;background:#c49ef5;"></div>';
+        grHtml += '</div>';
+        grHtml += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+        if(malPct3>0) grHtml += '<span style="font-size:10px;color:#5ab8f5;">\u25a0 Malzeme %'+malPct3+'</span>';
+        if(serPct3>0) grHtml += '<span style="font-size:10px;color:#92d050;">\u25a0 Servis %'+serPct3+'</span>';
+        if(yolPct3>0) grHtml += '<span style="font-size:10px;color:#c49ef5;">\u25a0 Yol %'+yolPct3+'</span>';
+        grHtml += '</div>';
+        grHtml += '</div>';
+      });
+      grHtml += '</div>';
+    }
+
+    grHtml += '</div>';
+    box.innerHTML = grHtml;
+    return;
   }
 
   // FaturaDetaylari: en büyük fatura no üstte (sayısal azalan)
