@@ -8635,7 +8635,7 @@ function stCreatePanel() {
   if (!c) return;
   var p = document.createElement('div');
   p.id = 'stPanel';
-  p.style.cssText = 'display:none;padding:24px;max-width:1400px;margin:0 auto;';
+  p.style.cssText = 'display:none;padding:24px 8px;max-width:none;';
   c.appendChild(p);
   stRender();
 }
@@ -9028,8 +9028,15 @@ function stRenderContent() {
   }) : sortedRows;
 
   var thStyle = 'background:#0e0e0e;color:#555;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:8px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:1;';
-  var th = '<th style="'+thStyle+'width:36px;">#</th>'+
+  var faturaDetayWidths = {'Fatura No':'4%','Kategori':'8%','Barkod':'4%','Ürün Adı':'17%','Miktar':'4%','Birim':'3%','Birim Fiyat':'6%','Para Birimi':'3%','Ara Toplam':'5%','PB Kuru':'6%','Ara Toplam (TL)':'9%','KDV %':'3%','KDV (TL)':'8%','Genel Toplam (TL)':'9%','Ay':'4%'};
+  var thStyleFD = 'background:#0e0e0e;color:#777;font-family:Barlow Condensed,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3px;padding:6px 3px;text-align:center;white-space:normal;word-break:break-word;position:sticky;top:0;z-index:1;overflow:hidden;';
+  var th = '<th style="'+thStyle+'width:28px;">#</th>'+
     headers.map(function(h){
+      if (isFaturaDetay) {
+        var w = faturaDetayWidths[h] || 'auto';
+        var al = (h === 'Ürün Adı') ? 'text-align:left;' : '';
+        return '<th style="'+thStyleFD+'width:'+w+';'+al+'">'+stEsc(h)+'</th>';
+      }
       return '<th style="'+thStyle+'">'+stEsc(h)+'</th>';
     }).join('');
 
@@ -9190,7 +9197,10 @@ function stRenderContent() {
           '</td>';
       }
 
-      return '<td contenteditable="true" oninput="stEdit('+actualIdx+','+ci+',this)" style="padding:7px 10px;border-bottom:1px solid '+rowBC+';color:'+textColor+';font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;outline:none;cursor:text;" title="'+stEsc(val)+'">'+stEsc(val)+'</td>';
+      var tdPad = isFaturaDetay ? '4px 3px' : '7px 10px';
+      var tdFs = isFaturaDetay ? '10.5px' : '12px';
+      var tdMxw = isFaturaDetay ? (h === 'Ürün Adı' ? '999px' : '80px') : '200px';
+      return '<td contenteditable="true" oninput="stEdit('+actualIdx+','+ci+',this)" style="padding:'+tdPad+';border-bottom:1px solid '+rowBC+';color:'+textColor+';font-size:'+tdFs+';max-width:'+tdMxw+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;outline:none;cursor:text;" title="'+stEsc(val)+'">'+stEsc(val)+'</td>';
     }).join('');
 
     return '<tr data-strow="'+actualIdx+'" style="background:'+rowBg+';">'+
@@ -9211,7 +9221,7 @@ function stRenderContent() {
     ''+ // Son 6 Hariç Onayla butonu kaldırıldı
     '</div>'+
     '<div style="overflow:auto;border-radius:8px;border:1px solid #1e1e1e;max-height:520px;">'+
-      '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:'+(isFaturaDetay?'10.5':'12')+'px;'+(isFaturaDetay?'table-layout:fixed;':'')+'"><thead><tr>'+th+'</tr></thead><tbody>'+body+'</tbody></table>'+
     '</div>';
 }
 
