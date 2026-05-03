@@ -6991,6 +6991,20 @@ function toggleSidebar() {
   const tw = document.getElementById('tabsWrap');
   const tg = document.getElementById('sidebarToggle');
   if (!tw || !tg) return;
+
+  // Ana sayfa aktifse önce onu kapat, layout'u göster
+  const homePanel = document.getElementById('homePanel');
+  const layoutWrap = document.querySelector('.layout-with-sidebar');
+  if (homePanel && homePanel.classList.contains('active')) {
+    if (typeof hideHomePage === 'function') hideHomePage();
+    if (layoutWrap) layoutWrap.style.display = '';
+    // Sidebar açık olarak aç
+    tw.classList.add('open');
+    tg.classList.add('open');
+    return;
+  }
+
+  // Normal durum: sidebar'ı aç/kapat
   const isOpen = tw.classList.toggle('open');
   tg.classList.toggle('open', isOpen);
 }
