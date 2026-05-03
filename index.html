@@ -7554,6 +7554,7 @@ async function loadData() {
       isOnline = true;
       buildUI();
       reapplySession();
+      restoreLastPage();
       setSyncStatus('✓ CANLI', 'ok');
     } else {
       SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
@@ -7561,6 +7562,7 @@ async function loadData() {
       await fbSaveAll();
       buildUI();
       reapplySession();
+      restoreLastPage();
       setSyncStatus('✓ CANLI', 'ok');
     }
     // Gerçek zamanlı dinle
@@ -7597,6 +7599,7 @@ async function loadData() {
     isOnline = false;
     buildUI();
     reapplySession();
+    restoreLastPage();
     setSyncStatus('ÇEVRIMDIŞI', 'err');
   }
 }
@@ -7821,6 +7824,45 @@ function hideHomePage() {
 }
 window.hideHomePage = hideHomePage;
 
+// Son aktif sayfayı geri yükle — buildUI+reapplySession sonrası her yerde çağrılır
+function restoreLastPage() {
+  var lastPage = null;
+  try { lastPage = JSON.parse(localStorage.getItem('orimak_lastPage')); } catch(e){}
+  if (!lastPage || lastPage.type === 'home') {
+    showHomePage();
+    return;
+  }
+  if (lastPage.type === 'sheet') {
+    hideHomePage();
+    var tw = document.getElementById('tabsWrap');
+    var burger = document.getElementById('sidebarToggle');
+    if (tw) tw.classList.add('open');
+    if (burger) burger.classList.add('open');
+    if (typeof switchTab === 'function') switchTab(lastPage.idx || 0);
+    return;
+  }
+  if (lastPage.type === 'special') {
+    hideHomePage();
+    var tw2 = document.getElementById('tabsWrap');
+    var burger2 = document.getElementById('sidebarToggle');
+    if (tw2) tw2.classList.add('open');
+    if (burger2) burger2.classList.add('open');
+    var fnMap = { yp: 'ypSwitchTo', sn: 'snSwitchTo', st: 'stSwitchTo' };
+    var fnName = fnMap[lastPage.key];
+    if (typeof window[fnName] === 'function') {
+      window[fnName]();
+    } else {
+      var tries = 0;
+      var poll = setInterval(function() {
+        tries++;
+        if (typeof window[fnName] === 'function') { clearInterval(poll); window[fnName](); }
+        else if (tries > 20) { clearInterval(poll); showHomePage(); }
+      }, 100);
+    }
+  }
+}
+window.restoreLastPage = restoreLastPage;
+
 function homeRefreshStats() {
   try {
     var total = parseInt(document.getElementById('statTotal').textContent) || 0;
@@ -7912,39 +7954,12 @@ window.homeGoSpecial = homeGoSpecial;
     }
   }, 100);
   // Sayfa ilk yüklenince zaten oturum varsa son aktif sayfayı geri yükle
+  // (loadData tamamlanınca restoreLastPage zaten çağrılır; bu sadece loadData çalışmazsa fallback)
   setTimeout(function(){
     var sess = localStorage.getItem('orimak_auth');
     if(!sess) return;
-    var lastPage = null;
-    try { lastPage = JSON.parse(localStorage.getItem('orimak_lastPage')); } catch(e){}
-    if(!lastPage || lastPage.type === 'home') {
-      showHomePage();
-    } else if(lastPage.type === 'sheet') {
-      // Normal sheet sayfası
-      hideHomePage();
-      var tw = document.getElementById('tabsWrap');
-      var burger = document.getElementById('sidebarToggle');
-      if(tw) tw.classList.add('open');
-      if(burger) burger.classList.add('open');
-      if(typeof switchTab === 'function') switchTab(lastPage.idx || 0);
-    } else if(lastPage.type === 'special') {
-      hideHomePage();
-      var tw2 = document.getElementById('tabsWrap');
-      var burger2 = document.getElementById('sidebarToggle');
-      if(tw2) tw2.classList.add('open');
-      if(burger2) burger2.classList.add('open');
-      var fnMap = { yp: 'ypSwitchTo', sn: 'snSwitchTo', st: 'stSwitchTo' };
-      var fnName = fnMap[lastPage.key];
-      // Panel ve tab fonksiyonları buildUI'dan sonra hazır olur, biraz bekle
-      var tries = 0;
-      var poll = setInterval(function(){
-        tries++;
-        if(typeof window[fnName] === 'function') {
-          clearInterval(poll);
-          window[fnName]();
-        } else if(tries > 30) { clearInterval(poll); showHomePage(); }
-      }, 100);
-    }
+    // buildUI henüz çalışmadıysa (Firebase geç bağlandı) ana sayfayı göster
+    if(!document.querySelector('.sheet-panel')) showHomePage();
   }, 600);
 })();
 
