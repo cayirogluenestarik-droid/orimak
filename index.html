@@ -5,6 +5,123 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orimak Takip — Orimak</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- ══ PUSH BİLDİRİM SİSTEMİ ══ -->
+<script>
+(function(){
+'use strict';
+
+// ── VAPID Public Key ──
+var VAPID_PUBLIC_KEY = 'BPS0XuF-I8-2WqAhLi4QIe_iOGgpq-ezu3aPkJrb5bwksQjUgQEbYRrTLimHcuFeDND-lE1Ei3RpQWykuFHah7I';
+
+// Base64URL → Uint8Array dönüşümü (VAPID key için)
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  var base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var raw     = atob(base64);
+  var arr     = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+// ── Aboneliği Firestore'a Kaydet ──
+function saveSubscriptionToFirestore(sub, role, username) {
+  if (!window._db || !window._fsDoc || !window._fsSetDoc) return;
+  var json = sub.toJSON();
+  var docId = btoa(json.endpoint).replace(/[^a-z0-9]/gi,'').slice(0,40);
+  var data  = {
+    endpoint : json.endpoint,
+    p256dh   : json.keys ? json.keys.p256dh : '',
+    auth     : json.keys ? json.keys.auth   : '',
+    role     : role || 'viewer',
+    user     : username || '',
+    updatedAt: Date.now()
+  };
+  window._fsSetDoc(window._fsDoc(window._db, 'push_subscriptions', docId), data)
+    .catch(function(e){ console.warn('Subscription kaydedilemedi:', e); });
+}
+
+// ── Bildirimi Firestore Kuyruğuna Ekle ──
+// Cloud Function bu kuyruğu dinler ve push gönderir
+window.orimakSendPush = function(title, body, tag, url) {
+  if (!window._db || !window._fsCollection) return;
+  // Sadece manager/admin alır
+  var payload = {
+    title : title,
+    body  : body,
+    tag   : tag  || 'orimak',
+    url   : url  || '/',
+    roles : ['manager', 'admin'],
+    ts    : Date.now()
+  };
+  // push_queue koleksiyonuna yeni belge ekle
+  var colRef = window._fsCollection(window._db, 'push_queue');
+  var docRef = window._fsDoc(colRef); // auto-id
+  window._fsSetDoc(docRef, payload)
+    .catch(function(e){ console.warn('Push kuyruğuna eklenemedi:', e); });
+};
+
+// ── Service Worker Kayıt & Abonelik ──
+window.initPushNotifications = function() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Push bildirimler bu tarayıcıda desteklenmiyor.');
+    return;
+  }
+
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(reg) {
+      // Mevcut aboneliği kontrol et
+      return reg.pushManager.getSubscription().then(function(existing) {
+        if (existing) return existing; // Zaten abone, tekrar sor
+        // İzin iste
+        return Notification.requestPermission().then(function(perm) {
+          if (perm !== 'granted') return null;
+          return reg.pushManager.subscribe({
+            userVisibleOnly     : true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+          });
+        });
+      });
+    })
+    .then(function(sub) {
+      if (!sub) return;
+      var role     = window._currentRole || 'viewer';
+      var username = window._currentUser || '';
+      // Sadece manager ve admin aboneliği kaydedelim
+      if (role === 'manager' || role === 'admin') {
+        saveSubscriptionToFirestore(sub, role, username);
+      }
+    })
+    .catch(function(e){ console.warn('SW/Push hatası:', e); });
+};
+
+// ── Giriş Sonrası Otomatik Başlat ──
+// onLoggedIn çağrıldıktan sonra hook'u biz tetikleriz
+var _origOnLoggedIn = window.onLoggedIn;
+window.onLoggedIn = function(u) {
+  if (_origOnLoggedIn) _origOnLoggedIn(u);
+  var role = u.role || u.rol || 'viewer';
+  if (role === 'manager' || role === 'admin') {
+    // Firebase hazır olduktan sonra başlat
+    setTimeout(function() { window.initPushNotifications(); }, 2000);
+  }
+};
+
+// Sayfa yenilenince oturum varsa da başlat
+window.addEventListener('load', function() {
+  try {
+    var sess = localStorage.getItem('orimak_auth');
+    if (!sess) return;
+    var u    = JSON.parse(sess);
+    var role = u.role || u.rol || 'viewer';
+    if (role === 'manager' || role === 'admin') {
+      setTimeout(function() { window.initPushNotifications(); }, 3000);
+    }
+  } catch(e){}
+});
+
+})();
+</script>
 <style>
 :root{--dark:#1A1A1A;--orange:#F5A623;--cream:#FFF8F0;--mint:#BBE6D9;--green:#92D050;--red:#C00000;--white:#fff;--border:#2e2e2e;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -1782,6 +1899,7 @@ async function saveSiparis(editIdx) {
     yetkiliOnayKisi: editIdx >= 0 ? (rows[editIdx].yetkiliOnayKisi||'') : '',
     gelisOnay: editIdx >= 0 ? (rows[editIdx].gelisOnay||'') : '',
   };
+  const _isYeniSiparis = editIdx < 0;
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
   SHEETS[si].rows = rows;
@@ -1789,6 +1907,15 @@ async function saveSiparis(editIdx) {
   if (isOnline) await fbSaveAll();
   renderSiparisRows();
   updateTerminBadge();
+  // ── PUSH BİLDİRİMİ: Yeni sipariş eklendi ──
+  if (_isYeniSiparis && window.orimakSendPush) {
+    var _kim = window._currentUser || 'Kullanıcı';
+    window.orimakSendPush(
+      '🛒 Yeni Sipariş Eklendi',
+      _kim + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.sipAdet ? ' · ' + yeni.sipAdet + ' adet' : ''),
+      'siparis-yeni', '/'
+    );
+  }
 }
 window.saveSiparis = saveSiparis;
 
@@ -1919,6 +2046,7 @@ async function saveTeslim(editIdx) {
     gelisTarihi: document.getElementById('tk_tarih').value.trim(),
     teslimAlan: document.getElementById('tk_alan').value.trim(),
   };
+  const _isYeniTeslim = editIdx < 0;
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
   SHEETS[si].rows = rows;
@@ -1926,6 +2054,15 @@ async function saveTeslim(editIdx) {
   if (isOnline) await fbSaveAll();
   renderTeslimRows();
   renderSiparisRows(); // Sipariş formunu da güncelle
+  // ── PUSH BİLDİRİMİ: Yeni teslim kaydı ──
+  if (_isYeniTeslim && window.orimakSendPush) {
+    var _kimT = window._currentUser || 'Kullanıcı';
+    window.orimakSendPush(
+      '📦 Teslim Kaydı Eklendi',
+      _kimT + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.gelisAdet ? ' · ' + yeni.gelisAdet + ' adet' : '') + (yeni.gelisTarihi ? ' / ' + yeni.gelisTarihi : ''),
+      'teslim-yeni', '/'
+    );
+  }
 }
 window.saveTeslim = saveTeslim;
 
@@ -7715,6 +7852,16 @@ async function addRow() {
       return { ...rest, yetkili: r._yetkili, yetkiliKisi: r._yetkiliKisi || '', gelis: r._gelis, gelenAdet: r._gelenAdet, makine: r._makine };
     });
     await fbSaveAll();
+    // ── PUSH BİLDİRİMİ: Makine malzeme listesine satır eklendi ──
+    if (window.orimakSendPush) {
+      var _kimA = window._currentUser || 'Kullanıcı';
+      var _sayfaAdi = (SHEETS[si] && SHEETS[si].name) ? SHEETS[si].name : 'Malzeme Listesi';
+      window.orimakSendPush(
+        '⚙️ Malzeme Listesine Ekleme',
+        _kimA + ': ' + (name || '—') + ' — ' + _sayfaAdi,
+        'malzeme-ekle', '/'
+      );
+    }
     rebuildTable(si);
   } else {
     // Offline - sadece local ekle
@@ -11956,6 +12103,15 @@ function bindEvents(box){
     flRows(mk).push({isim:'',gelisFiyat:'',birim:'TL',karMarj:'30'});
     flSave();
     window.flRender(null);
+    // ── PUSH BİLDİRİMİ: Fiyat listesine malzeme eklendi ──
+    if (window.orimakSendPush) {
+      var _kimFL = window._currentUser || 'Kullanıcı';
+      window.orimakSendPush(
+        '💰 Fiyat Listesine Malzeme Eklendi',
+        _kimFL + ' yeni malzeme ekledi — Malzeme/Fiyat Listesi',
+        'fiyat-ekle', '/'
+      );
+    }
     setTimeout(function(){
       var inputs = box.querySelectorAll('.fl-table tbody tr:last-child .fl-isim');
       if(inputs.length) inputs[inputs.length-1].focus();
