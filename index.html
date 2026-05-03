@@ -333,6 +333,135 @@ tr.group-hidden{display:none !important;}
 ::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:4px;}
 ::-webkit-scrollbar-thumb:hover{background:#555;}
 
+/* ── ANA SAYFA ── */
+#homePanel{display:none;background:#0e0e0e;min-height:calc(100vh - 72px);padding:0;}
+#homePanel.active{display:block;}
+
+.home-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0e0e0e 0%,#161208 40%,#1a1500 70%,#0e0e0e 100%);
+  padding:64px 48px 52px;
+  border-bottom:1px solid #1e1c18;
+}
+.home-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 50%,rgba(245,166,35,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 10% 80%,rgba(245,166,35,.05) 0%,transparent 40%);
+  pointer-events:none;
+}
+.home-hero-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+  max-width:1200px;margin:0 auto;
+}
+.home-hero-left{}
+.home-hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;color:var(--orange);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.home-hero-eyebrow::before{content:'';display:block;width:20px;height:2px;background:var(--orange);}
+.home-hero-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,5vw,64px);font-weight:900;
+  letter-spacing:-1px;line-height:.95;color:#fff;margin-bottom:18px;
+}
+.home-hero-title span{color:var(--orange);}
+.home-hero-sub{
+  font-size:14px;color:#666;max-width:520px;line-height:1.7;
+  font-weight:300;letter-spacing:.3px;
+}
+.home-hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+.home-logo-big{
+  background:#fff;border-radius:12px;padding:14px 28px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 1px rgba(245,166,35,.15);
+}
+.home-logo-big img{height:64px;display:block;}
+.home-date-chip{
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:2px;color:#555;background:#111;border:1px solid #1e1e1e;
+  border-radius:20px;padding:6px 14px;white-space:nowrap;
+}
+
+/* Hızlı erişim kartları */
+.home-nav-section{padding:40px 48px;max-width:1200px;margin:0 auto;}
+.home-section-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;color:#444;
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.home-section-label::after{content:'';flex:1;height:1px;background:#1e1e1e;}
+
+.home-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:40px;}
+.home-card{
+  background:#131313;border:1px solid #1e1e1e;border-radius:10px;
+  padding:20px 22px;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+}
+.home-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  background:linear-gradient(135deg,rgba(245,166,35,.06),transparent);
+  transition:opacity .2s;
+}
+.home-card:hover{border-color:rgba(245,166,35,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.home-card:hover::before{opacity:1;}
+.home-card-icon{font-size:22px;line-height:1;}
+.home-card-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:#ccc;
+  transition:color .2s;
+}
+.home-card:hover .home-card-name{color:var(--orange);}
+.home-card-desc{font-size:11px;color:#555;line-height:1.5;}
+.home-card-arrow{
+  margin-top:auto;font-family:'Barlow Condensed',sans-serif;font-size:10px;
+  font-weight:700;letter-spacing:2px;color:#333;
+  display:flex;align-items:center;gap:6px;transition:color .2s;
+}
+.home-card:hover .home-card-arrow{color:var(--orange);}
+.home-card-arrow::after{content:'→';}
+.home-card.card-special{border-color:rgba(146,208,80,.15);background:linear-gradient(135deg,#0d1a0f,#111);}
+.home-card.card-special:hover{border-color:rgba(146,208,80,.5);}
+.home-card.card-special::before{background:linear-gradient(135deg,rgba(146,208,80,.06),transparent);}
+.home-card.card-special .home-card-arrow{color:#2a4a1a;}
+.home-card.card-special:hover .home-card-arrow{color:#92D050;}
+.home-card.card-blue{border-color:rgba(90,160,255,.12);background:linear-gradient(135deg,#0a0f1a,#111);}
+.home-card.card-blue:hover{border-color:rgba(90,160,255,.4);}
+.home-card.card-blue::before{background:linear-gradient(135deg,rgba(90,160,255,.06),transparent);}
+.home-card.card-blue .home-card-arrow{color:#1a2a3a;}
+.home-card.card-blue:hover .home-card-arrow{color:#7ab8f5;}
+
+/* Durum bölümü */
+.home-status-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  padding:0 48px 40px;max-width:1200px;
+  margin:0 auto;
+}
+.home-stat-card{
+  background:#111;border:1px solid #1e1e1e;border-radius:8px;
+  padding:16px 18px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.home-stat-num{
+  font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;
+  color:#ddd;line-height:1;
+}
+.home-stat-label{font-size:10px;color:#555;letter-spacing:1px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;}
+.home-stat-dot{width:8px;height:8px;border-radius:50%;margin-bottom:4px;}
+
+/* Home Buton header'da */
+.hbtn-home{background:linear-gradient(135deg,#1a1500,#111);color:var(--orange);border:1px solid rgba(245,166,35,.35)!important;}
+.hbtn-home:hover{opacity:1!important;background:linear-gradient(135deg,#2a2000,#1a1500)!important;border-color:var(--orange)!important;}
+.hbtn-home.active{background:var(--orange)!important;color:#111!important;}
+
+@media(max-width:768px){
+  .home-hero{padding:32px 20px 28px;}
+  .home-hero-grid{grid-template-columns:1fr;gap:20px;}
+  .home-hero-right{align-items:flex-start;}
+  .home-nav-section{padding:28px 16px;}
+  .home-cards{grid-template-columns:1fr 1fr;}
+  .home-status-row{grid-template-columns:1fr 1fr;padding:0 16px 28px;}
+}
+
 /* ── YEDEK PARÇA LİSTESİ PANEL ── */
 #ypanel{background:#2a2a2a;min-height:600px;padding:24px 32px 60px;}
 .yp-page{max-width:1000px;margin:0 auto;background:#fff;box-shadow:0 8px 40px rgba(0,0,0,0.4);}
@@ -2352,6 +2481,7 @@ function showAdminMsg(text, type) {
     <button id="arsivBtn" class="hbtn hbtn-purple" onclick="openArsiv()" style="display:none">
       📁 ARŞİV
     </button>
+    <button id="homeBtnHeader" class="hbtn hbtn-home" onclick="showHomePage()" title="Ana Sayfa">🏠 ANA SAYFA</button>
     <button class="hbtn hbtn-dark" onclick="loadData()">↺ Yenile</button>
     <button class="hbtn hbtn-dark" onclick="window.print()">🖨 Yazdır</button>
   </div>
@@ -2578,6 +2708,95 @@ function showAdminMsg(text, type) {
   </div>
 </div>
 
+
+<!-- ══ ANA SAYFA PANELİ ══ -->
+<div id="homePanel">
+  <div class="home-hero">
+    <div class="home-hero-grid">
+      <div class="home-hero-left">
+        <div class="home-hero-eyebrow">Orimak Takip Sistemi</div>
+        <div class="home-hero-title">
+          ORİMAK<br><span>TAKİP</span>
+        </div>
+        <div class="home-hero-sub">
+          Malzeme sipariş, termin ve teslimat takibini gerçek zamanlı olarak yönetin. Aşağıdaki panellerden birini seçerek ilgili bölüme geçin.
+        </div>
+      </div>
+      <div class="home-hero-right">
+        <div class="home-logo-big">
+          <img id="homeLogoImg" src="" alt="Orimak Logo" style="height:64px;">
+        </div>
+        <div class="home-date-chip" id="homeDateChip">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Durum istatistikleri -->
+  <div style="padding:32px 48px 0;max-width:1200px;margin:0 auto;">
+    <div class="home-section-label">Genel Durum</div>
+  </div>
+  <div class="home-status-row" id="homeStatRow">
+    <div class="home-stat-card">
+      <div class="home-stat-dot" style="background:#555;border:1px solid #666;"></div>
+      <div class="home-stat-num" id="hStatTotal">—</div>
+      <div class="home-stat-label">Toplam Satır</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-dot" style="background:var(--orange);"></div>
+      <div class="home-stat-num" id="hStatOnay">—</div>
+      <div class="home-stat-label">Yetkili Onayı</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-dot" style="background:var(--mint);"></div>
+      <div class="home-stat-num" id="hStatBekle">—</div>
+      <div class="home-stat-label">Beklemede</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-dot" style="background:var(--green);"></div>
+      <div class="home-stat-num" id="hStatGelis">—</div>
+      <div class="home-stat-label">Geliş Onayı</div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-dot" style="background:var(--red);"></div>
+      <div class="home-stat-num" id="hStatEksik">—</div>
+      <div class="home-stat-label">Eksik Adet</div>
+    </div>
+  </div>
+
+  <!-- Hızlı erişim: sayfalar -->
+  <div class="home-nav-section">
+    <div class="home-section-label">Sipariş &amp; Malzeme Sayfaları</div>
+    <div class="home-cards" id="homeSheetCards"></div>
+
+    <div class="home-section-label">Özel Paneller</div>
+    <div class="home-cards" id="homeSpecialCards">
+      <div class="home-card card-special" onclick="homeGoSpecial('st')">
+        <div class="home-card-icon">🔧</div>
+        <div class="home-card-name">Servis Takip</div>
+        <div class="home-card-desc">Makine servis kayıtlarını görüntüle ve yönet.</div>
+        <div class="home-card-arrow">GİT</div>
+      </div>
+      <div class="home-card card-special" onclick="homeGoSpecial('sn')">
+        <div class="home-card-icon">🔢</div>
+        <div class="home-card-name">Seri No</div>
+        <div class="home-card-desc">Makine seri numaralarını takip et.</div>
+        <div class="home-card-arrow">GİT</div>
+      </div>
+      <div class="home-card card-special" onclick="homeGoSpecial('yp')">
+        <div class="home-card-icon">📋</div>
+        <div class="home-card-name">Yedek Parça</div>
+        <div class="home-card-desc">Yedek parça listesi ve stok durumu.</div>
+        <div class="home-card-arrow">GİT</div>
+      </div>
+      <div class="home-card card-blue" onclick="homeGoSpecial('sf')">
+        <div class="home-card-icon">💼</div>
+        <div class="home-card-name">Satış Takip</div>
+        <div class="home-card-desc">Müşteri ve satış bilgilerini yönet.</div>
+        <div class="home-card-arrow">GİT</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="stats-bar" id="statsBar">
   <div class="stat"><div class="stat-dot" style="background:#ccc;border:1px solid #555"></div>Toplam<span class="stat-num" id="statTotal">0</span></div>
@@ -6718,6 +6937,7 @@ function buildTabs() {
 // Makine grubu sidebar güncellemesi — switchTab'dan sonra çağrılır
 
 function switchTab(idx) {
+  if(typeof hideHomePage === 'function') hideHomePage();
   activeSheet = idx;
   // Normal tab-btn butonları
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
@@ -7516,6 +7736,172 @@ buildUI();
 // Oturum varsa butonları hemen göster (Firebase bekleme)
 if (window.reapplySession) window.reapplySession();
 window.loadData = loadData;
+
+// ── ANA SAYFA FONKSİYONLARI ──
+function showHomePage() {
+  // Ana sayfayı göster, diğer panelleri gizle
+  var homePanel = document.getElementById('homePanel');
+  var statsBar  = document.getElementById('statsBar');
+  var toolBar   = document.getElementById('toolBar');
+  var legendBar = document.getElementById('legendBar');
+  var pageTitleBar = document.getElementById('pageTitleBar');
+  var layoutWrap = document.querySelector('.layout-with-sidebar');
+
+  if(homePanel) homePanel.classList.add('active');
+  if(statsBar)  statsBar.style.display  = 'none';
+  if(toolBar)   toolBar.style.display   = 'none';
+  if(legendBar) legendBar.style.display = 'none';
+  if(pageTitleBar) pageTitleBar.style.display = 'none';
+  if(layoutWrap) layoutWrap.style.display = 'none';
+
+  // Hamburger sidebar'ı kapat
+  var tabsWrap = document.getElementById('tabsWrap');
+  var burger   = document.getElementById('sidebarToggle');
+  if(tabsWrap){ tabsWrap.classList.remove('open'); }
+  if(burger)  { burger.classList.remove('open'); }
+
+  // Başlık düğmesi aktif görünümü
+  var hbtn = document.getElementById('homeBtnHeader');
+  if(hbtn) hbtn.classList.add('active');
+
+  // İstatistikleri güncelle
+  homeRefreshStats();
+
+  // Sayfa kartlarını yenile
+  homeRenderSheetCards();
+
+  // Logo ve tarih
+  var logoMain = document.querySelector('.logo-img');
+  var homeLogo = document.getElementById('homeLogoImg');
+  if(logoMain && homeLogo) homeLogo.src = logoMain.src;
+  var homeDateChip = document.getElementById('homeDateChip');
+  if(homeDateChip){
+    var d = new Date();
+    var days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+    var months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    homeDateChip.textContent = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
+}
+window.showHomePage = showHomePage;
+
+function hideHomePage() {
+  var homePanel = document.getElementById('homePanel');
+  var statsBar  = document.getElementById('statsBar');
+  var toolBar   = document.getElementById('toolBar');
+  var legendBar = document.getElementById('legendBar');
+  var pageTitleBar = document.getElementById('pageTitleBar');
+  var layoutWrap = document.querySelector('.layout-with-sidebar');
+
+  if(homePanel) homePanel.classList.remove('active');
+  if(statsBar)  statsBar.style.display  = '';
+  if(toolBar)   toolBar.style.display   = '';
+  if(legendBar) legendBar.style.display = '';
+  if(pageTitleBar) pageTitleBar.style.display = '';
+  if(layoutWrap) layoutWrap.style.display = '';
+
+  var hbtn = document.getElementById('homeBtnHeader');
+  if(hbtn) hbtn.classList.remove('active');
+}
+window.hideHomePage = hideHomePage;
+
+function homeRefreshStats() {
+  try {
+    var total = parseInt(document.getElementById('statTotal').textContent) || 0;
+    var onay  = parseInt(document.getElementById('statOnay').textContent)  || 0;
+    var bekle = parseInt(document.getElementById('statBekle').textContent) || 0;
+    var gelis = parseInt(document.getElementById('statGelis').textContent) || 0;
+    var eksik = parseInt(document.getElementById('statEksik').textContent) || 0;
+    var set = function(id, val){ var el=document.getElementById(id); if(el) el.textContent = val; };
+    set('hStatTotal', total);
+    set('hStatOnay',  onay);
+    set('hStatBekle', bekle);
+    set('hStatGelis', gelis);
+    set('hStatEksik', eksik);
+  } catch(e){}
+}
+
+function homeRenderSheetCards() {
+  var container = document.getElementById('homeSheetCards');
+  if(!container || typeof SHEETS === 'undefined') return;
+  container.innerHTML = '';
+
+  var icons = {
+    'siparis': '🛒', 'teslim': '📦', 'satis': '💼'
+  };
+  var defaultIcons = ['⚙️','🔩','🔧','🏗️','🛠️','📐','🔬','🔋','🖥️','🔌'];
+
+  SHEETS.forEach(function(sheet, i) {
+    if(sheet.type === 'siparis' || sheet.type === 'teslim' || sheet.type === 'satis') return;
+    var card = document.createElement('div');
+    card.className = 'home-card';
+    var ico = icons[sheet.type] || defaultIcons[i % defaultIcons.length];
+    card.innerHTML =
+      '<div class="home-card-icon">' + ico + '</div>' +
+      '<div class="home-card-name">' + sheet.name + '</div>' +
+      '<div class="home-card-desc">' + (sheet.rows ? sheet.rows.filter(function(r){return r['3'];}).length : 0) + ' malzeme kaydı</div>' +
+      '<div class="home-card-arrow">GİT</div>';
+    card.addEventListener('click', (function(idx){ return function(){ homeGoSheet(idx); }; })(i));
+    container.appendChild(card);
+  });
+
+  // Sipariş / teslim sayfaları özel renk
+  SHEETS.forEach(function(sheet, i) {
+    if(sheet.type !== 'siparis' && sheet.type !== 'teslim') return;
+    var card = document.createElement('div');
+    card.className = 'home-card card-blue';
+    var ico = icons[sheet.type] || '📄';
+    card.innerHTML =
+      '<div class="home-card-icon">' + ico + '</div>' +
+      '<div class="home-card-name">' + sheet.name + '</div>' +
+      '<div class="home-card-desc">Sipariş / teslim takip sayfası</div>' +
+      '<div class="home-card-arrow">GİT</div>';
+    card.addEventListener('click', (function(idx){ return function(){ homeGoSheet(idx); }; })(i));
+    container.appendChild(card);
+  });
+}
+
+function homeGoSheet(idx) {
+  hideHomePage();
+  // Sidebar'ı aç
+  var tabsWrap = document.getElementById('tabsWrap');
+  var burger   = document.getElementById('sidebarToggle');
+  if(tabsWrap){ tabsWrap.classList.add('open'); }
+  if(burger)  { burger.classList.add('open'); }
+  if(typeof switchTab === 'function') switchTab(idx);
+}
+window.homeGoSheet = homeGoSheet;
+
+function homeGoSpecial(panelKey) {
+  hideHomePage();
+  var tabsWrap = document.getElementById('tabsWrap');
+  var burger   = document.getElementById('sidebarToggle');
+  if(tabsWrap){ tabsWrap.classList.add('open'); }
+  if(burger)  { burger.classList.add('open'); }
+  var tabIds = { 'st':'tabBtn-st','sn':'tabBtn-sn','yp':'tabBtn-yp','sf':'tabBtn-sf' };
+  var tabId = tabIds[panelKey];
+  if(tabId){
+    var btn = document.getElementById(tabId);
+    if(btn) btn.click();
+  }
+}
+window.homeGoSpecial = homeGoSpecial;
+
+// Giriş yaptıktan sonra ana sayfayı otomatik göster
+(function(){
+  var _origOnLoggedIn = window.onLoggedIn || null;
+  var checkInterval = setInterval(function(){
+    if(typeof onLoggedIn === 'function' && onLoggedIn !== checkInterval){
+      clearInterval(checkInterval);
+    }
+  }, 100);
+  // Sayfa ilk yüklenince zaten oturum varsa biraz geciktirerek ana sayfayı göster
+  setTimeout(function(){
+    var sess = localStorage.getItem('orimak_auth');
+    if(sess){
+      showHomePage();
+    }
+  }, 600);
+})();
 
 // Oturum yoksa loading gösterme
 (function() {
