@@ -6939,6 +6939,8 @@ function buildTabs() {
 function switchTab(idx) {
   if(typeof hideHomePage === 'function') hideHomePage();
   activeSheet = idx;
+  try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'sheet', idx:idx})); } catch(e){}
+
   // Normal tab-btn butonları
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
   // Makine grubu alt butonları
@@ -7753,6 +7755,7 @@ window.loadData = loadData;
 
 // ── ANA SAYFA FONKSİYONLARI ──
 function showHomePage() {
+  try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'home'})); } catch(e){}
   // Ana sayfayı göster, diğer panelleri gizle
   var homePanel = document.getElementById('homePanel');
   var statsBar  = document.getElementById('statsBar');
@@ -7908,11 +7911,39 @@ window.homeGoSpecial = homeGoSpecial;
       clearInterval(checkInterval);
     }
   }, 100);
-  // Sayfa ilk yüklenince zaten oturum varsa biraz geciktirerek ana sayfayı göster
+  // Sayfa ilk yüklenince zaten oturum varsa son aktif sayfayı geri yükle
   setTimeout(function(){
     var sess = localStorage.getItem('orimak_auth');
-    if(sess){
+    if(!sess) return;
+    var lastPage = null;
+    try { lastPage = JSON.parse(localStorage.getItem('orimak_lastPage')); } catch(e){}
+    if(!lastPage || lastPage.type === 'home') {
       showHomePage();
+    } else if(lastPage.type === 'sheet') {
+      // Normal sheet sayfası
+      hideHomePage();
+      var tw = document.getElementById('tabsWrap');
+      var burger = document.getElementById('sidebarToggle');
+      if(tw) tw.classList.add('open');
+      if(burger) burger.classList.add('open');
+      if(typeof switchTab === 'function') switchTab(lastPage.idx || 0);
+    } else if(lastPage.type === 'special') {
+      hideHomePage();
+      var tw2 = document.getElementById('tabsWrap');
+      var burger2 = document.getElementById('sidebarToggle');
+      if(tw2) tw2.classList.add('open');
+      if(burger2) burger2.classList.add('open');
+      var fnMap = { yp: 'ypSwitchTo', sn: 'snSwitchTo', st: 'stSwitchTo' };
+      var fnName = fnMap[lastPage.key];
+      // Panel ve tab fonksiyonları buildUI'dan sonra hazır olur, biraz bekle
+      var tries = 0;
+      var poll = setInterval(function(){
+        tries++;
+        if(typeof window[fnName] === 'function') {
+          clearInterval(poll);
+          window[fnName]();
+        } else if(tries > 30) { clearInterval(poll); showHomePage(); }
+      }, 100);
     }
   }, 600);
 })();
@@ -8581,6 +8612,7 @@ window.ypSwitchTo = function() {
   if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('YEDEK PARÇA')) return;
+  try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'special', key:'yp'})); } catch(e){}
   // Diğer sekmeleri kapat
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.tab-machine-child').forEach(function(b){ b.classList.remove('active'); });
@@ -8963,6 +8995,7 @@ window.snSwitchTo = function() {
   if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('SERİ NO')) return;
+  try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'special', key:'sn'})); } catch(e){}
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -10155,6 +10188,7 @@ window.stSwitchTo = function() {
   if (role !== 'admin' && role !== 'manager') return;
   var sayfalar = window._currentSayfalar || [];
   if (sayfalar.length > 0 && !sayfalar.includes('SERVİS TAKİP')) return;
+  try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'special', key:'st'})); } catch(e){}
   document.querySelectorAll('.sheet-panel').forEach(function(p){ p.classList.remove('active'); });
   var ypp = document.getElementById('ypanel'); if (ypp) ypp.style.display='none';
   var snp = document.getElementById('snPanel'); if (snp) snp.style.display='none';
