@@ -5,123 +5,182 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orimak Takip — Orimak</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<!-- ══ PUSH BİLDİRİM SİSTEMİ ══ -->
+<!-- ══ PUSH BİLDİRİM SİSTEMİ (Firestore gerçek zamanlı, ücretsiz) ══ -->
 <script>
 (function(){
 'use strict';
 
-// ── VAPID Public Key ──
-var VAPID_PUBLIC_KEY = 'BPS0XuF-I8-2WqAhLi4QIe_iOGgpq-ezu3aPkJrb5bwksQjUgQEbYRrTLimHcuFeDND-lE1Ei3RpQWykuFHah7I';
+// ── Bildirim UI stili ──
+var _style = document.createElement('style');
+_style.textContent = [
+  '#orimak-notif-container{',
+  '  position:fixed;top:80px;right:20px;z-index:99999;',
+  '  display:flex;flex-direction:column;gap:10px;pointer-events:none;',
+  '}',
+  '.orimak-notif{',
+  '  background:#1e1e1e;border:1px solid #2e2e2e;border-left:4px solid #F5A623;',
+  '  border-radius:10px;padding:14px 18px;min-width:280px;max-width:340px;',
+  '  box-shadow:0 8px 32px rgba(0,0,0,.6);pointer-events:all;',
+  '  font-family:Barlow,sans-serif;cursor:pointer;',
+  '  animation:notifSlide .3s ease;',
+  '}',
+  '.orimak-notif.teslim{border-left-color:#92D050;}',
+  '.orimak-notif.malzeme{border-left-color:#7ab8f5;}',
+  '.orimak-notif.fiyat{border-left-color:#c49ef5;}',
+  '.orimak-notif-title{',
+  '  font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;',
+  '  letter-spacing:1px;color:#fff;margin-bottom:4px;',
+  '}',
+  '.orimak-notif-body{font-size:12px;color:#aaa;line-height:1.5;}',
+  '.orimak-notif-time{font-size:10px;color:#555;margin-top:6px;',
+  '  font-family:"Barlow Condensed",sans-serif;letter-spacing:.5px;}',
+  '@keyframes notifSlide{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}'
+].join('');
+document.head.appendChild(_style);
 
-// Base64URL → Uint8Array dönüşümü (VAPID key için)
-function urlBase64ToUint8Array(base64String) {
-  var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  var base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  var raw     = atob(base64);
-  var arr     = new Uint8Array(raw.length);
-  for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-  return arr;
-}
-
-// ── Aboneliği Firestore'a Kaydet ──
-function saveSubscriptionToFirestore(sub, role, username) {
-  if (!window._db || !window._fsDoc || !window._fsSetDoc) return;
-  var json = sub.toJSON();
-  var docId = btoa(json.endpoint).replace(/[^a-z0-9]/gi,'').slice(0,40);
-  var data  = {
-    endpoint : json.endpoint,
-    p256dh   : json.keys ? json.keys.p256dh : '',
-    auth     : json.keys ? json.keys.auth   : '',
-    role     : role || 'viewer',
-    user     : username || '',
-    updatedAt: Date.now()
-  };
-  window._fsSetDoc(window._fsDoc(window._db, 'push_subscriptions', docId), data)
-    .catch(function(e){ console.warn('Subscription kaydedilemedi:', e); });
-}
-
-// ── Bildirimi Firestore Kuyruğuna Ekle ──
-// Cloud Function bu kuyruğu dinler ve push gönderir
-window.orimakSendPush = function(title, body, tag, url) {
-  if (!window._db || !window._fsCollection) return;
-  // Sadece manager/admin alır
-  var payload = {
-    title : title,
-    body  : body,
-    tag   : tag  || 'orimak',
-    url   : url  || '/',
-    roles : ['manager', 'admin'],
-    ts    : Date.now()
-  };
-  // push_queue koleksiyonuna yeni belge ekle
-  var colRef = window._fsCollection(window._db, 'push_queue');
-  var docRef = window._fsDoc(colRef); // auto-id
-  window._fsSetDoc(docRef, payload)
-    .catch(function(e){ console.warn('Push kuyruğuna eklenemedi:', e); });
-};
-
-// ── Service Worker Kayıt & Abonelik ──
-window.initPushNotifications = function() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    console.log('Push bildirimler bu tarayıcıda desteklenmiyor.');
-    return;
+// ── Bildirim Konteyneri ──
+var _container = null;
+function getContainer() {
+  if (!_container) {
+    _container = document.createElement('div');
+    _container.id = 'orimak-notif-container';
+    document.body.appendChild(_container);
   }
+  return _container;
+}
 
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(reg) {
-      // Mevcut aboneliği kontrol et
-      return reg.pushManager.getSubscription().then(function(existing) {
-        if (existing) return existing; // Zaten abone, tekrar sor
-        // İzin iste
-        return Notification.requestPermission().then(function(perm) {
-          if (perm !== 'granted') return null;
-          return reg.pushManager.subscribe({
-            userVisibleOnly     : true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-          });
-        });
-      });
-    })
-    .then(function(sub) {
-      if (!sub) return;
-      var role     = window._currentRole || 'viewer';
-      var username = window._currentUser || '';
-      // Sadece manager ve admin aboneliği kaydedelim
-      if (role === 'manager' || role === 'admin') {
-        saveSubscriptionToFirestore(sub, role, username);
-      }
-    })
-    .catch(function(e){ console.warn('SW/Push hatası:', e); });
+// ── Ekranda Bildirim Göster ──
+function showToast(title, body, type) {
+  var c    = getContainer();
+  var div  = document.createElement('div');
+  var cls  = type === 'teslim' ? 'teslim' : type === 'malzeme' ? 'malzeme' : type === 'fiyat' ? 'fiyat' : '';
+  div.className = 'orimak-notif ' + cls;
+
+  var now  = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+  div.innerHTML =
+    '<div class="orimak-notif-title">' + title + '</div>' +
+    '<div class="orimak-notif-body">'  + body  + '</div>' +
+    '<div class="orimak-notif-time">'  + now   + '</div>';
+
+  div.onclick = function() { div.remove(); };
+  c.appendChild(div);
+
+  // 7 saniye sonra otomatik kapat
+  setTimeout(function() {
+    div.style.transition = 'opacity .4s';
+    div.style.opacity = '0';
+    setTimeout(function() { div.remove(); }, 400);
+  }, 7000);
+
+  // Tarayıcı Notification API (izin varsa)
+  if (window.Notification && Notification.permission === 'granted') {
+    new Notification(title, { body: body, icon: '/favicon.ico' });
+  }
+}
+
+// ── Firestore Dinleyicisi ──
+// push_messages koleksiyonuna yeni belge gelince bildirim göster
+var _unsubPush = null;
+var _lastPushTs = Date.now(); // sadece bu oturumdan sonra gelenleri al
+
+function startPushListener() {
+  if (!window._db || !window._fsCollection || !window._fsOnSnapshot || !window._fsDoc) return;
+
+  var role = window._currentRole || 'viewer';
+  if (role !== 'manager' && role !== 'admin') return;
+  if (_unsubPush) return; // zaten dinleniyor
+
+  var colRef = window._fsCollection(window._db, 'push_messages');
+
+  _unsubPush = window._fsOnSnapshot(colRef, function(snap) {
+    snap.docChanges().forEach(function(change) {
+      if (change.type !== 'added') return;
+      var d = change.doc.data();
+      if (!d.ts || d.ts < _lastPushTs) return; // eski mesajları atla
+      // Kendi gönderdiğimizi atla
+      var myUser = window._currentUser || '';
+      if (d.sender && d.sender === myUser) return;
+
+      showToast(d.title || 'Orimak', d.body || '', d.type || '');
+    });
+  });
+}
+
+// ── Push Mesajı Gönder (Firestore'a yaz) ──
+window.orimakSendPush = function(title, body, tag, url) {
+  if (!window._db || !window._fsCollection || !window._fsDoc || !window._fsSetDoc) return;
+
+  var type = tag === 'teslim-yeni' ? 'teslim'
+           : tag === 'malzeme-ekle' ? 'malzeme'
+           : tag === 'fiyat-ekle' ? 'fiyat'
+           : 'siparis';
+
+  var payload = {
+    title  : title,
+    body   : body,
+    type   : type,
+    tag    : tag,
+    sender : window._currentUser || '',
+    ts     : Date.now()
+  };
+
+  var colRef = window._fsCollection(window._db, 'push_messages');
+  var docRef = window._fsDoc(colRef);
+  window._fsSetDoc(docRef, payload).catch(function(e) {
+    console.warn('Push mesajı gönderilemedi:', e);
+  });
+
+  // Eski mesajları temizle (sadece admin yapar, 50 mesajdan fazla olunca)
+  // — Cloud Functions olmadan basit tutuyoruz, manuel temizlik yeterli
 };
 
-// ── Giriş Sonrası Otomatik Başlat ──
-// onLoggedIn çağrıldıktan sonra hook'u biz tetikleriz
+// ── Tarayıcı Bildirim İzni İste ──
+function requestNotifPermission() {
+  if (window.Notification && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+// ── Giriş Sonrası Başlat ──
 var _origOnLoggedIn = window.onLoggedIn;
 window.onLoggedIn = function(u) {
   if (_origOnLoggedIn) _origOnLoggedIn(u);
   var role = u.role || u.rol || 'viewer';
   if (role === 'manager' || role === 'admin') {
-    // Firebase hazır olduktan sonra başlat
-    setTimeout(function() { window.initPushNotifications(); }, 2000);
+    requestNotifPermission();
+    // Firebase hazır olunca dinlemeye başla
+    var tries = 0;
+    var poll = setInterval(function() {
+      tries++;
+      if (window._db && window._fsCollection && window._fsOnSnapshot) {
+        clearInterval(poll);
+        startPushListener();
+      } else if (tries > 30) {
+        clearInterval(poll);
+      }
+    }, 300);
   }
 };
 
 // Sayfa yenilenince oturum varsa da başlat
-window.addEventListener('load', function() {
+window.addEventListener('firebaseReady', function() {
   try {
     var sess = localStorage.getItem('orimak_auth');
     if (!sess) return;
     var u    = JSON.parse(sess);
     var role = u.role || u.rol || 'viewer';
     if (role === 'manager' || role === 'admin') {
-      setTimeout(function() { window.initPushNotifications(); }, 3000);
+      window._currentUser = u.user || '';
+      window._currentRole = role;
+      requestNotifPermission();
+      setTimeout(startPushListener, 500);
     }
-  } catch(e){}
-});
+  } catch(e) {}
+}, { once: true });
 
 })();
 </script>
+
 <style>
 :root{--dark:#1A1A1A;--orange:#F5A623;--cream:#FFF8F0;--mint:#BBE6D9;--green:#92D050;--red:#C00000;--white:#fff;--border:#2e2e2e;}
 *{box-sizing:border-box;margin:0;padding:0;}
