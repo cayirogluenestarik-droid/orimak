@@ -11983,7 +11983,12 @@ function flLoad(){
           });
           FL.data = norm;
           FL.loaded = true; /* bir kez yuklendi, artik sifirlanmayacak */
-          window.flRender(null);
+          /* Sadece FiyatListesi tab'i aktifse render et;
+             degilse data hazir, tab acilinca stRenderContent -> flRender calisacak */
+          var pg = (typeof ST_PAGES!=='undefined'&&typeof stActiveIdx!=='undefined') ? ST_PAGES[stActiveIdx] : null;
+          if(pg && pg[0]==='FiyatListesi.html'){
+            window.flRender(null);
+          }
         }
       }).catch(function(){});
     }
@@ -12028,9 +12033,14 @@ function flDraw(){
   /* ── Mevcut DOM varsa partial update yap ── */
   var existing = box.querySelector('.fl-wrap');
   if(existing){
-    /* Dropdown güncelle */
+    /* Dropdown seçeneklerini güncelle (data yüklendikten sonra sayılar değişir) */
     var sel = box.querySelector('.fl-msel');
-    if(sel && parseInt(sel.value,10)!==FL.activeIdx) sel.value=String(FL.activeIdx);
+    if(sel){
+      var newOpts = FL_MACHINES.map(function(m,i){
+        return '<option value="'+i+'"'+(i===FL.activeIdx?' selected':'')+'>'+flEsc(m.label)+' ('+flRows(m.key).length+')</option>';
+      }).join('');
+      sel.innerHTML = newOpts;
+    }
 
     /* Stats güncelle */
     var stat = box.querySelector('.fl-mstat');
@@ -12292,8 +12302,14 @@ window.flRender = function(box){
 
   var existing = box.querySelector('.fl-wrap');
   if(existing){
+    /* Select options'ları yeniden oluştur (data yüklendikten sonra sayılar güncellenir) */
     var sel2 = box.querySelector('.fl-msel');
-    if(sel2 && parseInt(sel2.value,10)!==FL.activeIdx) sel2.value=String(FL.activeIdx);
+    if(sel2){
+      var newOpts = FL_MACHINES.map(function(m,i){
+        return '<option value="'+i+'"'+(i===FL.activeIdx?' selected':'')+'>'+flEsc(m.label)+' ('+flRows(m.key).length+')</option>';
+      }).join('');
+      sel2.innerHTML = newOpts;
+    }
     var stat2 = box.querySelector('.fl-mstat');
     if(stat2) stat2.innerHTML='Toplam: <span>'+rows.length+'</span>'+(FL.search?' &nbsp;·&nbsp; Filtre: <span>'+list.length+'</span>':'');
     var tbody2 = box.querySelector('.fl-table tbody');
