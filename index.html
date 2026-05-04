@@ -1402,7 +1402,11 @@ async function renderPartiList() {
           <div class="p-date">${p.tarih}</div>
         </div>
         <span class="p-badge ${isAktif ? 'p-badge-active' : 'p-badge-arsiv'}">${isAktif ? 'AKTİF' : 'ARŞİV'}</span>
-        ${!isAktif ? `<button class="hbtn hbtn-dark" style="font-size:11px;padding:5px 10px;margin-left:6px;" onclick="partiYukle('${p.ad}')">Yükle</button>` : ''}
+        ${!isAktif ? `
+          <button class="hbtn hbtn-dark" style="font-size:11px;padding:5px 10px;margin-left:6px;" onclick="partiYukle('${p.ad}')">Yükle</button>
+          <button class="hbtn" style="font-size:11px;padding:5px 10px;background:linear-gradient(135deg,#6b1a00,#4a1000);color:#ffb07a;border:1px solid #8a3a00;" onclick="partiPDFIndir('${p.ad}')">📄 PDF</button>
+          <button class="hbtn" style="font-size:11px;padding:5px 10px;background:rgba(192,0,0,.15);color:#ff6666;border:1px solid rgba(192,0,0,.4);" onclick="partiSil('${p.ad}')">🗑 Sil</button>
+        ` : ''}
       `;
       list.appendChild(div);
     });
@@ -1625,6 +1629,45 @@ async function partiYukle(ad) {
   } catch(e) { alert('Hata: ' + e.message); }
 }
 window.partiYukle = partiYukle;
+
+async function partiSil(ad) {
+  if (!confirm(`"${ad}" partisini kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!`)) return;
+  try {
+    // Partiler listesinden çıkar
+    const partiSnap = await window._fsGetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'));
+    const partiler = partiSnap.exists() ? (partiSnap.data().list || []) : [];
+    const yeni = partiler.filter(p => p.ad !== ad);
+    await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'partiler'), { list: yeni });
+    // Arşiv verisini de sil
+    try {
+      const arsivRef = window._fsDoc(window._db, 'arsiv', ad.replace(/[^a-zA-Z0-9]/g, '_'));
+      await window._fsDeleteDoc(arsivRef);
+    } catch(e2) { /* arşiv belgesi yoksa geç */ }
+    renderPartiList();
+  } catch(e) {
+    alert('Hata: ' + e.message);
+  }
+}
+window.partiSil = partiSil;
+
+async function partiPDFIndir(ad) {
+  try {
+    const snap = await window._fsGetDoc(window._fsDoc(window._db, 'arsiv', ad.replace(/[^a-zA-Z0-9]/g, '_')));
+    if (!snap.exists()) { alert('Bu partiye ait arşiv verisi bulunamadı.'); return; }
+    const sheets = JSON.parse(snap.data().data);
+    const tarih = new Date().toLocaleDateString('tr-TR');
+    const html = buildPDFHtml(ad, `Arşiv Raporu — ${tarih}`, sheets);
+    const win = window.open('', '_blank');
+    if (!win) { alert('Popup engelleyici aktif. Lütfen izin verin.'); return; }
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 500);
+  } catch(e) {
+    alert('Hata: ' + e.message);
+  }
+}
+window.partiPDFIndir = partiPDFIndir;
 
 function showPartiMsg(text, type) {
   const el = document.getElementById('partiMsg');
