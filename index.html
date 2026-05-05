@@ -49,6 +49,198 @@ function getContainer() {
   return _container;
 }
 
+// ── Sekme Dot Bildirim Sistemi ──
+// Hangi type → hangi tab buttonlarına dot ekleneceğini tanımlar
+var _TYPE_TO_TAB = {
+  'teslim'  : ['teslim'],   // sheet.type === 'teslim' olan tablar
+  'malzeme' : ['malzeme'],  // sheet.type içinde 'malzeme' geçenler veya genel tablar
+  'fiyat'   : ['sf'],       // Servis Fiyat = tabBtn-sf; fiyat listesi
+  'siparis' : ['siparis']
+};
+
+// Bekleyen dot'ları sakla: tabId → count
+var _dotMap = {};
+
+// Sekme title flash
+var _origTitle = document.title;
+var _flashTimer = null;
+var _flashCount = 0;
+
+function startTabFlash() {
+  if (_flashTimer) return;
+  var alt = false;
+  _flashTimer = setInterval(function() {
+    document.title = alt ? ('🔴 Yeni Bildirim | ' + _origTitle) : _origTitle;
+    alt = !alt;
+  }, 1000);
+}
+function stopTabFlash() {
+  if (_flashTimer) { clearInterval(_flashTimer); _flashTimer = null; }
+  document.title = _origTitle;
+}
+
+// CSS: kırmızı nokta stili
+(function(){
+  var s = document.createElement('style');
+  s.textContent = [
+    '.notif-dot{',
+    '  display:inline-block;width:8px;height:8px;',
+    '  background:#e53935;border-radius:50%;',
+    '  margin-left:6px;flex-shrink:0;',
+    '  box-shadow:0 0 0 2px rgba(229,57,53,.3);',
+    '  animation:dotPulse 1.4s ease-in-out infinite;',
+    '  vertical-align:middle;',
+    '}',
+    '@keyframes dotPulse{',
+    '  0%,100%{box-shadow:0 0 0 2px rgba(229,57,53,.3);}',
+    '  50%{box-shadow:0 0 0 5px rgba(229,57,53,.0);}',
+    '}'
+  ].join('');
+  document.head.appendChild(s);
+})();
+
+// Bir tab butonuna kırmızı nokta ekle
+function addDotToTab(tabId) {
+  _dotMap[tabId] = (_dotMap[tabId] || 0) + 1;
+  // Hemen varsa ekle, yoksa MutationObserver ile bekle
+  _applyDotToBtn(tabId);
+  // Buton henüz DOM'a eklenmemişse bekle
+  if (!document.getElementById(tabId)) {
+    _waitForTabBtn(tabId);
+  }
+}
+
+function _applyDotToBtn(tabId) {
+  var btn = document.getElementById(tabId);
+  if (!btn) return;
+  if (!btn.querySelector('.notif-dot')) {
+    var dot = document.createElement('span');
+    dot.className = 'notif-dot';
+    btn.appendChild(dot);
+  }
+}
+
+function _waitForTabBtn(tabId) {
+  var obs = new MutationObserver(function() {
+    var btn = document.getElementById(tabId);
+    if (btn) { _applyDotToBtn(tabId); obs.disconnect(); }
+  });
+  obs.observe(document.body, { childList: true, subtree: true });
+  // 30 saniye sonra temizle
+  setTimeout(function() { obs.disconnect(); }, 30000);
+}
+
+// Tab butonundan nokta kaldır
+function removeDotFromTab(tabId) {
+  delete _dotMap[tabId];
+  var btn = document.getElementById(tabId);
+  if (btn) {
+    var dot = btn.querySelector('.notif-dot');
+    if (dot) dot.remove();
+  }
+  // Hiç dot kalmadıysa title flash'i durdur
+  if (Object.keys(_dotMap).length === 0) stopTabFlash();
+}
+
+// Bildirim tipine göre hangi tab'lara dot ekleneceğini bul
+function addDotByType(type) {
+  // teslim tipi → type==='teslim' olan SHEETS'in tab buttonlarına
+  if (type === 'teslim') {
+    // SHEETS mevcut değilse sonradan bul
+    _applyDotBySheetType('teslim');
+    return;
+  }
+  if (type === 'malzeme') {
+    _applyDotBySheetType('malzeme');
+    return;
+  }
+  if (type === 'siparis') {
+    _applyDotBySheetType('siparis');
+    return;
+  }
+  if (type === 'fiyat') {
+    // Servis Fiyat butonu: tabBtn-sf
+    addDotToTab('tabBtn-sf');
+    // Fiyat Listesi özel tab
+    addDotToTab('tabBtn-fl');
+    return;
+  }
+  // Bilinmeyen tip → genel
+  startTabFlash();
+}
+
+function _applyDotBySheetType(sheetType) {
+  if (window.SHEETS) {
+    var found = false;
+    window.SHEETS.forEach(function(sh, idx) {
+      if (sh.type === sheetType) {
+        addDotToTab('tabBtn-' + idx);
+        found = true;
+      }
+    });
+    if (found) return;
+  }
+  // SHEETS henüz yüklenmediyse kısa süre sonra tekrar dene
+  setTimeout(function() { _applyDotBySheetType(sheetType); }, 1000);
+}
+
+// switchTab patch: aktif olan tab'ın dot'unu kaldır
+(function patchSwitchTab() {
+  var _origST = window.switchTab;
+  function patchedSwitchTab(idx) {
+    if (_origST) _origST.call(this, idx);
+    var tabId = 'tabBtn-' + idx;
+    if (_dotMap[tabId]) removeDotFromTab(tabId);
+  }
+  if (typeof window.switchTab === 'function') {
+    window.switchTab = patchedSwitchTab;
+  } else {
+    // switchTab henüz tanımlanmamışsa defineProperty ile yakala
+    var _stDefined = false;
+    Object.defineProperty(window, 'switchTab', {
+      configurable: true,
+      set: function(fn) {
+        if (_stDefined) return;
+        _stDefined = true;
+        Object.defineProperty(window, 'switchTab', { configurable:true, writable:true, value: function(idx) {
+          fn.call(this, idx);
+          var tabId = 'tabBtn-' + idx;
+          if (_dotMap[tabId]) removeDotFromTab(tabId);
+        }});
+      },
+      get: function() { return undefined; }
+    });
+  }
+})();
+
+// Özel paneller (st, sn, yp, sf) açılınca dot kaldır
+(function patchHomeGoSpecial() {
+  var _origHGS = window.homeGoSpecial;
+  function patchedHGS(panelKey) {
+    if (_origHGS) _origHGS.call(this, panelKey);
+    var tabId = { 'st':'tabBtn-st','sn':'tabBtn-sn','yp':'tabBtn-yp','sf':'tabBtn-sf' }[panelKey];
+    if (tabId && _dotMap[tabId]) removeDotFromTab(tabId);
+  }
+  if (typeof window.homeGoSpecial === 'function') {
+    window.homeGoSpecial = patchedHGS;
+  }
+  // Yoksa tanımlanınca yakala
+  var _origDefine = window.homeGoSpecial;
+  if (!_origDefine) {
+    var _hgsDefined = false;
+    Object.defineProperty(window, 'homeGoSpecial', {
+      configurable: true,
+      set: function(fn) {
+        if (_hgsDefined) return;
+        _hgsDefined = true;
+        Object.defineProperty(window, 'homeGoSpecial', { configurable:true, writable:true, value: patchedHGS.bind(null) });
+        _origHGS = fn;
+      },
+      get: function() { return undefined; }
+    });
+  }
+})();
+
 // ── Ekranda Bildirim Göster ──
 function showToast(title, body, type) {
   var c    = getContainer();
@@ -64,6 +256,10 @@ function showToast(title, body, type) {
 
   div.onclick = function() { div.remove(); };
   c.appendChild(div);
+
+  // İlgili sekme butonuna kırmızı nokta + sekme yanması
+  addDotByType(type);
+  startTabFlash();
 
   // 7 saniye sonra otomatik kapat
   setTimeout(function() {
