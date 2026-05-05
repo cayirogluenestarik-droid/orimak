@@ -2017,9 +2017,10 @@ function renderSiparisRows() {
         if (window.orimakSendPush) {
           const siparisNo = rows[i].siparisNo || rows[i].no || (i+1);
           const makine = rows[i].makine || rows[i].makineAdi || '';
+          const urun = rows[i].urunAdi || rows[i].urunKodu || '';
           window.orimakSendPush(
             '✅ Yetkili Onayı Verildi',
-            kisi + ' · ' + (makine ? makine + ' · ' : '') + 'Sipariş #' + siparisNo,
+            kisi + ' · ' + (makine ? makine + ' · ' : '') + (urun ? urun + ' · ' : '') + 'Sipariş #' + siparisNo + ' · Satır ' + (i+1),
             'onay', '/'
           );
         }
@@ -2182,9 +2183,17 @@ async function saveSiparis(editIdx) {
   // ── PUSH BİLDİRİMİ: Yeni sipariş eklendi ──
   if (_isYeniSiparis && window.orimakSendPush) {
     var _kim = window._currentUser || 'Kullanıcı';
+    var _yeniSatirNo = rows.length; // push sonrası son satır
     window.orimakSendPush(
       '🛒 Yeni Sipariş Eklendi',
-      _kim + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.sipAdet ? ' · ' + yeni.sipAdet + ' adet' : ''),
+      _kim + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.sipAdet ? ' · ' + yeni.sipAdet + ' adet' : '') + ' · Satır ' + _yeniSatirNo,
+      'siparis-yeni', '/'
+    );
+  } else if (!_isYeniSiparis && window.orimakSendPush) {
+    var _kimD = window._currentUser || 'Kullanıcı';
+    window.orimakSendPush(
+      '✏️ Sipariş Düzenlendi',
+      _kimD + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.sipAdet ? ' · ' + yeni.sipAdet + ' adet' : '') + ' · Satır ' + (editIdx + 1),
       'siparis-yeni', '/'
     );
   }
@@ -2329,9 +2338,17 @@ async function saveTeslim(editIdx) {
   // ── PUSH BİLDİRİMİ: Yeni teslim kaydı ──
   if (_isYeniTeslim && window.orimakSendPush) {
     var _kimT = window._currentUser || 'Kullanıcı';
+    var _yeniTeslimSatirNo = rows.length; // push sonrası son satır
     window.orimakSendPush(
       '📦 Teslim Kaydı Eklendi',
-      _kimT + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.gelisAdet ? ' · ' + yeni.gelisAdet + ' adet' : '') + (yeni.gelisTarihi ? ' / ' + yeni.gelisTarihi : ''),
+      _kimT + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.gelisAdet ? ' · ' + yeni.gelisAdet + ' adet' : '') + (yeni.gelisTarihi ? ' / ' + yeni.gelisTarihi : '') + ' · Satır ' + _yeniTeslimSatirNo,
+      'teslim-yeni', '/'
+    );
+  } else if (!_isYeniTeslim && window.orimakSendPush) {
+    var _kimTD = window._currentUser || 'Kullanıcı';
+    window.orimakSendPush(
+      '✏️ Teslim Kaydı Düzenlendi',
+      _kimTD + ': ' + (yeni.urunAdi || yeni.urunKodu || '—') + (yeni.gelisAdet ? ' · ' + yeni.gelisAdet + ' adet' : '') + (yeni.gelisTarihi ? ' / ' + yeni.gelisTarihi : '') + ' · Satır ' + (editIdx + 1),
       'teslim-yeni', '/'
     );
   }
@@ -7716,9 +7733,10 @@ function makeRow(si, ri, row) {
               const row2 = state[si].rows[ri];
               const makine = row2.makine || row2.makineAdi || row2._makine || '';
               const no = row2.no || row2.siparisNo || (ri+1);
+              const urunAdi2 = row2['3'] || row2['2'] || row2.urunAdi || row2.urunKodu || '';
               window.orimakSendPush(
                 '✅ Yetkili Onayı Verildi',
-                kisi + (makine ? ' · ' + makine : '') + (sayfaAdi ? ' · ' + sayfaAdi : '') + ' · #' + no,
+                kisi + (makine ? ' · ' + makine : '') + (sayfaAdi ? ' · ' + sayfaAdi : '') + (urunAdi2 ? ' · ' + urunAdi2 : '') + ' · Satır ' + (ri+1) + ' (#' + no + ')',
                 'onay', '/'
               );
             }
@@ -8168,9 +8186,11 @@ async function addRow() {
     if (window.orimakSendPush) {
       var _kimA = window._currentUser || 'Kullanıcı';
       var _sayfaAdi = (SHEETS[si] && SHEETS[si].name) ? SHEETS[si].name : 'Malzeme Listesi';
+      // Eklenen satırın sıra numarasını bul
+      var _yeniRowNo = newRow._rowNo || (function(){ var c=0; state[si].rows.forEach(function(r){ if(!r._group&&(r['3']||r['2'])) c++; }); return c; })();
       window.orimakSendPush(
         '⚙️ Malzeme Listesine Ekleme',
-        _kimA + ': ' + (name || '—') + ' — ' + _sayfaAdi,
+        _kimA + ': ' + (name || '—') + ' — ' + _sayfaAdi + ' · Satır ' + _yeniRowNo,
         'malzeme-ekle', '/'
       );
     }
@@ -12435,9 +12455,11 @@ function bindEvents(box){
     // ── PUSH BİLDİRİMİ: Fiyat listesine malzeme eklendi ──
     if (window.orimakSendPush) {
       var _kimFL = window._currentUser || 'Kullanıcı';
+      var _mkFL = flKey();
+      var _satirNoFL = flRows(_mkFL).length; // push sonrası son satır
       window.orimakSendPush(
         '💰 Fiyat Listesine Malzeme Eklendi',
-        _kimFL + ' yeni malzeme ekledi — Malzeme/Fiyat Listesi',
+        _kimFL + ' yeni malzeme ekledi — Malzeme/Fiyat Listesi · Satır ' + _satirNoFL,
         'fiyat-ekle', '/'
       );
     }
