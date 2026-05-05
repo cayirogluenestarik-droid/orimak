@@ -184,62 +184,19 @@ function _applyDotBySheetType(sheetType) {
   setTimeout(function() { _applyDotBySheetType(sheetType); }, 1000);
 }
 
-// switchTab patch: aktif olan tab'ın dot'unu kaldır
-(function patchSwitchTab() {
-  var _origST = window.switchTab;
-  function patchedSwitchTab(idx) {
-    if (_origST) _origST.call(this, idx);
-    var tabId = 'tabBtn-' + idx;
-    if (_dotMap[tabId]) removeDotFromTab(tabId);
-  }
-  if (typeof window.switchTab === 'function') {
-    window.switchTab = patchedSwitchTab;
-  } else {
-    // switchTab henüz tanımlanmamışsa defineProperty ile yakala
-    var _stDefined = false;
-    Object.defineProperty(window, 'switchTab', {
-      configurable: true,
-      set: function(fn) {
-        if (_stDefined) return;
-        _stDefined = true;
-        Object.defineProperty(window, 'switchTab', { configurable:true, writable:true, value: function(idx) {
-          fn.call(this, idx);
-          var tabId = 'tabBtn-' + idx;
-          if (_dotMap[tabId]) removeDotFromTab(tabId);
-        }});
-      },
-      get: function() { return undefined; }
-    });
-  }
-})();
+// Tüm dotlar temizlendiyse sekme flash'ı durdur
+function stopTabFlashIfClear() {
+  if (Object.keys(_dotMap).length === 0) stopTabFlash();
+}
 
-// Özel paneller (st, sn, yp, sf) açılınca dot kaldır
-(function patchHomeGoSpecial() {
-  var _origHGS = window.homeGoSpecial;
-  function patchedHGS(panelKey) {
-    if (_origHGS) _origHGS.call(this, panelKey);
-    var tabId = { 'st':'tabBtn-st','sn':'tabBtn-sn','yp':'tabBtn-yp','sf':'tabBtn-sf' }[panelKey];
-    if (tabId && _dotMap[tabId]) removeDotFromTab(tabId);
-  }
-  if (typeof window.homeGoSpecial === 'function') {
-    window.homeGoSpecial = patchedHGS;
-  }
-  // Yoksa tanımlanınca yakala
-  var _origDefine = window.homeGoSpecial;
-  if (!_origDefine) {
-    var _hgsDefined = false;
-    Object.defineProperty(window, 'homeGoSpecial', {
-      configurable: true,
-      set: function(fn) {
-        if (_hgsDefined) return;
-        _hgsDefined = true;
-        Object.defineProperty(window, 'homeGoSpecial', { configurable:true, writable:true, value: patchedHGS.bind(null) });
-        _origHGS = fn;
-      },
-      get: function() { return undefined; }
-    });
-  }
-})();
+// Tab butonlarına click listener — her tıkta dot ve flash temizle
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn, .tab-machine-child');
+  if (!btn) return;
+  var id = btn.id;
+  if (id && _dotMap[id]) removeDotFromTab(id);
+  stopTabFlashIfClear();
+});
 
 // ── Ekranda Bildirim Göster ──
 function showToast(title, body, type) {
@@ -7382,6 +7339,9 @@ function buildTabs() {
 function switchTab(idx) {
   if(typeof hideHomePage === 'function') hideHomePage();
   activeSheet = idx;
+  // Bildirim dot ve sekme flash temizle
+  if(typeof removeDotFromTab === 'function') removeDotFromTab('tabBtn-' + idx);
+  if(typeof stopTabFlashIfClear === 'function') stopTabFlashIfClear();
   try { localStorage.setItem('orimak_lastPage', JSON.stringify({type:'sheet', idx:idx})); } catch(e){}
 
   // Normal tab-btn butonları
@@ -8412,6 +8372,9 @@ function homeGoSpecial(panelKey) {
   if(tabId){
     var btn = document.getElementById(tabId);
     if(btn) btn.click();
+    // Bildirim dot ve sekme flash temizle
+    if(typeof removeDotFromTab === 'function') removeDotFromTab(tabId);
+    if(typeof stopTabFlashIfClear === 'function') stopTabFlashIfClear();
   }
 }
 window.homeGoSpecial = homeGoSpecial;
