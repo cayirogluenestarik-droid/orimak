@@ -158,6 +158,11 @@ function addDotByType(type) {
     _applyDotBySheetType('siparis');
     return;
   }
+  if (type === 'onay') {
+    // Onay: sipariş sayfasına nokta
+    _applyDotBySheetType('siparis');
+    return;
+  }
   if (type === 'fiyat') {
     // Servis Fiyat butonu: tabBtn-sf
     addDotToTab('tabBtn-sf');
@@ -266,6 +271,7 @@ window.orimakSendPush = function(title, body, tag, url) {
   var type = tag === 'teslim-yeni' ? 'teslim'
            : tag === 'malzeme-ekle' ? 'malzeme'
            : tag === 'fiyat-ekle' ? 'fiyat'
+           : tag === 'onay' ? 'onay'
            : 'siparis';
 
   var payload = {
@@ -2007,6 +2013,16 @@ function renderSiparisRows() {
         const kisi = window._currentUser || '?';
         const tarih = new Date().toLocaleDateString('tr-TR');
         rows[i].yetkiliOnayKisi = kisi + ' · ' + tarih;
+        // Bildirim gönder
+        if (window.orimakSendPush) {
+          const siparisNo = rows[i].siparisNo || rows[i].no || (i+1);
+          const makine = rows[i].makine || rows[i].makineAdi || '';
+          window.orimakSendPush(
+            '✅ Yetkili Onayı Verildi',
+            kisi + ' · ' + (makine ? makine + ' · ' : '') + 'Sipariş #' + siparisNo,
+            'onay', '/'
+          );
+        }
       } else {
         rows[i].yetkiliOnayKisi = '';
       }
@@ -7694,6 +7710,18 @@ function makeRow(si, ri, row) {
             const kisi = window._currentUser || '?';
             const tarih = new Date().toLocaleDateString('tr-TR');
             state[si].rows[ri]._yetkiliKisi = kisi + ' · ' + tarih;
+            // Bildirim gönder
+            if (window.orimakSendPush) {
+              const sayfaAdi = (window.SHEETS && window.SHEETS[si]) ? (window.SHEETS[si].name || '') : '';
+              const row2 = state[si].rows[ri];
+              const makine = row2.makine || row2.makineAdi || row2._makine || '';
+              const no = row2.no || row2.siparisNo || (ri+1);
+              window.orimakSendPush(
+                '✅ Yetkili Onayı Verildi',
+                kisi + (makine ? ' · ' + makine : '') + (sayfaAdi ? ' · ' + sayfaAdi : '') + ' · #' + no,
+                'onay', '/'
+              );
+            }
           } else {
             state[si].rows[ri]._yetkiliKisi = '';
           }
