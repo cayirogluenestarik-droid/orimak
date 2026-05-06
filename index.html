@@ -2198,6 +2198,7 @@ function siparisField(label, id, val, cls='') {
 
 async function saveSiparis(editIdx) {
   const si = getSiparisIdx();
+  if (si < 0) { alert('Sipariş sayfası bulunamadı!'); return; }
   const rows = getSiparisRows();
   const yeni = {
     urunKodu: document.getElementById('sp_kod').value.trim(),
@@ -2214,12 +2215,12 @@ async function saveSiparis(editIdx) {
   const _isYeniSiparis = editIdx < 0;
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
-  SHEETS[si].rows = rows;
-  document.getElementById('siparisModal').remove();
-  if (isOnline) await fbSaveAll();
   // ── SATIR BELİRTECİ ──
   const _highlightIdx = _isYeniSiparis ? rows.length - 1 : editIdx;
   setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
+  SHEETS[si].rows = rows;
+  document.getElementById('siparisModal').remove();
+  if (isOnline) await fbSaveAll();
   renderSiparisRows();
   updateTerminBadge();
   // ── PUSH BİLDİRİMİ: Yeni sipariş eklendi ──
@@ -2365,6 +2366,7 @@ window.autoFillTeslimAdi = autoFillTeslimAdi;
 
 async function saveTeslim(editIdx) {
   const si = getTeslimIdx();
+  if (si < 0) { alert('Teslim sayfası bulunamadı!'); return; }
   const rows = getTeslimRows();
   const kodSel = document.getElementById('tk_kod').value;
   const kodM = document.getElementById('tk_kod_m').value.trim();
