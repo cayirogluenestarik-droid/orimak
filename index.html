@@ -181,9 +181,6 @@ window._updatePageNotifClearBtn = _updatePageNotifClearBtn;
 
 // Sayfa bildirim temizle butonuna click handler ekle (DOM hazır olunca)
 document.addEventListener('DOMContentLoaded', function() {
-  // Önceki oturumdan kalan bildirimleri geri yükle
-  _loadNotifs();
-
   var btn = document.getElementById('pageNotifClearBtn');
   if (btn) {
     btn.addEventListener('click', function() {
@@ -384,8 +381,8 @@ document.addEventListener('click', function(e) {
   stopTabFlashIfClear();
 });
 
-// ── Bildirim Kalıcılığı (sessionStorage) ──
-var _NOTIF_KEY = 'orimak_notifs_v1';
+// ── Bildirim Kalıcılığı (localStorage) ──
+var _NOTIF_KEY = 'orimak_notifs_v2';
 
 function _saveNotifs() {
   try {
@@ -395,37 +392,49 @@ function _saveNotifs() {
       var titleEl = t.querySelector('.orimak-notif-title');
       var bodyEl  = t.querySelector('.orimak-notif-body');
       var timeEl  = t.querySelector('.orimak-notif-time');
-      // rowLabel badge içeriğini al
-      var badge = t.querySelector('.orimak-notif-row');
+      var badge   = t.querySelector('.orimak-notif-row');
+      // title text'ini badge olmadan al
+      var titleText = '';
+      if (titleEl) {
+        titleEl.childNodes.forEach(function(node) {
+          if (node.nodeType === 3) titleText += node.textContent;
+        });
+        titleText = titleText.trim();
+        if (!titleText) titleText = titleEl.textContent.trim();
+      }
       list.push({
-        title   : titleEl ? (titleEl.childNodes[0] ? titleEl.childNodes[0].textContent : titleEl.textContent) : '',
-        body    : bodyEl  ? bodyEl.textContent  : '',
-        time    : timeEl  ? timeEl.textContent  : '',
+        title   : titleText,
+        body    : bodyEl  ? bodyEl.textContent.trim()  : '',
+        time    : timeEl  ? timeEl.textContent.trim()  : '',
         type    : t.getAttribute('data-notif-type') || '',
-        rowLabel: badge   ? badge.textContent    : ''
+        rowLabel: badge   ? badge.textContent.trim()   : '',
+        ts      : t.getAttribute('data-ts') || String(Date.now())
       });
     });
-    sessionStorage.setItem(_NOTIF_KEY, JSON.stringify(list));
+    localStorage.setItem(_NOTIF_KEY, JSON.stringify(list));
   } catch(e) {}
 }
 
 function _loadNotifs() {
   try {
-    var raw = sessionStorage.getItem(_NOTIF_KEY);
+    var raw = localStorage.getItem(_NOTIF_KEY);
     if (!raw) return;
     var list = JSON.parse(raw);
     if (!list || !list.length) return;
+    // Zaten yüklenmiş mi? (çift yüklemeyi önle)
+    if (document.querySelector('#orimak-notif-container .orimak-notif')) return;
     var c = getContainer();
     list.forEach(function(n) {
       var div = document.createElement('div');
       var cls = n.type === 'teslim' ? 'teslim' : n.type === 'malzeme' ? 'malzeme' : n.type === 'fiyat' ? 'fiyat' : '';
       div.className = 'orimak-notif ' + cls;
       div.setAttribute('data-notif-type', n.type || '');
+      div.setAttribute('data-ts', n.ts || '');
       var rowBadge = n.rowLabel ? '<span class="orimak-notif-row">' + n.rowLabel + '</span>' : '';
       div.innerHTML =
         '<div class="orimak-notif-title">' + n.title + rowBadge + '</div>' +
         '<div class="orimak-notif-body">'  + n.body  + '</div>' +
-        '<div class="orimak-notif-time">'  + n.time  + ' ↩</div>';
+        '<div class="orimak-notif-time">'  + n.time  + '</div>';
       div.onclick = function() {
         div.remove();
         _saveNotifs();
@@ -435,11 +444,11 @@ function _loadNotifs() {
       var clearBtn = c.querySelector('#orimak-clear-btn');
       if (clearBtn) c.insertBefore(div, clearBtn);
       else c.appendChild(div);
-      // dot ekle
       if (typeof addDotByType === 'function') addDotByType(n.type);
     });
     _updateClearBtn();
-    _updatePageNotifClearBtn();
+    // SHEETS henüz hazır olmayabilir, geciktirerek güncelle
+    setTimeout(function() { _updatePageNotifClearBtn(); }, 800);
     if (list.length > 0 && typeof startTabFlash === 'function') startTabFlash();
   } catch(e) {}
 }
@@ -451,6 +460,7 @@ function showToast(title, body, type, rowLabel) {
   var cls  = type === 'teslim' ? 'teslim' : type === 'malzeme' ? 'malzeme' : type === 'fiyat' ? 'fiyat' : '';
   div.className = 'orimak-notif ' + cls;
   div.setAttribute('data-notif-type', type || '');
+  div.setAttribute('data-ts', String(Date.now()));
 
   var now  = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
   var rowBadge = rowLabel
@@ -616,6 +626,11 @@ window.addEventListener('firebaseReady', function() {
       setTimeout(startPushListener, 500);
     }
   } catch(e) {}
+}, { once: true });
+
+// Sayfa yenilenince localStorage'dan bildirimleri geri yükle
+window.addEventListener('firebaseReady', function() {
+  setTimeout(function() { _loadNotifs(); }, 200);
 }, { once: true });
 
 })();
@@ -8352,8 +8367,8 @@ async function loadData() {
       setTimeout(() => { isLocalUpdate = false; }, 2000);
     };
     window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
-      // Kendi güncellemelerimizde veya highlight aktifken atla
-      if (isLocalUpdate || window._highlightRow) return;
+      // Sadece kendi güncellemelerimizi atla — dış güncellemeleri her zaman uygula
+      if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
         ['siparis','teslim','satis'].forEach(tip => {
