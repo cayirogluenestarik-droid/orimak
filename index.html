@@ -43,6 +43,12 @@ _style.textContent = [
   '.orimak-notif.malzeme .orimak-notif-row{background:#7ab8f5;}',
   '.orimak-notif.fiyat .orimak-notif-row{background:#c49ef5;}',
   '@keyframes notifSlide{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}'
+  '.row-highlight-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.8px;font-family:"Barlow Condensed",sans-serif;vertical-align:middle;margin-left:6px;animation:rowBadgePulse 1s ease-in-out infinite alternate;}',
+  '.row-highlight-badge.badge-new{background:#F5A623;color:#1a1a1a;}',
+  '.row-highlight-badge.badge-edit{background:#7ab8f5;color:#1a1a1a;}',
+  '@keyframes rowBadgePulse{from{opacity:1}to{opacity:.4}}',
+  'tr.row-highlight-active td{box-shadow:inset 0 0 0 2px #F5A623!important;}',
+  'tr.row-highlight-edit td{box-shadow:inset 0 0 0 2px #7ab8f5!important;}',
 ].join('');
 document.head.appendChild(_style);
 
@@ -251,6 +257,19 @@ function showToast(title, body, type, rowLabel) {
 // push_messages koleksiyonuna yeni belge gelince bildirim göster
 var _unsubPush = null;
 var _lastPushTs = Date.now(); // sadece bu oturumdan sonra gelenleri al
+
+// ── Satır Belirteci ──
+var _highlightRow = null;
+function setRowHighlight(sheet, idx, type) {
+  if (_highlightRow && _highlightRow.timer) clearTimeout(_highlightRow.timer);
+  _highlightRow = { sheet: sheet, idx: idx, type: type };
+  _highlightRow.timer = setTimeout(function() {
+    _highlightRow = null;
+    if (sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
+    else if (sheet === 'teslim') { if (window.renderTeslimRows) window.renderTeslimRows(); }
+    else { if (window.rebuildTable) window.rebuildTable(sheet); }
+  }, 8000);
+}
 
 function startPushListener() {
   if (!window._db || !window._fsCollection || !window._fsOnSnapshot || !window._fsDoc) return;
@@ -1997,6 +2016,10 @@ function renderSiparisRows() {
 
     const tr = document.createElement('tr');
     tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
+    // ── SATIR BELİRTECİ ──
+    if (_highlightRow && _highlightRow.sheet === 'siparis' && _highlightRow.idx === i) {
+      tr.classList.add(_highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    }
 
     function mkTd(html, style) {
       const td = document.createElement('td');
@@ -2011,7 +2034,10 @@ function renderSiparisRows() {
       return td;
     }
 
-    tr.appendChild(mkTd(String(i+1), 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
+    const _sipNoHtml = (_highlightRow && _highlightRow.sheet === 'siparis' && _highlightRow.idx === i)
+      ? String(i+1) + '<span class="row-highlight-badge ' + (_highlightRow.type === 'new' ? 'badge-new' : 'badge-edit') + '">' + (_highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ') + '</span>'
+      : String(i+1);
+    tr.appendChild(mkTd(_sipNoHtml, 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
     tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
     tr.appendChild(mkTd(r.urunAdi||''));
     tr.appendChild(mkTd(r.sipAdet||'', 'text-align:center;'));
@@ -2191,6 +2217,9 @@ async function saveSiparis(editIdx) {
   SHEETS[si].rows = rows;
   document.getElementById('siparisModal').remove();
   if (isOnline) await fbSaveAll();
+  // ── SATIR BELİRTECİ ──
+  const _highlightIdx = _isYeniSiparis ? rows.length - 1 : editIdx;
+  setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
   renderSiparisRows();
   updateTerminBadge();
   // ── PUSH BİLDİRİMİ: Yeni sipariş eklendi ──
@@ -2266,8 +2295,15 @@ function renderTeslimRows() {
   rows.forEach((r, i) => {
     const tr = document.createElement('tr');
     tr.className = 'data-row';
+    // ── SATIR BELİRTECİ ──
+    const _teslimBadgeHtml = (_highlightRow && _highlightRow.sheet === 'teslim' && _highlightRow.idx === i)
+      ? `<span class="row-highlight-badge ${_highlightRow.type === 'new' ? 'badge-new' : 'badge-edit'}">${_highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ'}</span>`
+      : '';
+    if (_highlightRow && _highlightRow.sheet === 'teslim' && _highlightRow.idx === i) {
+      tr.classList.add(_highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    }
     tr.innerHTML = `
-      <td class="col-no">${i+1}</td>
+      <td class="col-no">${i+1}${_teslimBadgeHtml}</td>
       <td style="font-family:'Barlow Condensed',sans-serif;font-weight:600;">${r.urunKodu||''}</td>
       <td>${r.urunAdi||''}</td>
       <td style="text-align:center;">${r.gelisAdet||''}</td>
@@ -2348,6 +2384,9 @@ async function saveTeslim(editIdx) {
   SHEETS[si].rows = rows;
   document.getElementById('teslimModal').remove();
   if (isOnline) await fbSaveAll();
+  // ── SATIR BELİRTECİ ──
+  const _highlightTeslimIdx = _isYeniTeslim ? rows.length - 1 : editIdx;
+  setRowHighlight('teslim', _highlightTeslimIdx, _isYeniTeslim ? 'new' : 'edit');
   renderTeslimRows();
   renderSiparisRows(); // Sipariş formunu da güncelle
   // ── PUSH BİLDİRİMİ: Yeni teslim kaydı ──
