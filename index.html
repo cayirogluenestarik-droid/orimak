@@ -263,6 +263,7 @@ window._highlightRow = null;
 window.setRowHighlight = function(sheet, idx, type) {
   if (window._highlightRow && window._highlightRow.timer) clearTimeout(window._highlightRow.timer);
   window._highlightRow = { sheet: sheet, idx: idx, type: type };
+  // Badge'i 8 saniye sonra temizle
   window._highlightRow.timer = setTimeout(function() {
     window._highlightRow = null;
     if (sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
@@ -8113,8 +8114,20 @@ async function loadData() {
         buildState();
         rebuildTable(activeSheet);
         updateStats(activeSheet);
+        // Highlight aktifse badge'i koru — sıfırlamadan render et
         renderSiparisRows();
         renderTeslimRows();
+        // Highlight süresi dolmamışsa timer'ı yenile (dışarıdan gelen render badge'i silmesin)
+        if (window._highlightRow) {
+          var _hlCopy = { sheet: window._highlightRow.sheet, idx: window._highlightRow.idx, type: window._highlightRow.type };
+          if (window._highlightRow.timer) clearTimeout(window._highlightRow.timer);
+          window._highlightRow = _hlCopy;
+          window._highlightRow.timer = setTimeout(function() {
+            window._highlightRow = null;
+            if (_hlCopy.sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
+            else if (_hlCopy.sheet === 'teslim') { if (window.renderTeslimRows) window.renderTeslimRows(); }
+          }, 8000);
+        }
         if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
