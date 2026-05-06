@@ -8311,7 +8311,7 @@ function filterTable(q) {
 
 const firebaseConfig = null; // login script'te tanımlı
 
-// ── FİRESTORE KAYDET ──
+// ── FİRESTORE KAYDET (temel fonksiyon) ──
 async function fbSaveAll() {
   if (!window._db) return;
   try {
@@ -8320,6 +8320,10 @@ async function fbSaveAll() {
 }
 
 // ── FİRESTORE'DAN YÜKLEMESİ ──
+// isLocalUpdate modül scope'unda — her loadData çağrısında sıfırlanmaz
+var _isLocalUpdate = false;
+var _snapshotUnsub = null; // aktif listener referansı
+
 async function loadData() {
   setSyncStatus('⟳ BAĞLANIYOR', 'loading');
   // Firebase hazır değilse event'i bekle
@@ -8352,42 +8356,55 @@ async function loadData() {
     } else {
       SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
       isOnline = true;
+      _isLocalUpdate = true;
       await fbSaveAll();
+      setTimeout(() => { _isLocalUpdate = false; }, 3000);
       buildUI();
       reapplySession();
       restoreLastPage();
       setSyncStatus('✓ CANLI', 'ok');
     }
-    // Gerçek zamanlı dinle
-    let isLocalUpdate = false;
-    const origFbSaveAll = fbSaveAll;
+
+    // fbSaveAll'u wrap et — kendi yazmalarımızı işaretle
+    // Orijinal fonksiyonu her seferinde temel `fbSaveAll`'dan al (çift wrap önle)
     window.fbSaveAll = async function() {
-      isLocalUpdate = true;
-      await origFbSaveAll();
-      setTimeout(() => { isLocalUpdate = false; }, 2000);
+      _isLocalUpdate = true;
+      await fbSaveAll(); // temel fonksiyon (yukarıda tanımlı)
+      // 3 saniye sonra dış güncellemelere tekrar izin ver
+      setTimeout(() => { _isLocalUpdate = false; }, 3000);
     };
-    window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
-      // Sadece kendi güncellemelerimizi atla — dış güncellemeleri her zaman uygula
-      if (isLocalUpdate) return;
-      if (d.exists() && d.data().data) {
-        const updated = JSON.parse(d.data().data);
-        ['siparis','teslim','satis'].forEach(tip => {
-          if (!updated.find(s => s.type === tip)) {
-            const existing = SHEETS.find(s => s.type === tip);
-            if (existing) updated.push(existing);
-          }
-        });
-        SHEETS = updated;
-        buildState();
-        rebuildTable(activeSheet);
-        updateStats(activeSheet);
-        renderSiparisRows();
-        renderTeslimRows();
-        if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
-        setSyncStatus('✓ CANLI', 'ok');
-        // Bildirim butonu veri geldikten sonra güncelle
-        if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
-      }
+
+    // Eğer zaten aktif bir listener varsa iptal et (loadData tekrar çağrılırsa)
+    if (_snapshotUnsub) { try { _snapshotUnsub(); } catch(e){} }
+
+    // İlk snapshot'ı atlamak için flag
+    let _firstSnapshot = true;
+
+    _snapshotUnsub = window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
+      // İlk tetiklemeyi atla (mevcut veriyi zaten getDoc ile çektik)
+      if (_firstSnapshot) { _firstSnapshot = false; console.log('[Orimak] onSnapshot: ilk snapshot atlandı'); return; }
+      // Kendi yazmalarımızı atla
+      if (_isLocalUpdate) { console.log('[Orimak] onSnapshot: kendi güncellemesi, atlandı'); return; }
+      if (!d.exists() || !d.data().data) return;
+
+      console.log('[Orimak] onSnapshot: dış güncelleme geldi, tablo yenileniyor');
+      const updated = JSON.parse(d.data().data);
+      ['siparis','teslim','satis'].forEach(tip => {
+        if (!updated.find(s => s.type === tip)) {
+          const existing = SHEETS.find(s => s.type === tip);
+          if (existing) updated.push(existing);
+        }
+      });
+      SHEETS = updated;
+      buildState();
+      rebuildTable(activeSheet);
+      updateStats(activeSheet);
+      renderSiparisRows();
+      renderTeslimRows();
+      if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
+      setSyncStatus('✓ CANLI', 'ok');
+      // Bildirim butonu veri geldikten sonra güncelle
+      if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
     });
   } catch(e) {
     console.warn('Firebase hatası:', e);
