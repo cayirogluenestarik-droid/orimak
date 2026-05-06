@@ -608,6 +608,19 @@ function _updatePageNotifClearBtn() {
     if (relevantTypes.indexOf(nt) >= 0) count++;
   });
 
+  // O tipe ait satır _notif sayısı (kalıcı badge'ler)
+  if (window.SHEETS) {
+    window.SHEETS.forEach(function(sh) {
+      var matches = false;
+      if (relevantTypes.indexOf('teslim')  >= 0 && sh.type === 'teslim')  matches = true;
+      if (relevantTypes.indexOf('siparis') >= 0 && sh.type === 'siparis') matches = true;
+      if (relevantTypes.indexOf('malzeme') >= 0 && sh.type !== 'siparis' && sh.type !== 'teslim' && sh.type !== 'satis') matches = true;
+      if (matches && sh.rows) {
+        sh.rows.forEach(function(r) { if (r._notif) count++; });
+      }
+    });
+  }
+
   if (count > 0 && relevantTypes.length > 0) {
     btn.style.display = 'inline-flex';
     if (lbl) lbl.textContent = count + ' BİLDİRİMİ TEMİZLE';
@@ -645,6 +658,7 @@ function _onPageNotifClearClick() {
   }
   if (relevantTypes.length === 0) return;
 
+  // 1) Toast'ları sil
   document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
     var nt = t.getAttribute('data-notif-type') || '';
     if (relevantTypes.indexOf(nt) >= 0) {
@@ -658,6 +672,48 @@ function _onPageNotifClearClick() {
       }, 300);
     }
   });
+
+  // 2) Aktif sayfadaki satırların _notif alanlarını sil
+  _clearActiveSheetRowNotifs(relevantTypes);
+}
+
+// Aktif sayfanın satır _notif alanlarını temizle ve Firebase'e kaydet
+function _clearActiveSheetRowNotifs(relevantTypes) {
+  if (!window.SHEETS) return;
+  var changedSheets = false;
+
+  // Tüm SHEETS'lerden ilgili tipte olanları bul
+  window.SHEETS.forEach(function(sh) {
+    var matches = false;
+    if (relevantTypes.indexOf('teslim')  >= 0 && sh.type === 'teslim')  matches = true;
+    if (relevantTypes.indexOf('siparis') >= 0 && sh.type === 'siparis') matches = true;
+    // 'malzeme' → siparis/teslim/satis dışındaki tüm sayfalar
+    if (relevantTypes.indexOf('malzeme') >= 0 && sh.type !== 'siparis' && sh.type !== 'teslim' && sh.type !== 'satis') matches = true;
+
+    if (matches && sh.rows) {
+      sh.rows.forEach(function(r) {
+        if (r._notif) {
+          delete r._notif;
+          changedSheets = true;
+        }
+      });
+    }
+  });
+
+  if (changedSheets) {
+    // state'i de güncelle
+    if (typeof buildState === 'function') buildState();
+    // Aktif tabloyu yeniden çiz
+    if (relevantTypes.indexOf('siparis') >= 0 && typeof window.renderSiparisRows === 'function') window.renderSiparisRows();
+    if (relevantTypes.indexOf('teslim')  >= 0 && typeof window.renderTeslimRows  === 'function') window.renderTeslimRows();
+    if (relevantTypes.indexOf('malzeme') >= 0 && typeof window.rebuildTable === 'function' && typeof activeSheet !== 'undefined') {
+      try { window.rebuildTable(activeSheet); } catch(e) {}
+    }
+    // Firebase'e kaydet
+    if (typeof window.fbSaveAll === 'function') {
+      try { window.fbSaveAll(); } catch(e) { console.warn('Notif temizleme kayıt hatası:', e); }
+    }
+  }
 }
 
 // Buton click handler ve bildirimleri yükleme — DOM hazır olunca
@@ -2347,9 +2403,12 @@ function renderSiparisRows() {
 
     const tr = document.createElement('tr');
     tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
-    // ── SATIR BELİRTECİ ──
-    if (window._highlightRow && window._highlightRow.sheet === 'siparis' && window._highlightRow.idx === i) {
-      tr.classList.add(window._highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    // ── SATIR BELİRTECİ: _highlightRow (anlık) VEYA r._notif (kalıcı) ──
+    var _liveHL = (window._highlightRow && window._highlightRow.sheet === 'siparis' && window._highlightRow.idx === i) ? window._highlightRow.type : null;
+    var _persistHL = (r._notif && r._notif.type) ? r._notif.type : null;
+    var _activeHL = _liveHL || _persistHL; // anlık her zaman önceliklidir
+    if (_activeHL) {
+      tr.classList.add(_activeHL === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
     }
 
     function mkTd(html, style) {
@@ -2365,8 +2424,8 @@ function renderSiparisRows() {
       return td;
     }
 
-    const _sipNoHtml = (window._highlightRow && window._highlightRow.sheet === 'siparis' && window._highlightRow.idx === i)
-      ? String(i+1) + '<span class="row-highlight-badge ' + (window._highlightRow.type === 'new' ? 'badge-new' : 'badge-edit') + '">' + (window._highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ') + '</span>'
+    const _sipNoHtml = _activeHL
+      ? String(i+1) + '<span class="row-highlight-badge ' + (_activeHL === 'new' ? 'badge-new' : 'badge-edit') + '">' + (_activeHL === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ') + '</span>'
       : String(i+1);
     tr.appendChild(mkTd(_sipNoHtml, 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
     tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
@@ -2544,6 +2603,12 @@ async function saveSiparis(editIdx) {
     gelisOnay: editIdx >= 0 ? (rows[editIdx].gelisOnay||'') : '',
   };
   const _isYeniSiparis = editIdx < 0;
+  // ── KALICI BİLDİRİM: satıra _notif alanı ekle (Firebase'e gidecek) ──
+  yeni._notif = {
+    type: _isYeniSiparis ? 'new' : 'edit',
+    user: window._currentUser || '',
+    ts:   Date.now()
+  };
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
   SHEETS[si].rows = rows;
@@ -2627,12 +2692,15 @@ function renderTeslimRows() {
   rows.forEach((r, i) => {
     const tr = document.createElement('tr');
     tr.className = 'data-row';
-    // ── SATIR BELİRTECİ ──
-    const _teslimBadgeHtml = (window._highlightRow && window._highlightRow.sheet === 'teslim' && window._highlightRow.idx === i)
-      ? `<span class="row-highlight-badge ${window._highlightRow.type === 'new' ? 'badge-new' : 'badge-edit'}">${window._highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ'}</span>`
+    // ── SATIR BELİRTECİ: _highlightRow (anlık) VEYA r._notif (kalıcı) ──
+    var _liveHL = (window._highlightRow && window._highlightRow.sheet === 'teslim' && window._highlightRow.idx === i) ? window._highlightRow.type : null;
+    var _persistHL = (r._notif && r._notif.type) ? r._notif.type : null;
+    var _activeHL = _liveHL || _persistHL;
+    const _teslimBadgeHtml = _activeHL
+      ? `<span class="row-highlight-badge ${_activeHL === 'new' ? 'badge-new' : 'badge-edit'}">${_activeHL === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ'}</span>`
       : '';
-    if (window._highlightRow && window._highlightRow.sheet === 'teslim' && window._highlightRow.idx === i) {
-      tr.classList.add(window._highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    if (_activeHL) {
+      tr.classList.add(_activeHL === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
     }
     tr.innerHTML = `
       <td class="col-no">${i+1}${_teslimBadgeHtml}</td>
@@ -2712,6 +2780,12 @@ async function saveTeslim(editIdx) {
     teslimAlan: document.getElementById('tk_alan').value.trim(),
   };
   const _isYeniTeslim = editIdx < 0;
+  // ── KALICI BİLDİRİM: satıra _notif ekle ──
+  yeni._notif = {
+    type: _isYeniTeslim ? 'new' : 'edit',
+    user: window._currentUser || '',
+    ts:   Date.now()
+  };
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
   SHEETS[si].rows = rows;
@@ -8244,6 +8318,16 @@ function makeRow(si, ri, row) {
         td.appendChild(div);
       } else {
         td.textContent = c.val !== undefined ? c.val : '';
+        // ── KALICI SATIR BELİRTECİ: col-no'ya badge ekle ──
+        if (c.cls === 'col-no' && row._notif && row._notif.type) {
+          var _notifTypeR = row._notif.type;
+          var _badgeR = document.createElement('span');
+          _badgeR.className = 'row-highlight-badge ' + (_notifTypeR === 'new' ? 'badge-new' : 'badge-edit');
+          _badgeR.style.marginLeft = '4px';
+          _badgeR.textContent = _notifTypeR === 'new' ? '⬆ YENİ' : '✏ DÜZ.';
+          td.appendChild(_badgeR);
+          tr.classList.add(_notifTypeR === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+        }
       }
       tr.appendChild(td);
     });
@@ -8414,6 +8498,7 @@ async function loadData() {
       reapplySession();
       restoreLastPage();
       setSyncStatus('✓ CANLI', 'ok');
+      if (typeof _updatePageNotifClearBtn === 'function') setTimeout(_updatePageNotifClearBtn, 600);
     } else {
       SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
       isOnline = true;
@@ -8432,8 +8517,8 @@ async function loadData() {
       setTimeout(() => { isLocalUpdate = false; }, 2000);
     };
     window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
-      // Kendi güncellemelerimizde veya highlight aktifken atla
-      if (isLocalUpdate || window._highlightRow) return;
+      // Kendi güncellemelerimizi atla — dış güncellemeleri her zaman uygula
+      if (isLocalUpdate) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
         ['siparis','teslim','satis'].forEach(tip => {
@@ -8450,6 +8535,8 @@ async function loadData() {
         renderTeslimRows();
         if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
+        // Yeni veri geldi — bildirim butonu sayısını güncelle
+        if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
       }
     });
   } catch(e) {
@@ -8547,7 +8634,8 @@ async function addRow() {
   try {
 
   const newRow = { '2': code || '', '3': name, '4': olcu || '', '5': adet || '',
-    _group: false, _rowNo: null, _yetkili: '', _yetkiliKisi: '', _gelis: '', _gelenAdet: '', _makine: '' };
+    _group: false, _rowNo: null, _yetkili: '', _yetkiliKisi: '', _gelis: '', _gelenAdet: '', _makine: '',
+    _notif: { type: 'new', user: window._currentUser || '', ts: Date.now() } };
 
   // Firebase'e kaydet
   if (isOnline) {
