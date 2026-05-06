@@ -8313,10 +8313,12 @@ const firebaseConfig = null; // login script'te tanımlı
 
 // ── FİRESTORE KAYDET (temel fonksiyon) ──
 async function fbSaveAll() {
-  if (!window._db) return;
+  if (!window._db) { console.warn('[Orimak] fbSaveAll: _db yok!'); return; }
   try {
+    console.log('[Orimak] fbSaveAll: Firestore\'a yazılıyor (' + SHEETS.length + ' sayfa)');
     await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), { data: JSON.stringify(SHEETS), updatedAt: Date.now() });
-  } catch(e) { console.warn('Firebase kayıt hatası:', e); }
+    console.log('[Orimak] fbSaveAll: ✓ Yazıldı');
+  } catch(e) { console.warn('[Orimak] Firebase kayıt hatası:', e); }
 }
 
 // ── FİRESTORE'DAN YÜKLEMESİ ──
@@ -8368,10 +8370,11 @@ async function loadData() {
     // fbSaveAll'u wrap et — kendi yazmalarımızı işaretle
     // Orijinal fonksiyonu her seferinde temel `fbSaveAll`'dan al (çift wrap önle)
     window.fbSaveAll = async function() {
+      console.log('[Orimak] window.fbSaveAll çağrıldı, _isLocalUpdate=true yapılıyor');
       _isLocalUpdate = true;
       await fbSaveAll(); // temel fonksiyon (yukarıda tanımlı)
       // 3 saniye sonra dış güncellemelere tekrar izin ver
-      setTimeout(() => { _isLocalUpdate = false; }, 3000);
+      setTimeout(() => { _isLocalUpdate = false; console.log('[Orimak] _isLocalUpdate sıfırlandı'); }, 3000);
     };
 
     // Eğer zaten aktif bir listener varsa iptal et (loadData tekrar çağrılırsa)
