@@ -377,8 +377,19 @@ window.orimakSendPush = function(title, body, tag, url, rowLabel) {
     console.warn('Push mesajı gönderilemedi:', e);
   });
 
-  // Eski mesajları temizle (sadece admin yapar, 50 mesajdan fazla olunca)
-  // — Cloud Functions olmadan basit tutuyoruz, manuel temizlik yeterli
+  // Eski mesajları temizle — 7 günden eski belgeler silinir
+  // Her 10 bildirimde bir çalışır, gereksiz okuma yapılmaz
+  if (Math.random() < 0.1 && window._fsGetDocs && window._fsDeleteDoc) {
+    var _yediGunOnce = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    window._fsGetDocs(window._fsCollection(window._db, 'push_messages')).then(function(snap) {
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        if (d.ts && d.ts < _yediGunOnce) {
+          window._fsDeleteDoc(doc.ref).catch(function(){});
+        }
+      });
+    }).catch(function(){});
+  }
 };
 
 // ── Tarayıcı Bildirim İzni İste ──
