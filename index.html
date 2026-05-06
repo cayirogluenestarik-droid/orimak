@@ -259,17 +259,17 @@ var _unsubPush = null;
 var _lastPushTs = Date.now(); // sadece bu oturumdan sonra gelenleri al
 
 // ── Satır Belirteci ──
-var _highlightRow = null;
-function setRowHighlight(sheet, idx, type) {
-  if (_highlightRow && _highlightRow.timer) clearTimeout(_highlightRow.timer);
-  _highlightRow = { sheet: sheet, idx: idx, type: type };
-  _highlightRow.timer = setTimeout(function() {
-    _highlightRow = null;
+window._highlightRow = null;
+window.setRowHighlight = function(sheet, idx, type) {
+  if (window._highlightRow && window._highlightRow.timer) clearTimeout(window._highlightRow.timer);
+  window._highlightRow = { sheet: sheet, idx: idx, type: type };
+  window._highlightRow.timer = setTimeout(function() {
+    window._highlightRow = null;
     if (sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
     else if (sheet === 'teslim') { if (window.renderTeslimRows) window.renderTeslimRows(); }
     else { if (window.rebuildTable) window.rebuildTable(sheet); }
   }, 8000);
-}
+};
 
 function startPushListener() {
   if (!window._db || !window._fsCollection || !window._fsOnSnapshot || !window._fsDoc) return;
@@ -2017,8 +2017,8 @@ function renderSiparisRows() {
     const tr = document.createElement('tr');
     tr.className = 'data-row ' + getSiparisRowClass(r, teslim);
     // ── SATIR BELİRTECİ ──
-    if (_highlightRow && _highlightRow.sheet === 'siparis' && _highlightRow.idx === i) {
-      tr.classList.add(_highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    if (window._highlightRow && window._highlightRow.sheet === 'siparis' && window._highlightRow.idx === i) {
+      tr.classList.add(window._highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
     }
 
     function mkTd(html, style) {
@@ -2034,8 +2034,8 @@ function renderSiparisRows() {
       return td;
     }
 
-    const _sipNoHtml = (_highlightRow && _highlightRow.sheet === 'siparis' && _highlightRow.idx === i)
-      ? String(i+1) + '<span class="row-highlight-badge ' + (_highlightRow.type === 'new' ? 'badge-new' : 'badge-edit') + '">' + (_highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ') + '</span>'
+    const _sipNoHtml = (window._highlightRow && window._highlightRow.sheet === 'siparis' && window._highlightRow.idx === i)
+      ? String(i+1) + '<span class="row-highlight-badge ' + (window._highlightRow.type === 'new' ? 'badge-new' : 'badge-edit') + '">' + (window._highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ') + '</span>'
       : String(i+1);
     tr.appendChild(mkTd(_sipNoHtml, 'text-align:center;font-weight:700;color:#999;font-size:11px;font-family:Barlow Condensed,sans-serif;'));
     tr.appendChild(mkTd(r.urunKodu||'', "font-family:'Barlow Condensed',sans-serif;font-weight:600;"));
@@ -2217,7 +2217,7 @@ async function saveSiparis(editIdx) {
   else rows.push(yeni);
   // ── SATIR BELİRTECİ ──
   const _highlightIdx = _isYeniSiparis ? rows.length - 1 : editIdx;
-  setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
+  window.setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
   SHEETS[si].rows = rows;
   document.getElementById('siparisModal').remove();
   if (isOnline) await fbSaveAll();
@@ -2297,11 +2297,11 @@ function renderTeslimRows() {
     const tr = document.createElement('tr');
     tr.className = 'data-row';
     // ── SATIR BELİRTECİ ──
-    const _teslimBadgeHtml = (_highlightRow && _highlightRow.sheet === 'teslim' && _highlightRow.idx === i)
-      ? `<span class="row-highlight-badge ${_highlightRow.type === 'new' ? 'badge-new' : 'badge-edit'}">${_highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ'}</span>`
+    const _teslimBadgeHtml = (window._highlightRow && window._highlightRow.sheet === 'teslim' && window._highlightRow.idx === i)
+      ? `<span class="row-highlight-badge ${window._highlightRow.type === 'new' ? 'badge-new' : 'badge-edit'}">${window._highlightRow.type === 'new' ? '⬆ YENİ' : '✏ DÜZENLENDİ'}</span>`
       : '';
-    if (_highlightRow && _highlightRow.sheet === 'teslim' && _highlightRow.idx === i) {
-      tr.classList.add(_highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
+    if (window._highlightRow && window._highlightRow.sheet === 'teslim' && window._highlightRow.idx === i) {
+      tr.classList.add(window._highlightRow.type === 'new' ? 'row-highlight-active' : 'row-highlight-edit');
     }
     tr.innerHTML = `
       <td class="col-no">${i+1}${_teslimBadgeHtml}</td>
@@ -2388,7 +2388,7 @@ async function saveTeslim(editIdx) {
   if (isOnline) await fbSaveAll();
   // ── SATIR BELİRTECİ ──
   const _highlightTeslimIdx = _isYeniTeslim ? rows.length - 1 : editIdx;
-  setRowHighlight('teslim', _highlightTeslimIdx, _isYeniTeslim ? 'new' : 'edit');
+  window.setRowHighlight('teslim', _highlightTeslimIdx, _isYeniTeslim ? 'new' : 'edit');
   renderTeslimRows();
   renderSiparisRows(); // Sipariş formunu da güncelle
   // ── PUSH BİLDİRİMİ: Yeni teslim kaydı ──
