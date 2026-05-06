@@ -97,6 +97,8 @@ function getContainer() {
         if (!_container.querySelector('.orimak-notif')) {
           _clearBtn.style.display = 'none';
         }
+        _saveNotifs();
+        if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
       }, 400);
     };
     _container.appendChild(_clearBtn);
@@ -179,6 +181,9 @@ window._updatePageNotifClearBtn = _updatePageNotifClearBtn;
 
 // Sayfa bildirim temizle butonuna click handler ekle (DOM hazır olunca)
 document.addEventListener('DOMContentLoaded', function() {
+  // Önceki oturumdan kalan bildirimleri geri yükle
+  _loadNotifs();
+
   var btn = document.getElementById('pageNotifClearBtn');
   if (btn) {
     btn.addEventListener('click', function() {
@@ -217,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (relevantTypes.length === 0 || relevantTypes.indexOf(nt) >= 0) {
           t.style.transition = 'opacity .3s';
           t.style.opacity = '0';
-          setTimeout(function() { t.remove(); _updateClearBtn(); _updatePageNotifClearBtn(); }, 300);
+          setTimeout(function() { t.remove(); _saveNotifs(); _updateClearBtn(); _updatePageNotifClearBtn(); }, 300);
         }
       });
       btn.style.display = 'none';
@@ -379,6 +384,66 @@ document.addEventListener('click', function(e) {
   stopTabFlashIfClear();
 });
 
+// ── Bildirim Kalıcılığı (sessionStorage) ──
+var _NOTIF_KEY = 'orimak_notifs_v1';
+
+function _saveNotifs() {
+  try {
+    var toasts = document.querySelectorAll('#orimak-notif-container .orimak-notif');
+    var list = [];
+    toasts.forEach(function(t) {
+      var titleEl = t.querySelector('.orimak-notif-title');
+      var bodyEl  = t.querySelector('.orimak-notif-body');
+      var timeEl  = t.querySelector('.orimak-notif-time');
+      // rowLabel badge içeriğini al
+      var badge = t.querySelector('.orimak-notif-row');
+      list.push({
+        title   : titleEl ? (titleEl.childNodes[0] ? titleEl.childNodes[0].textContent : titleEl.textContent) : '',
+        body    : bodyEl  ? bodyEl.textContent  : '',
+        time    : timeEl  ? timeEl.textContent  : '',
+        type    : t.getAttribute('data-notif-type') || '',
+        rowLabel: badge   ? badge.textContent    : ''
+      });
+    });
+    sessionStorage.setItem(_NOTIF_KEY, JSON.stringify(list));
+  } catch(e) {}
+}
+
+function _loadNotifs() {
+  try {
+    var raw = sessionStorage.getItem(_NOTIF_KEY);
+    if (!raw) return;
+    var list = JSON.parse(raw);
+    if (!list || !list.length) return;
+    var c = getContainer();
+    list.forEach(function(n) {
+      var div = document.createElement('div');
+      var cls = n.type === 'teslim' ? 'teslim' : n.type === 'malzeme' ? 'malzeme' : n.type === 'fiyat' ? 'fiyat' : '';
+      div.className = 'orimak-notif ' + cls;
+      div.setAttribute('data-notif-type', n.type || '');
+      var rowBadge = n.rowLabel ? '<span class="orimak-notif-row">' + n.rowLabel + '</span>' : '';
+      div.innerHTML =
+        '<div class="orimak-notif-title">' + n.title + rowBadge + '</div>' +
+        '<div class="orimak-notif-body">'  + n.body  + '</div>' +
+        '<div class="orimak-notif-time">'  + n.time  + ' ↩</div>';
+      div.onclick = function() {
+        div.remove();
+        _saveNotifs();
+        _updateClearBtn();
+        _updatePageNotifClearBtn();
+      };
+      var clearBtn = c.querySelector('#orimak-clear-btn');
+      if (clearBtn) c.insertBefore(div, clearBtn);
+      else c.appendChild(div);
+      // dot ekle
+      if (typeof addDotByType === 'function') addDotByType(n.type);
+    });
+    _updateClearBtn();
+    _updatePageNotifClearBtn();
+    if (list.length > 0 && typeof startTabFlash === 'function') startTabFlash();
+  } catch(e) {}
+}
+
 // ── Ekranda Bildirim Göster ──
 function showToast(title, body, type, rowLabel) {
   var c    = getContainer();
@@ -398,6 +463,7 @@ function showToast(title, body, type, rowLabel) {
 
   div.onclick = function() {
     div.remove();
+    _saveNotifs();
     _updateClearBtn();
     _updatePageNotifClearBtn();
   };
@@ -409,6 +475,7 @@ function showToast(title, body, type, rowLabel) {
   // İlgili sekme butonuna kırmızı nokta + sekme yanması
   addDotByType(type);
   startTabFlash();
+  _saveNotifs();
   _updateClearBtn();
   _updatePageNotifClearBtn();
 
@@ -8303,6 +8370,8 @@ async function loadData() {
         renderTeslimRows();
         if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
+        // Bildirim butonu veri geldikten sonra güncelle
+        if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
       }
     });
   } catch(e) {
