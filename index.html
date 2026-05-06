@@ -257,6 +257,7 @@ function showToast(title, body, type, rowLabel) {
 // push_messages koleksiyonuna yeni belge gelince bildirim göster
 var _unsubPush = null;
 var _lastPushTs = Date.now(); // sadece bu oturumdan sonra gelenleri al
+window._tabId = Math.random().toString(36).slice(2); // bu sekmeye özgü ID
 
 // ── Satır Belirteci ──
 window._highlightRow = null;
@@ -280,15 +281,18 @@ function startPushListener() {
 
   var colRef = window._fsCollection(window._db, 'push_messages');
 
+  var _pushListenerReady = false; // ilk snapshot'tan sonra dinlemeye başla
   _unsubPush = window._fsOnSnapshot(colRef, function(snap) {
+    if (!_pushListenerReady) {
+      // İlk tetiklemede mevcut dokümanları atla, sadece bundan sonrasını dinle
+      _pushListenerReady = true;
+      return;
+    }
     snap.docChanges().forEach(function(change) {
       if (change.type !== 'added') return;
       var d = change.doc.data();
-      if (!d.ts || d.ts < _lastPushTs) return; // eski mesajları atla
-      // Kendi gönderdiğimizi atla
-      var myUser = window._currentUser || '';
-      if (d.sender && d.sender === myUser) return;
-
+      // Aynı sekme/pencereden gönderilen bildirimi atla
+      if (d._tabId && d._tabId === window._tabId) return;
       showToast(d.title || 'Orimak', d.body || '', d.type || '', d.rowLabel || '');
     });
   });
@@ -311,6 +315,7 @@ window.orimakSendPush = function(title, body, tag, url, rowLabel) {
     tag      : tag,
     rowLabel : rowLabel || '',
     sender   : window._currentUser || '',
+    _tabId   : window._tabId || '',
     ts       : Date.now()
   };
 
