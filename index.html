@@ -97,8 +97,6 @@ function getContainer() {
         if (!_container.querySelector('.orimak-notif')) {
           _clearBtn.style.display = 'none';
         }
-        _saveNotifs();
-        if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
       }, 400);
     };
     _container.appendChild(_clearBtn);
@@ -114,118 +112,6 @@ function _updateClearBtn() {
   var count = document.querySelectorAll('#orimak-notif-container .orimak-notif').length;
   btn.style.display = count > 0 ? 'block' : 'none';
 }
-
-// Sayfa başlığındaki bildirim temizle butonunu güncelle
-function _updatePageNotifClearBtn() {
-  var btn = document.getElementById('pageNotifClearBtn');
-  var lbl = document.getElementById('pageNotifClearLabel');
-  if (!btn) return;
-
-  // Aktif sayfanın tiplerine karşılık gelen bildirim tiplerini bul
-  var relevantTypes = [];
-
-  // Özel paneller aktif mi kontrol et
-  var specialPanels = [
-    { id: 'stPanel',  types: [] },        // Servis Takip — bildirim tipi yok
-    { id: 'snPanel',  types: [] },        // Seri No — bildirim tipi yok
-    { id: 'ypanel',   types: [] },        // Yedek Parça — bildirim tipi yok
-  ];
-  var isSpecial = false;
-  for (var si2 = 0; si2 < specialPanels.length; si2++) {
-    var sp = specialPanels[si2];
-    var spEl = document.getElementById(sp.id);
-    if (spEl && spEl.style.display !== 'none' && spEl.style.display !== '') {
-      isSpecial = true;
-      relevantTypes = sp.types;
-      break;
-    }
-  }
-
-  // Fiyat paneli (sf veya fl) aktif mi?
-  var sfPanel = document.getElementById('sfPanel') || document.getElementById('stContent');
-  // SF/FL paneli için: tabBtn-sf veya tabBtn-fl active sınıfına bakabiliriz
-  var sfBtn = document.getElementById('tabBtn-sf');
-  var flBtn = document.getElementById('tabBtn-fl');
-  if (!isSpecial && ((sfBtn && sfBtn.classList && sfBtn.classList.contains('active')) ||
-                     (flBtn && flBtn.classList && flBtn.classList.contains('active')))) {
-    relevantTypes = ['fiyat'];
-    isSpecial = true;
-  }
-
-  // Normal SHEETS sayfaları
-  if (!isSpecial) {
-    var sheetType = '';
-    if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
-      sheetType = window.SHEETS[activeSheet].type || '';
-    }
-    if (sheetType === 'teslim')       relevantTypes = ['teslim'];
-    else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
-    else                              relevantTypes = ['malzeme'];
-  }
-
-  // O tipe ait toast sayısını say
-  var count = 0;
-  document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
-    var nt = t.getAttribute('data-notif-type') || '';
-    if (relevantTypes.indexOf(nt) >= 0) count++;
-  });
-
-  if (count > 0 && relevantTypes.length > 0) {
-    btn.style.display = 'inline-flex';
-    if (lbl) lbl.textContent = count + ' BİLDİRİMİ TEMİZLE';
-  } else {
-    btn.style.display = 'none';
-  }
-}
-window._updatePageNotifClearBtn = _updatePageNotifClearBtn;
-
-// Sayfa bildirim temizle butonuna click handler ekle (DOM hazır olunca)
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('pageNotifClearBtn');
-  if (btn) {
-    btn.addEventListener('click', function() {
-      var relevantTypes = [];
-      var isSpecial = false;
-      var specialPanels = [
-        { id: 'stPanel', types: [] },
-        { id: 'snPanel', types: [] },
-        { id: 'ypanel',  types: [] },
-      ];
-      for (var si3 = 0; si3 < specialPanels.length; si3++) {
-        var sp2 = specialPanels[si3];
-        var spEl2 = document.getElementById(sp2.id);
-        if (spEl2 && spEl2.style.display !== 'none' && spEl2.style.display !== '') {
-          isSpecial = true; relevantTypes = sp2.types; break;
-        }
-      }
-      var sfBtn2 = document.getElementById('tabBtn-sf');
-      var flBtn2 = document.getElementById('tabBtn-fl');
-      if (!isSpecial && ((sfBtn2 && sfBtn2.classList && sfBtn2.classList.contains('active')) ||
-                         (flBtn2 && flBtn2.classList && flBtn2.classList.contains('active')))) {
-        relevantTypes = ['fiyat']; isSpecial = true;
-      }
-      if (!isSpecial) {
-        var sheetType = '';
-        if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
-          sheetType = window.SHEETS[activeSheet].type || '';
-        }
-        if (sheetType === 'teslim')       relevantTypes = ['teslim'];
-        else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
-        else                              relevantTypes = ['malzeme'];
-      }
-
-      document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
-        var nt = t.getAttribute('data-notif-type') || '';
-        if (relevantTypes.length === 0 || relevantTypes.indexOf(nt) >= 0) {
-          t.style.transition = 'opacity .3s';
-          t.style.opacity = '0';
-          setTimeout(function() { t.remove(); _saveNotifs(); _updateClearBtn(); _updatePageNotifClearBtn(); }, 300);
-        }
-      });
-      btn.style.display = 'none';
-    });
-  }
-});
 
 // ── Sekme Dot Bildirim Sistemi ──
 // Hangi type → hangi tab buttonlarına dot ekleneceğini tanımlar
@@ -381,86 +267,12 @@ document.addEventListener('click', function(e) {
   stopTabFlashIfClear();
 });
 
-// ── Bildirim Kalıcılığı (localStorage) ──
-var _NOTIF_KEY = 'orimak_notifs_v2';
-
-function _saveNotifs() {
-  try {
-    var toasts = document.querySelectorAll('#orimak-notif-container .orimak-notif');
-    var list = [];
-    toasts.forEach(function(t) {
-      var titleEl = t.querySelector('.orimak-notif-title');
-      var bodyEl  = t.querySelector('.orimak-notif-body');
-      var timeEl  = t.querySelector('.orimak-notif-time');
-      var badge   = t.querySelector('.orimak-notif-row');
-      // title text'ini badge olmadan al
-      var titleText = '';
-      if (titleEl) {
-        titleEl.childNodes.forEach(function(node) {
-          if (node.nodeType === 3) titleText += node.textContent;
-        });
-        titleText = titleText.trim();
-        if (!titleText) titleText = titleEl.textContent.trim();
-      }
-      list.push({
-        title   : titleText,
-        body    : bodyEl  ? bodyEl.textContent.trim()  : '',
-        time    : timeEl  ? timeEl.textContent.trim()  : '',
-        type    : t.getAttribute('data-notif-type') || '',
-        rowLabel: badge   ? badge.textContent.trim()   : '',
-        ts      : t.getAttribute('data-ts') || String(Date.now())
-      });
-    });
-    localStorage.setItem(_NOTIF_KEY, JSON.stringify(list));
-  } catch(e) {}
-}
-
-function _loadNotifs() {
-  try {
-    var raw = localStorage.getItem(_NOTIF_KEY);
-    if (!raw) return;
-    var list = JSON.parse(raw);
-    if (!list || !list.length) return;
-    // Zaten yüklenmiş mi? (çift yüklemeyi önle)
-    if (document.querySelector('#orimak-notif-container .orimak-notif')) return;
-    var c = getContainer();
-    list.forEach(function(n) {
-      var div = document.createElement('div');
-      var cls = n.type === 'teslim' ? 'teslim' : n.type === 'malzeme' ? 'malzeme' : n.type === 'fiyat' ? 'fiyat' : '';
-      div.className = 'orimak-notif ' + cls;
-      div.setAttribute('data-notif-type', n.type || '');
-      div.setAttribute('data-ts', n.ts || '');
-      var rowBadge = n.rowLabel ? '<span class="orimak-notif-row">' + n.rowLabel + '</span>' : '';
-      div.innerHTML =
-        '<div class="orimak-notif-title">' + n.title + rowBadge + '</div>' +
-        '<div class="orimak-notif-body">'  + n.body  + '</div>' +
-        '<div class="orimak-notif-time">'  + n.time  + '</div>';
-      div.onclick = function() {
-        div.remove();
-        _saveNotifs();
-        _updateClearBtn();
-        _updatePageNotifClearBtn();
-      };
-      var clearBtn = c.querySelector('#orimak-clear-btn');
-      if (clearBtn) c.insertBefore(div, clearBtn);
-      else c.appendChild(div);
-      if (typeof addDotByType === 'function') addDotByType(n.type);
-    });
-    _updateClearBtn();
-    // SHEETS henüz hazır olmayabilir, geciktirerek güncelle
-    setTimeout(function() { _updatePageNotifClearBtn(); }, 800);
-    if (list.length > 0 && typeof startTabFlash === 'function') startTabFlash();
-  } catch(e) {}
-}
-
 // ── Ekranda Bildirim Göster ──
 function showToast(title, body, type, rowLabel) {
   var c    = getContainer();
   var div  = document.createElement('div');
   var cls  = type === 'teslim' ? 'teslim' : type === 'malzeme' ? 'malzeme' : type === 'fiyat' ? 'fiyat' : '';
   div.className = 'orimak-notif ' + cls;
-  div.setAttribute('data-notif-type', type || '');
-  div.setAttribute('data-ts', String(Date.now()));
 
   var now  = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
   var rowBadge = rowLabel
@@ -473,9 +285,7 @@ function showToast(title, body, type, rowLabel) {
 
   div.onclick = function() {
     div.remove();
-    _saveNotifs();
     _updateClearBtn();
-    _updatePageNotifClearBtn();
   };
   // Temizle butonunun üstüne ekle (buton hep altta kalsın)
   var clearBtn = c.querySelector('#orimak-clear-btn');
@@ -485,9 +295,7 @@ function showToast(title, body, type, rowLabel) {
   // İlgili sekme butonuna kırmızı nokta + sekme yanması
   addDotByType(type);
   startTabFlash();
-  _saveNotifs();
   _updateClearBtn();
-  _updatePageNotifClearBtn();
 
   // Otomatik kapanma YOK — kullanıcı Temizle butonuna basar
 
@@ -628,10 +436,268 @@ window.addEventListener('firebaseReady', function() {
   } catch(e) {}
 }, { once: true });
 
-// Sayfa yenilenince localStorage'dan bildirimleri geri yükle
-window.addEventListener('firebaseReady', function() {
-  setTimeout(function() { _loadNotifs(); }, 200);
-}, { once: true });
+// ════════════════════════════════════════════════════════
+// ── BİLDİRİM KALICILIĞI + SAYFA BAŞINA TEMİZLE BUTONU ──
+// ════════════════════════════════════════════════════════
+// Bildirimler localStorage'da saklanır. Sadece kullanıcı manuel olarak
+// "Bildirimleri Temizle" butonuna basınca silinir. Sayfa yenilenince kaybolmazlar.
+
+var _NOTIF_KEY = 'orimak_notifs_v3';
+
+// Bildirim listesini localStorage'a kaydet
+function _saveNotifs() {
+  try {
+    var toasts = document.querySelectorAll('#orimak-notif-container .orimak-notif');
+    var list = [];
+    toasts.forEach(function(t) {
+      list.push({
+        title   : t.getAttribute('data-title')    || '',
+        body    : t.getAttribute('data-body')     || '',
+        time    : t.getAttribute('data-time')     || '',
+        type    : t.getAttribute('data-notif-type') || '',
+        rowLabel: t.getAttribute('data-rowlabel') || '',
+        ts      : t.getAttribute('data-ts')       || String(Date.now())
+      });
+    });
+    localStorage.setItem(_NOTIF_KEY, JSON.stringify(list));
+  } catch(e) {}
+}
+
+// Toast div'i oluştur (showToast ve _loadNotifs aynı yapıyı kullansın)
+function _buildToastDiv(title, body, time, type, rowLabel, ts) {
+  var div = document.createElement('div');
+  var cls = type === 'teslim' ? 'teslim' : type === 'malzeme' ? 'malzeme' : type === 'fiyat' ? 'fiyat' : '';
+  div.className = 'orimak-notif ' + cls;
+  div.setAttribute('data-notif-type', type || '');
+  div.setAttribute('data-title',  title  || '');
+  div.setAttribute('data-body',   body   || '');
+  div.setAttribute('data-time',   time   || '');
+  div.setAttribute('data-rowlabel', rowLabel || '');
+  div.setAttribute('data-ts',     String(ts || Date.now()));
+  var rowBadge = rowLabel ? '<span class="orimak-notif-row">' + rowLabel + '</span>' : '';
+  div.innerHTML =
+    '<div class="orimak-notif-title">' + title + rowBadge + '</div>' +
+    '<div class="orimak-notif-body">'  + body  + '</div>' +
+    '<div class="orimak-notif-time">'  + time  + '</div>';
+  div.onclick = function() {
+    div.remove();
+    _saveNotifs();
+    _updateClearBtn();
+    _updatePageNotifClearBtn();
+  };
+  return div;
+}
+
+// localStorage'dan bildirimleri geri yükle
+function _loadNotifs() {
+  try {
+    var raw = localStorage.getItem(_NOTIF_KEY);
+    if (!raw) return;
+    var list = JSON.parse(raw);
+    if (!list || !list.length) return;
+    // Çift yüklemeyi önle
+    if (document.querySelector('#orimak-notif-container .orimak-notif')) return;
+    var c = getContainer();
+    list.forEach(function(n) {
+      var div = _buildToastDiv(n.title, n.body, n.time, n.type, n.rowLabel, n.ts);
+      var clearBtn = c.querySelector('#orimak-clear-btn');
+      if (clearBtn) c.insertBefore(div, clearBtn);
+      else c.appendChild(div);
+      if (typeof addDotByType === 'function') addDotByType(n.type);
+    });
+    _updateClearBtn();
+    setTimeout(function() { _updatePageNotifClearBtn(); }, 800);
+    if (list.length > 0 && typeof startTabFlash === 'function') startTabFlash();
+  } catch(e) {}
+}
+
+// Mevcut showToast'ı override et — kalıcılık ekle, mantığını koruyarak
+var _origShowToast = showToast;
+showToast = function(title, body, type, rowLabel) {
+  var c    = getContainer();
+  var now  = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+  var div  = _buildToastDiv(title, body, now, type, rowLabel, Date.now());
+  var clearBtn = c.querySelector('#orimak-clear-btn');
+  if (clearBtn) c.insertBefore(div, clearBtn);
+  else c.appendChild(div);
+  // İlgili sekme butonuna kırmızı nokta + sekme yanması
+  if (typeof addDotByType === 'function') addDotByType(type);
+  if (typeof startTabFlash === 'function') startTabFlash();
+  _saveNotifs();
+  _updateClearBtn();
+  _updatePageNotifClearBtn();
+  // Tarayıcı bildirimi
+  if (window.Notification && Notification.permission === 'granted') {
+    try { new Notification(title, { body: body, icon: '/favicon.ico' }); } catch(e){}
+  }
+};
+
+// Global temizle butonunun click handler'ını localStorage temizleyecek şekilde wrap'le
+// (getContainer ilk çağrıldığında zaten _clearBtn'u oluşturuyor)
+var _origGetContainer = getContainer;
+getContainer = function() {
+  var firstTime = !document.getElementById('orimak-notif-container');
+  var c = _origGetContainer();
+  if (firstTime) {
+    var btn = c.querySelector('#orimak-clear-btn');
+    if (btn) {
+      // Tüm bildirimleri sil + localStorage'ı temizle
+      btn.onclick = function() {
+        var toasts = c.querySelectorAll('.orimak-notif');
+        toasts.forEach(function(t) {
+          t.style.transition = 'opacity .3s';
+          t.style.opacity = '0';
+          setTimeout(function() { t.remove(); }, 300);
+        });
+        setTimeout(function() {
+          localStorage.removeItem(_NOTIF_KEY);
+          if (!c.querySelector('.orimak-notif')) btn.style.display = 'none';
+          _updatePageNotifClearBtn();
+        }, 400);
+      };
+    }
+  }
+  return c;
+};
+
+// Sayfa başlığındaki butonu güncelle: aktif sayfaya ait okunmamış bildirim sayısını göster
+function _updatePageNotifClearBtn() {
+  var btn = document.getElementById('pageNotifClearBtn');
+  var lbl = document.getElementById('pageNotifClearLabel');
+  if (!btn) return;
+
+  // Aktif sayfanın hangi bildirim tiplerine sahip olduğunu belirle
+  var relevantTypes = [];
+  var isSpecial = false;
+
+  // Özel paneller — bildirimleri yok ama buton da gözükmesin
+  var specialIds = ['stPanel', 'snPanel', 'ypanel'];
+  for (var i = 0; i < specialIds.length; i++) {
+    var spEl = document.getElementById(specialIds[i]);
+    if (spEl && spEl.style.display !== 'none' && spEl.style.display !== '') {
+      isSpecial = true;
+      relevantTypes = [];
+      break;
+    }
+  }
+
+  // Fiyat panelleri (sf veya fl)
+  var sfBtn = document.getElementById('tabBtn-sf');
+  var flBtn = document.getElementById('tabBtn-fl');
+  if (!isSpecial && ((sfBtn && sfBtn.classList && sfBtn.classList.contains('active')) ||
+                     (flBtn && flBtn.classList && flBtn.classList.contains('active')))) {
+    relevantTypes = ['fiyat'];
+    isSpecial = true;
+  }
+
+  // Normal SHEETS sayfaları
+  if (!isSpecial) {
+    var sheetType = '';
+    if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
+      sheetType = window.SHEETS[activeSheet].type || '';
+    }
+    if (sheetType === 'teslim')       relevantTypes = ['teslim'];
+    else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
+    else                              relevantTypes = ['malzeme'];
+  }
+
+  // O tipe ait toast sayısı
+  var count = 0;
+  document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
+    var nt = t.getAttribute('data-notif-type') || '';
+    if (relevantTypes.indexOf(nt) >= 0) count++;
+  });
+
+  if (count > 0 && relevantTypes.length > 0) {
+    btn.style.display = 'inline-flex';
+    if (lbl) lbl.textContent = count + ' BİLDİRİMİ TEMİZLE';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+window._updatePageNotifClearBtn = _updatePageNotifClearBtn;
+
+// Sayfa başlığı butonu click handler — sadece aktif sayfaya ait bildirimleri sil
+function _onPageNotifClearClick() {
+  var relevantTypes = [];
+  var isSpecial = false;
+  var specialIds = ['stPanel', 'snPanel', 'ypanel'];
+  for (var i = 0; i < specialIds.length; i++) {
+    var spEl = document.getElementById(specialIds[i]);
+    if (spEl && spEl.style.display !== 'none' && spEl.style.display !== '') {
+      isSpecial = true; relevantTypes = []; break;
+    }
+  }
+  var sfBtn = document.getElementById('tabBtn-sf');
+  var flBtn = document.getElementById('tabBtn-fl');
+  if (!isSpecial && ((sfBtn && sfBtn.classList && sfBtn.classList.contains('active')) ||
+                     (flBtn && flBtn.classList && flBtn.classList.contains('active')))) {
+    relevantTypes = ['fiyat']; isSpecial = true;
+  }
+  if (!isSpecial) {
+    var sheetType = '';
+    if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
+      sheetType = window.SHEETS[activeSheet].type || '';
+    }
+    if (sheetType === 'teslim')       relevantTypes = ['teslim'];
+    else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
+    else                              relevantTypes = ['malzeme'];
+  }
+  if (relevantTypes.length === 0) return;
+
+  document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
+    var nt = t.getAttribute('data-notif-type') || '';
+    if (relevantTypes.indexOf(nt) >= 0) {
+      t.style.transition = 'opacity .3s';
+      t.style.opacity = '0';
+      setTimeout(function() {
+        t.remove();
+        _saveNotifs();
+        _updateClearBtn();
+        _updatePageNotifClearBtn();
+      }, 300);
+    }
+  });
+}
+
+// Buton click handler ve bildirimleri yükleme — DOM hazır olunca
+function _initNotifPersistence() {
+  var btn = document.getElementById('pageNotifClearBtn');
+  if (btn && !btn._handlerAttached) {
+    btn.addEventListener('click', _onPageNotifClearClick);
+    btn._handlerAttached = true;
+  }
+  _loadNotifs();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(_initNotifPersistence, 100);
+  });
+} else {
+  setTimeout(_initNotifPersistence, 100);
+}
+
+// switchTab değişince butonu güncelle (mevcut switchTab'ı patch et)
+window.addEventListener('load', function() {
+  if (typeof window.switchTab === 'function' && !window.switchTab._notifBtnPatched) {
+    var _origSwitch = window.switchTab;
+    window.switchTab = function(idx) {
+      var r = _origSwitch.apply(this, arguments);
+      setTimeout(function() { _updatePageNotifClearBtn(); }, 50);
+      return r;
+    };
+    window.switchTab._notifBtnPatched = true;
+  }
+});
+
+// Özel panel butonları (sf, fl, st, sn, yp) tıklanınca da butonu güncelle
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('#tabBtn-sf, #tabBtn-fl, #tabBtn-st, #tabBtn-sn, #tabBtn-yp, .tab-btn, .tab-machine-child');
+  if (btn) {
+    setTimeout(function() { _updatePageNotifClearBtn(); }, 100);
+  }
+});
 
 })();
 </script>
@@ -3588,7 +3654,7 @@ function showAdminMsg(text, type) {
   <span class="page-title-text" id="pageTitleText">SAYFALAR</span>
   <span class="page-title-sep" id="pageTitleSep" style="display:none;">·</span>
   <span class="page-title-count" id="pageTitleCount"></span>
-  <button id="pageNotifClearBtn" style="display:none;margin-left:auto;background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.3);color:#e57373;border-radius:5px;padding:3px 10px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;display:none;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;" onmouseenter="this.style.background='rgba(229,57,53,.25)'" onmouseleave="this.style.background='rgba(229,57,53,.12)'">🗑 <span id="pageNotifClearLabel">BİLDİRİMLERİ TEMİZLE</span></button>
+  <button id="pageNotifClearBtn" type="button" style="display:none;margin-left:auto;background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.3);color:#e57373;border-radius:5px;padding:3px 10px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;">🗑 <span id="pageNotifClearLabel">BİLDİRİMLERİ TEMİZLE</span></button>
 </div>
 
 <div class="layout-with-sidebar">
@@ -7747,7 +7813,6 @@ function switchTab(idx) {
   refreshGlobalMakineInput(idx);
   closeSidebar();
   updatePageTitleBar(idx);
-  if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
 }
 
 function toggleSidebar() {
@@ -8311,21 +8376,15 @@ function filterTable(q) {
 
 const firebaseConfig = null; // login script'te tanımlı
 
-// ── FİRESTORE KAYDET (temel fonksiyon) ──
+// ── FİRESTORE KAYDET ──
 async function fbSaveAll() {
-  if (!window._db) { console.warn('[Orimak] fbSaveAll: _db yok!'); return; }
+  if (!window._db) return;
   try {
-    console.log('[Orimak] fbSaveAll: Firestore\'a yazılıyor (' + SHEETS.length + ' sayfa)');
     await window._fsSetDoc(window._fsDoc(window._db, 'malzeme', 'sheets'), { data: JSON.stringify(SHEETS), updatedAt: Date.now() });
-    console.log('[Orimak] fbSaveAll: ✓ Yazıldı');
-  } catch(e) { console.warn('[Orimak] Firebase kayıt hatası:', e); }
+  } catch(e) { console.warn('Firebase kayıt hatası:', e); }
 }
 
 // ── FİRESTORE'DAN YÜKLEMESİ ──
-// isLocalUpdate modül scope'unda — her loadData çağrısında sıfırlanmaz
-var _isLocalUpdate = false;
-var _snapshotUnsub = null; // aktif listener referansı
-
 async function loadData() {
   setSyncStatus('⟳ BAĞLANIYOR', 'loading');
   // Firebase hazır değilse event'i bekle
@@ -8358,56 +8417,40 @@ async function loadData() {
     } else {
       SHEETS = JSON.parse(JSON.stringify(OFFLINE_DATA));
       isOnline = true;
-      _isLocalUpdate = true;
       await fbSaveAll();
-      setTimeout(() => { _isLocalUpdate = false; }, 3000);
       buildUI();
       reapplySession();
       restoreLastPage();
       setSyncStatus('✓ CANLI', 'ok');
     }
-
-    // fbSaveAll'u wrap et — kendi yazmalarımızı işaretle
-    // Orijinal fonksiyonu her seferinde temel `fbSaveAll`'dan al (çift wrap önle)
+    // Gerçek zamanlı dinle
+    let isLocalUpdate = false;
+    const origFbSaveAll = fbSaveAll;
     window.fbSaveAll = async function() {
-      console.log('[Orimak] window.fbSaveAll çağrıldı, _isLocalUpdate=true yapılıyor');
-      _isLocalUpdate = true;
-      await fbSaveAll(); // temel fonksiyon (yukarıda tanımlı)
-      // 3 saniye sonra dış güncellemelere tekrar izin ver
-      setTimeout(() => { _isLocalUpdate = false; console.log('[Orimak] _isLocalUpdate sıfırlandı'); }, 3000);
+      isLocalUpdate = true;
+      await origFbSaveAll();
+      setTimeout(() => { isLocalUpdate = false; }, 2000);
     };
-
-    // Eğer zaten aktif bir listener varsa iptal et (loadData tekrar çağrılırsa)
-    if (_snapshotUnsub) { try { _snapshotUnsub(); } catch(e){} }
-
-    // İlk snapshot'ı atlamak için flag
-    let _firstSnapshot = true;
-
-    _snapshotUnsub = window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
-      // İlk tetiklemeyi atla (mevcut veriyi zaten getDoc ile çektik)
-      if (_firstSnapshot) { _firstSnapshot = false; console.log('[Orimak] onSnapshot: ilk snapshot atlandı'); return; }
-      // Kendi yazmalarımızı atla
-      if (_isLocalUpdate) { console.log('[Orimak] onSnapshot: kendi güncellemesi, atlandı'); return; }
-      if (!d.exists() || !d.data().data) return;
-
-      console.log('[Orimak] onSnapshot: dış güncelleme geldi, tablo yenileniyor');
-      const updated = JSON.parse(d.data().data);
-      ['siparis','teslim','satis'].forEach(tip => {
-        if (!updated.find(s => s.type === tip)) {
-          const existing = SHEETS.find(s => s.type === tip);
-          if (existing) updated.push(existing);
-        }
-      });
-      SHEETS = updated;
-      buildState();
-      rebuildTable(activeSheet);
-      updateStats(activeSheet);
-      renderSiparisRows();
-      renderTeslimRows();
-      if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
-      setSyncStatus('✓ CANLI', 'ok');
-      // Bildirim butonu veri geldikten sonra güncelle
-      if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
+    window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
+      // Kendi güncellemelerimizde veya highlight aktifken atla
+      if (isLocalUpdate || window._highlightRow) return;
+      if (d.exists() && d.data().data) {
+        const updated = JSON.parse(d.data().data);
+        ['siparis','teslim','satis'].forEach(tip => {
+          if (!updated.find(s => s.type === tip)) {
+            const existing = SHEETS.find(s => s.type === tip);
+            if (existing) updated.push(existing);
+          }
+        });
+        SHEETS = updated;
+        buildState();
+        rebuildTable(activeSheet);
+        updateStats(activeSheet);
+        renderSiparisRows();
+        renderTeslimRows();
+        if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
+        setSyncStatus('✓ CANLI', 'ok');
+      }
     });
   } catch(e) {
     console.warn('Firebase hatası:', e);
