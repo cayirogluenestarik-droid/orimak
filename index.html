@@ -49,6 +49,14 @@ _style.textContent = [
   '@keyframes rowBadgePulse{from{opacity:1}to{opacity:.4}}',
   'tr.row-highlight-active td{box-shadow:inset 0 0 0 2px #F5A623!important;}',
   'tr.row-highlight-edit td{box-shadow:inset 0 0 0 2px #7ab8f5!important;}',
+  '#orimak-notif-container{display:flex;flex-direction:column;gap:8px;}',
+  '#orimak-clear-btn{',
+  '  order:9999;margin-top:2px;padding:5px 10px;',
+  '  background:rgba(30,30,30,.9);border:1px solid #2e2e2e;border-radius:6px;',
+  '  font-size:10px;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;',
+  '  color:#666;cursor:pointer;pointer-events:all;text-align:center;',
+  '  transition:color .2s,border-color .2s;',
+  '}',
 ].join('');
 document.head.appendChild(_style);
 
@@ -58,9 +66,51 @@ function getContainer() {
   if (!_container) {
     _container = document.createElement('div');
     _container.id = 'orimak-notif-container';
+
+    // Temizle butonu
+    var _clearBtn = document.createElement('div');
+    _clearBtn.id = 'orimak-clear-btn';
+    _clearBtn.innerHTML = '🗑 Bildirimleri Temizle';
+    _clearBtn.style.cssText = [
+      'display:none;',
+      'text-align:right;',
+      'padding:4px 8px;',
+      'font-size:10px;',
+      'font-family:"Barlow Condensed",sans-serif;',
+      'letter-spacing:1px;',
+      'color:#666;',
+      'cursor:pointer;',
+      'pointer-events:all;',
+      'user-select:none;',
+    ].join('');
+    _clearBtn.onmouseenter = function() { _clearBtn.style.color = '#F5A623'; };
+    _clearBtn.onmouseleave = function() { _clearBtn.style.color = '#666'; };
+    _clearBtn.onclick = function() {
+      // Sadece bu ekrandaki toast'ları kaldır
+      var toasts = _container.querySelectorAll('.orimak-notif');
+      toasts.forEach(function(t) {
+        t.style.transition = 'opacity .3s';
+        t.style.opacity = '0';
+        setTimeout(function() { t.remove(); }, 300);
+      });
+      setTimeout(function() {
+        if (!_container.querySelector('.orimak-notif')) {
+          _clearBtn.style.display = 'none';
+        }
+      }, 400);
+    };
+    _container.appendChild(_clearBtn);
     document.body.appendChild(_container);
   }
   return _container;
+}
+
+// Temizle butonunu göster/gizle
+function _updateClearBtn() {
+  var btn = document.getElementById('orimak-clear-btn');
+  if (!btn) return;
+  var count = document.querySelectorAll('#orimak-notif-container .orimak-notif').length;
+  btn.style.display = count > 0 ? 'block' : 'none';
 }
 
 // ── Sekme Dot Bildirim Sistemi ──
@@ -233,19 +283,21 @@ function showToast(title, body, type, rowLabel) {
     '<div class="orimak-notif-body">'  + body  + '</div>' +
     '<div class="orimak-notif-time">'  + now   + '</div>';
 
-  div.onclick = function() { div.remove(); };
-  c.appendChild(div);
+  div.onclick = function() {
+    div.remove();
+    _updateClearBtn();
+  };
+  // Temizle butonunun üstüne ekle (buton hep altta kalsın)
+  var clearBtn = c.querySelector('#orimak-clear-btn');
+  if (clearBtn) c.insertBefore(div, clearBtn);
+  else c.appendChild(div);
 
   // İlgili sekme butonuna kırmızı nokta + sekme yanması
   addDotByType(type);
   startTabFlash();
+  _updateClearBtn();
 
-  // 7 saniye sonra otomatik kapat
-  setTimeout(function() {
-    div.style.transition = 'opacity .4s';
-    div.style.opacity = '0';
-    setTimeout(function() { div.remove(); }, 400);
-  }, 7000);
+  // Otomatik kapanma YOK — kullanıcı Temizle butonuna basar
 
   // Tarayıcı Notification API (izin varsa)
   if (window.Notification && Notification.permission === 'granted') {
