@@ -113,6 +113,118 @@ function _updateClearBtn() {
   btn.style.display = count > 0 ? 'block' : 'none';
 }
 
+// Sayfa başlığındaki bildirim temizle butonunu güncelle
+function _updatePageNotifClearBtn() {
+  var btn = document.getElementById('pageNotifClearBtn');
+  var lbl = document.getElementById('pageNotifClearLabel');
+  if (!btn) return;
+
+  // Aktif sayfanın tiplerine karşılık gelen bildirim tiplerini bul
+  var relevantTypes = [];
+
+  // Özel paneller aktif mi kontrol et
+  var specialPanels = [
+    { id: 'stPanel',  types: [] },        // Servis Takip — bildirim tipi yok
+    { id: 'snPanel',  types: [] },        // Seri No — bildirim tipi yok
+    { id: 'ypanel',   types: [] },        // Yedek Parça — bildirim tipi yok
+  ];
+  var isSpecial = false;
+  for (var si2 = 0; si2 < specialPanels.length; si2++) {
+    var sp = specialPanels[si2];
+    var spEl = document.getElementById(sp.id);
+    if (spEl && spEl.style.display !== 'none' && spEl.style.display !== '') {
+      isSpecial = true;
+      relevantTypes = sp.types;
+      break;
+    }
+  }
+
+  // Fiyat paneli (sf veya fl) aktif mi?
+  var sfPanel = document.getElementById('sfPanel') || document.getElementById('stContent');
+  // SF/FL paneli için: tabBtn-sf veya tabBtn-fl active sınıfına bakabiliriz
+  var sfBtn = document.getElementById('tabBtn-sf');
+  var flBtn = document.getElementById('tabBtn-fl');
+  if (!isSpecial && ((sfBtn && sfBtn.classList && sfBtn.classList.contains('active')) ||
+                     (flBtn && flBtn.classList && flBtn.classList.contains('active')))) {
+    relevantTypes = ['fiyat'];
+    isSpecial = true;
+  }
+
+  // Normal SHEETS sayfaları
+  if (!isSpecial) {
+    var sheetType = '';
+    if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
+      sheetType = window.SHEETS[activeSheet].type || '';
+    }
+    if (sheetType === 'teslim')       relevantTypes = ['teslim'];
+    else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
+    else                              relevantTypes = ['malzeme'];
+  }
+
+  // O tipe ait toast sayısını say
+  var count = 0;
+  document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
+    var nt = t.getAttribute('data-notif-type') || '';
+    if (relevantTypes.indexOf(nt) >= 0) count++;
+  });
+
+  if (count > 0 && relevantTypes.length > 0) {
+    btn.style.display = 'inline-flex';
+    if (lbl) lbl.textContent = count + ' BİLDİRİMİ TEMİZLE';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+window._updatePageNotifClearBtn = _updatePageNotifClearBtn;
+
+// Sayfa bildirim temizle butonuna click handler ekle (DOM hazır olunca)
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('pageNotifClearBtn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var relevantTypes = [];
+      var isSpecial = false;
+      var specialPanels = [
+        { id: 'stPanel', types: [] },
+        { id: 'snPanel', types: [] },
+        { id: 'ypanel',  types: [] },
+      ];
+      for (var si3 = 0; si3 < specialPanels.length; si3++) {
+        var sp2 = specialPanels[si3];
+        var spEl2 = document.getElementById(sp2.id);
+        if (spEl2 && spEl2.style.display !== 'none' && spEl2.style.display !== '') {
+          isSpecial = true; relevantTypes = sp2.types; break;
+        }
+      }
+      var sfBtn2 = document.getElementById('tabBtn-sf');
+      var flBtn2 = document.getElementById('tabBtn-fl');
+      if (!isSpecial && ((sfBtn2 && sfBtn2.classList && sfBtn2.classList.contains('active')) ||
+                         (flBtn2 && flBtn2.classList && flBtn2.classList.contains('active')))) {
+        relevantTypes = ['fiyat']; isSpecial = true;
+      }
+      if (!isSpecial) {
+        var sheetType = '';
+        if (typeof activeSheet !== 'undefined' && window.SHEETS && window.SHEETS[activeSheet]) {
+          sheetType = window.SHEETS[activeSheet].type || '';
+        }
+        if (sheetType === 'teslim')       relevantTypes = ['teslim'];
+        else if (sheetType === 'siparis') relevantTypes = ['siparis', 'onay'];
+        else                              relevantTypes = ['malzeme'];
+      }
+
+      document.querySelectorAll('#orimak-notif-container .orimak-notif').forEach(function(t) {
+        var nt = t.getAttribute('data-notif-type') || '';
+        if (relevantTypes.length === 0 || relevantTypes.indexOf(nt) >= 0) {
+          t.style.transition = 'opacity .3s';
+          t.style.opacity = '0';
+          setTimeout(function() { t.remove(); _updateClearBtn(); _updatePageNotifClearBtn(); }, 300);
+        }
+      });
+      btn.style.display = 'none';
+    });
+  }
+});
+
 // ── Sekme Dot Bildirim Sistemi ──
 // Hangi type → hangi tab buttonlarına dot ekleneceğini tanımlar
 var _TYPE_TO_TAB = {
@@ -273,6 +385,7 @@ function showToast(title, body, type, rowLabel) {
   var div  = document.createElement('div');
   var cls  = type === 'teslim' ? 'teslim' : type === 'malzeme' ? 'malzeme' : type === 'fiyat' ? 'fiyat' : '';
   div.className = 'orimak-notif ' + cls;
+  div.setAttribute('data-notif-type', type || '');
 
   var now  = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
   var rowBadge = rowLabel
@@ -286,6 +399,7 @@ function showToast(title, body, type, rowLabel) {
   div.onclick = function() {
     div.remove();
     _updateClearBtn();
+    _updatePageNotifClearBtn();
   };
   // Temizle butonunun üstüne ekle (buton hep altta kalsın)
   var clearBtn = c.querySelector('#orimak-clear-btn');
@@ -296,6 +410,7 @@ function showToast(title, body, type, rowLabel) {
   addDotByType(type);
   startTabFlash();
   _updateClearBtn();
+  _updatePageNotifClearBtn();
 
   // Otomatik kapanma YOK — kullanıcı Temizle butonuna basar
 
@@ -3391,6 +3506,7 @@ function showAdminMsg(text, type) {
   <span class="page-title-text" id="pageTitleText">SAYFALAR</span>
   <span class="page-title-sep" id="pageTitleSep" style="display:none;">·</span>
   <span class="page-title-count" id="pageTitleCount"></span>
+  <button id="pageNotifClearBtn" style="display:none;margin-left:auto;background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.3);color:#e57373;border-radius:5px;padding:3px 10px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;display:none;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;" onmouseenter="this.style.background='rgba(229,57,53,.25)'" onmouseleave="this.style.background='rgba(229,57,53,.12)'">🗑 <span id="pageNotifClearLabel">BİLDİRİMLERİ TEMİZLE</span></button>
 </div>
 
 <div class="layout-with-sidebar">
@@ -7549,6 +7665,7 @@ function switchTab(idx) {
   refreshGlobalMakineInput(idx);
   closeSidebar();
   updatePageTitleBar(idx);
+  if (typeof _updatePageNotifClearBtn === 'function') _updatePageNotifClearBtn();
 }
 
 function toggleSidebar() {
