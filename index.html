@@ -263,7 +263,6 @@ window._highlightRow = null;
 window.setRowHighlight = function(sheet, idx, type) {
   if (window._highlightRow && window._highlightRow.timer) clearTimeout(window._highlightRow.timer);
   window._highlightRow = { sheet: sheet, idx: idx, type: type };
-  // Badge'i 8 saniye sonra temizle
   window._highlightRow.timer = setTimeout(function() {
     window._highlightRow = null;
     if (sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
@@ -2216,12 +2215,12 @@ async function saveSiparis(editIdx) {
   const _isYeniSiparis = editIdx < 0;
   if (editIdx >= 0) rows[editIdx] = yeni;
   else rows.push(yeni);
-  // ── SATIR BELİRTECİ ──
-  const _highlightIdx = _isYeniSiparis ? rows.length - 1 : editIdx;
-  window.setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
   SHEETS[si].rows = rows;
   document.getElementById('siparisModal').remove();
   if (isOnline) await fbSaveAll();
+  // ── SATIR BELİRTECİ: fbSaveAll bittikten sonra set et ──
+  const _highlightIdx = _isYeniSiparis ? rows.length - 1 : editIdx;
+  window.setRowHighlight('siparis', _highlightIdx, _isYeniSiparis ? 'new' : 'edit');
   renderSiparisRows();
   updateTerminBadge();
   // ── PUSH BİLDİRİMİ: Yeni sipariş eklendi ──
@@ -8101,7 +8100,8 @@ async function loadData() {
       setTimeout(() => { isLocalUpdate = false; }, 2000);
     };
     window._fsOnSnapshot(window._fsDoc(window._db, 'malzeme', 'sheets'), (d) => {
-      if (isLocalUpdate) return;
+      // Kendi güncellemelerimizde veya highlight aktifken atla
+      if (isLocalUpdate || window._highlightRow) return;
       if (d.exists() && d.data().data) {
         const updated = JSON.parse(d.data().data);
         ['siparis','teslim','satis'].forEach(tip => {
@@ -8114,20 +8114,8 @@ async function loadData() {
         buildState();
         rebuildTable(activeSheet);
         updateStats(activeSheet);
-        // Highlight aktifse badge'i koru — sıfırlamadan render et
         renderSiparisRows();
         renderTeslimRows();
-        // Highlight süresi dolmamışsa timer'ı yenile (dışarıdan gelen render badge'i silmesin)
-        if (window._highlightRow) {
-          var _hlCopy = { sheet: window._highlightRow.sheet, idx: window._highlightRow.idx, type: window._highlightRow.type };
-          if (window._highlightRow.timer) clearTimeout(window._highlightRow.timer);
-          window._highlightRow = _hlCopy;
-          window._highlightRow.timer = setTimeout(function() {
-            window._highlightRow = null;
-            if (_hlCopy.sheet === 'siparis') { if (window.renderSiparisRows) window.renderSiparisRows(); }
-            else if (_hlCopy.sheet === 'teslim') { if (window.renderTeslimRows) window.renderTeslimRows(); }
-          }, 8000);
-        }
         if (typeof window.renderSatisRows === 'function') window.renderSatisRows();
         setSyncStatus('✓ CANLI', 'ok');
       }
