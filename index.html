@@ -1612,6 +1612,9 @@ function onLoggedIn(u) {
     document.getElementById('notifPermsBtn').style.display = 'inline-flex';
   }
 
+  // Bildirim ayar butonu tüm roller için görünür
+  document.getElementById('notifPermsBtn').style.display = 'inline-flex';
+
   if (role === 'viewer' || role === 'operator') {
     const addBtn = document.getElementById('addRowBtn');
     if (addBtn) addBtn.style.display = 'none';
@@ -11349,7 +11352,7 @@ if (window._db) setTimeout(stLoad, 1800);
 .oriform-ta{border:1px solid #c7b299;background:rgba(255,250,244,.82);font-family:Arial,sans-serif;font-size:10.5px;color:#241b12;outline:none;padding:4px;resize:vertical;min-height:30px;width:100%;box-sizing:border-box;}
 .oriform-ta:focus{border-color:#e36400;}
 .pf-price-cell{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
-.pf-currency-select{width:64px;border:1px solid #c7b299;border-radius:4px;background:#fffaf4;font-family:Arial,sans-serif;font-size:10px;color:#5a3715;padding:3px 4px;outline:none;}
+.pf-currency-select{width:52px;border:1px solid #c7b299;border-radius:4px;background:#fffaf4;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#5a3715;padding:3px 4px;outline:none;text-align:center;}
 .pf-currency-select:focus{border-color:#e36400;}
 .st-form-btn{border:none;border-radius:6px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
 .st-form-btn-teklif{background:rgba(245,166,35,.12);color:#e36400;border:1px solid rgba(245,166,35,.3);}
@@ -12460,11 +12463,11 @@ function pqfRenderRows() {
       '<td style="padding:3px 6px;"><input class="oriform-input" style="width:52px;text-align:center;" value="'+pqfEsc(r.qty)+'" placeholder="" oninput="pqfRows['+i+'].qty=this.value;window.pqfCalculate()"/></td>' +
       '<td style="padding:3px 6px;text-align:right;">' +
         '<input class="oriform-input" style="width:80px;text-align:right;" value="'+pqfEsc(r.price)+'" placeholder="" oninput="pqfRows['+i+'].price=this.value;window.pqfCalculate()"/>' +
-        '<select onchange="pqfRows['+i+'].currency=this.value;window.pqfCalculate()" style="border:none;background:transparent;font-size:10px;outline:none;margin-left:2px;">' +
+        '<select onchange="pqfRows['+i+'].currency=this.value;window.pqfCalculate()" style="border:none;background:transparent;font-size:13px;outline:none;margin-left:3px;font-weight:700;">' +
           '<option value="USD"'+(r.currency==='USD'?' selected':'')+'>$</option>' +
           '<option value="EUR"'+(r.currency==='EUR'?' selected':'')+'>€</option>' +
-          '<option value="TRY"'+(r.currency==='TRY'?' selected':'')+'>TRY</option>' +
-          '<option value="GBP"'+(r.currency==='GBP'?' selected':'')+'>GBP</option>' +
+          '<option value="TRY"'+(r.currency==='TRY'?' selected':'')+'>₺</option>' +
+          '<option value="GBP"'+(r.currency==='GBP'?' selected':'')+'>£</option>' +
         '</select>' +
       '</td>' +
       '<td style="padding:3px 6px;text-align:right;font-size:11px;" id="pqf_row_'+i+'">'+(t>0?pqfFmt(t)+' '+pqfCurrSym(r.currency||'USD'):'')+' </td>' +
