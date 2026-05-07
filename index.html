@@ -1612,9 +1612,6 @@ function onLoggedIn(u) {
     document.getElementById('notifPermsBtn').style.display = 'inline-flex';
   }
 
-  // Bildirim ayar butonu tüm roller için görünür
-  document.getElementById('notifPermsBtn').style.display = 'inline-flex';
-
   if (role === 'viewer' || role === 'operator') {
     const addBtn = document.getElementById('addRowBtn');
     if (addBtn) addBtn.style.display = 'none';
@@ -1664,26 +1661,25 @@ function reapplySession() {
     const vBadge = document.getElementById('versionBadge');
     const addBtn = document.getElementById('addRowBtn');
 
+    var npBtn = document.getElementById('notifPermsBtn');
     if (role === 'admin') {
       if (syBtn)  syBtn.style.display  = 'inline-flex';
       if (pBtn)   pBtn.style.display   = 'inline-flex';
       if (aBtn)   aBtn.style.display   = 'inline-flex';
       if (vBadge) vBadge.style.display = 'inline';
+      if (npBtn)  npBtn.style.display  = 'inline-flex';
       const toBtn1 = document.getElementById('topluOnayBtn');
       if (toBtn1) toBtn1.style.display = 'inline-flex';
     } else if (role === 'manager') {
       if (pBtn) pBtn.style.display = 'inline-flex';
       if (aBtn) aBtn.style.display = 'inline-flex';
+      if (npBtn) npBtn.style.display = 'inline-flex';
       const toBtn2 = document.getElementById('topluOnayBtn');
       if (toBtn2) toBtn2.style.display = 'inline-flex';
     } else if (role === 'operator') {
       const toBtn3 = document.getElementById('topluOnayBtn');
       if (toBtn3) toBtn3.style.display = 'inline-flex';
     }
-
-    // Bildirim ayar butonu tüm roller için görünür
-    var npBtn = document.getElementById('notifPermsBtn');
-    if (npBtn) npBtn.style.display = 'inline-flex';
 
     if (role === 'viewer' || role === 'operator') {
       if (addBtn) addBtn.style.display = 'none';
