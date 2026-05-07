@@ -1021,7 +1021,7 @@ td.col-code{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:
 #siteYonetimOverlay.open{display:flex;}
 .siteynt-box{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid var(--orange);border-radius:12px;width:720px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);}
 .siteynt-head{padding:16px 24px 0;border-bottom:1px solid #2a2a2a;display:flex;align-items:flex-end;justify-content:space-between;}
-.siteynt-tab{background:none;border:none;border-bottom:2px solid transparent;color:#666;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.2px;padding:10px 12px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.siteynt-tab{background:none;border:none;border-bottom:2px solid transparent;color:#666;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;padding:10px 18px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
 .siteynt-tab:hover{color:#aaa;}
 .siteynt-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
 .siteynt-body{padding:20px 24px;overflow-y:auto;flex:1;}
@@ -1605,9 +1605,11 @@ function onLoggedIn(u) {
     document.getElementById('partiBtn').style.display = 'inline-flex';
     document.getElementById('arsivBtn').style.display = 'inline-flex';
     document.getElementById('versionBadge').style.display = 'inline';
+    document.getElementById('notifPermsBtn').style.display = 'inline-flex';
   } else if (role === 'manager') {
     document.getElementById('partiBtn').style.display = 'inline-flex';
     document.getElementById('arsivBtn').style.display = 'inline-flex';
+    document.getElementById('notifPermsBtn').style.display = 'inline-flex';
   }
 
   if (role === 'viewer' || role === 'operator') {
@@ -2904,7 +2906,7 @@ window.closeSiteYonetimOutside = closeSiteYonetimOutside;
 
 function switchSYTab(idx) {
   _syActiveTab = idx;
-  [0,1,2,3].forEach(i => {
+  [0,1,2].forEach(i => {
     var tab = document.getElementById(`syTab${i}`);
     var panel = document.getElementById(`syPanel${i}`);
     if (tab) tab.classList.toggle('active', i === idx);
@@ -2913,7 +2915,6 @@ function switchSYTab(idx) {
   if (idx === 0) renderUserList();
   if (idx === 1) renderSayfaListesi();
   if (idx === 2) renderGrupSayfaSel();
-  if (idx === 3) renderNotifPermsPanel();
 }
 window.switchSYTab = switchSYTab;
 
@@ -2998,8 +2999,19 @@ async function saveGrupAdi(si, ri) {
 window.saveGrupAdi = saveGrupAdi;
 
 // ── Bildirim Sayfa İzinleri Paneli ──
+function openNotifPermsPanel() {
+  renderNotifPermsPanel();
+  document.getElementById('notifPermsOverlay').style.display = 'flex';
+}
+window.openNotifPermsPanel = openNotifPermsPanel;
+
+function closeNotifPermsPanel() {
+  document.getElementById('notifPermsOverlay').style.display = 'none';
+}
+window.closeNotifPermsPanel = closeNotifPermsPanel;
+
 function renderNotifPermsPanel() {
-  var panel = document.getElementById('syPanel3');
+  var panel = document.getElementById('notifPermsBody');
   if (!panel) return;
   var user = window._currentUser || '';
   if (!user) {
@@ -3018,8 +3030,7 @@ function renderNotifPermsPanel() {
   }
   if (pages.indexOf('Fiyat Listesi') === -1) pages.push('Fiyat Listesi');
 
-  var html = '<div class="admin-section-title">🔔 Bildirim Sayfa İzinleri</div>';
-  html += '<div style="color:#888;font-size:11px;margin-bottom:14px;line-height:1.5;">Hangi sayfalardan bildirim almak istediğinizi seçin. Kapalı sayfalardan gelen bildirimler gösterilmez.</div>';
+  var html = '<div style="color:#888;font-size:11px;margin-bottom:14px;line-height:1.5;">Hangi sayfalardan bildirim almak istediğinizi seçin. Kapalı sayfalardan gelen bildirimler gösterilmez.</div>';
   html += '<div style="display:flex;flex-direction:column;gap:6px;">';
 
   pages.forEach(function(pg) {
@@ -3045,7 +3056,6 @@ window._toggleNotifPerm = function(pageName, isOn) {
   var perms = window._getNotifPerms();
   perms[pageName] = isOn;
   window._setNotifPerms(perms);
-  // Toggle'ı görsel olarak güncelle
   renderNotifPermsPanel();
 };
 
@@ -3450,6 +3460,9 @@ function showAdminMsg(text, type) {
       🔔
       <span id="terminBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#c00;color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 5px;font-family:'Barlow Condensed',sans-serif;min-width:16px;text-align:center;"></span>
     </button>
+    <button id="notifPermsBtn" onclick="openNotifPermsPanel()" style="display:none;background:#1e1e1e;border:1px solid #2e2e2e;border-radius:8px;width:36px;height:36px;cursor:pointer;align-items:center;justify-content:center;font-size:16px;transition:all .2s;" title="Bildirim Sayfa İzinleri">
+      🔕
+    </button>
     <button id="siteYonetimBtn" class="hbtn hbtn-admin" onclick="openSiteYonetim()" style="display:none;border:1px solid #2a5a8e;">
       ⚙️ SİTE YÖNETİMİ
     </button>
@@ -3477,15 +3490,25 @@ function showAdminMsg(text, type) {
   </div>
 </div>
 
+<!-- ══ BİLDİRİM SAYFA İZİNLERİ ══ -->
+<div id="notifPermsOverlay" onclick="if(event.target===this)closeNotifPermsPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center;">
+  <div style="background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #e36400;border-radius:12px;width:420px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #2a2a2a;">
+      <h2 style="margin:0;font-size:15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1.5px;color:#e36400;">🔔 BİLDİRİM SAYFA İZİNLERİ</h2>
+      <button class="admin-close" onclick="closeNotifPermsPanel()">✕</button>
+    </div>
+    <div id="notifPermsBody" style="padding:16px 20px;overflow-y:auto;"></div>
+  </div>
+</div>
+
 <!-- ══ SİTE YÖNETİMİ ══ -->
 <div id="siteYonetimOverlay" onclick="closeSiteYonetimOutside(event)">
   <div class="siteynt-box">
     <div class="siteynt-head">
-      <div style="display:flex;gap:0;flex-wrap:wrap;">
+      <div style="display:flex;gap:0;">
         <button class="siteynt-tab active" id="syTab0" onclick="switchSYTab(0)">👤 Kullanıcılar</button>
         <button class="siteynt-tab" id="syTab1" onclick="switchSYTab(1)">📄 Sayfalar</button>
         <button class="siteynt-tab" id="syTab2" onclick="switchSYTab(2)">📋 Gruplar</button>
-        <button class="siteynt-tab" id="syTab3" onclick="switchSYTab(3)">🔔 Bildirim İzinleri</button>
       </div>
       <button class="admin-close" onclick="closeSiteYonetim()">✕</button>
     </div>
@@ -3526,9 +3549,6 @@ function showAdminMsg(text, type) {
         </div>
         <div class="admin-section-title">Grup Başlıkları</div>
         <div id="grupListesi" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
-      <!-- Bildirim İzinleri -->
-      <div id="syPanel3" class="sy-panel">
       </div>
     </div>
   </div>
