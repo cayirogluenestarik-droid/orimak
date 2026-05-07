@@ -1681,6 +1681,10 @@ function reapplySession() {
       if (toBtn3) toBtn3.style.display = 'inline-flex';
     }
 
+    // Bildirim ayar butonu tüm roller için görünür
+    var npBtn = document.getElementById('notifPermsBtn');
+    if (npBtn) npBtn.style.display = 'inline-flex';
+
     if (role === 'viewer' || role === 'operator') {
       if (addBtn) addBtn.style.display = 'none';
       const gmWrap = document.getElementById('globalMakineWrap');
