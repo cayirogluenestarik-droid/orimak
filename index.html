@@ -12304,19 +12304,19 @@ window.applyTopluOnay = function(){
       <tr>
         <td style="width:55%;"></td>
         <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;text-align:right;background:#f5f5f5;">TOPLAM TUTAR</td>
-        <td style="padding:4px 12px;font-size:11px;font-weight:700;border:1px solid #555;border-left:none;text-align:right;min-width:110px;" id="pfToplam">0,00 TL</td>
+        <td style="padding:4px 12px;font-size:11px;font-weight:700;border:1px solid #555;border-left:none;text-align:right;min-width:110px;" id="pfToplam">0,00 ₺</td>
       </tr>
       <tr>
         <td></td>
         <td style="padding:4px 10px;font-size:10px;font-weight:700;border:1px solid #555;border-top:none;text-align:right;background:#f5f5f5;">
           %<input id="pfKdvOran" class="oriform-input" style="width:24px;text-align:center;font-size:10px;" value="20" oninput="window.pfHesapla()"/> KDV
         </td>
-        <td style="padding:4px 12px;font-size:11px;border:1px solid #555;border-top:none;border-left:none;text-align:right;" id="pfKdv">0,00 TL</td>
+        <td style="padding:4px 12px;font-size:11px;border:1px solid #555;border-top:none;border-left:none;text-align:right;" id="pfKdv">0,00 ₺</td>
       </tr>
       <tr>
         <td></td>
         <td style="padding:5px 10px;font-size:11px;font-weight:900;border:2px solid #e36400;text-align:right;color:#e36400;">GENEL TOPLAM</td>
-        <td style="padding:5px 12px;font-size:13px;font-weight:900;border:2px solid #e36400;border-left:none;text-align:right;color:#e36400;" id="pfGenel">0,00 TL</td>
+        <td style="padding:5px 12px;font-size:13px;font-weight:900;border:2px solid #e36400;border-left:none;text-align:right;color:#e36400;" id="pfGenel">0,00 ₺</td>
       </tr>
     </table></div>
 
@@ -12461,8 +12461,8 @@ function pqfRenderRows() {
       '<td style="padding:3px 6px;text-align:right;">' +
         '<input class="oriform-input" style="width:80px;text-align:right;" value="'+pqfEsc(r.price)+'" placeholder="" oninput="pqfRows['+i+'].price=this.value;window.pqfCalculate()"/>' +
         '<select onchange="pqfRows['+i+'].currency=this.value;window.pqfCalculate()" style="border:none;background:transparent;font-size:10px;outline:none;margin-left:2px;">' +
-          '<option value="USD"'+(r.currency==='USD'?' selected':'')+'>USD</option>' +
-          '<option value="EUR"'+(r.currency==='EUR'?' selected':'')+'>EUR</option>' +
+          '<option value="USD"'+(r.currency==='USD'?' selected':'')+'>$</option>' +
+          '<option value="EUR"'+(r.currency==='EUR'?' selected':'')+'>€</option>' +
           '<option value="TRY"'+(r.currency==='TRY'?' selected':'')+'>TRY</option>' +
           '<option value="GBP"'+(r.currency==='GBP'?' selected':'')+'>GBP</option>' +
         '</select>' +
@@ -12501,7 +12501,7 @@ window.pfAddRow = function() {
 };
 
 function pfEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function pfCurrencySymbol(pb){ return pb === 'EUR' ? 'EUR' : pb === 'USD' ? 'USD' : 'TL'; }
+function pfCurrencySymbol(pb){ return pb === 'EUR' ? '€' : pb === 'USD' ? '$' : '₺'; }
 function pfCurrencySummary(list){
   var clean = list.filter(function(v){ return !!v; });
   if (!clean.length) return 'TL';
@@ -12527,9 +12527,9 @@ function pfRenderRows() {
         '<div class="pf-price-cell">'+
           '<input class="oriform-input" style="width:85px;text-align:right;" value="'+pfEsc(r.fiyat)+'" placeholder="" oninput="pfRows['+i+'].fiyat=this.value;window.pfHesapla()"/>'+
           '<select class="pf-currency-select" onchange="pfRows['+i+'].pb=this.value;window.pfHesapla()">'+
-            '<option value="TL"'+((r.pb||'TL')==='TL'?' selected':'')+'>TL</option>'+
-            '<option value="EUR"'+((r.pb||'TL')==='EUR'?' selected':'')+'>EUR</option>'+
-            '<option value="USD"'+((r.pb||'TL')==='USD'?' selected':'')+'>USD</option>'+
+            '<option value="TL"'+((r.pb||'TL')==='TL'?' selected':'')+'>₺</option>'+
+            '<option value="EUR"'+((r.pb||'TL')==='EUR'?' selected':'')+'>€</option>'+
+            '<option value="USD"'+((r.pb||'TL')==='USD'?' selected':'')+'>$</option>'+
           '</select>'+
         '</div>'+
       '</td>'+
