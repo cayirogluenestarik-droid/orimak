@@ -2618,11 +2618,17 @@ async function saveSiparis(editIdx) {
   const si = getSiparisIdx();
   if (si < 0) { alert('Sipariş sayfası bulunamadı!'); return; }
   const rows = getSiparisRows();
+  const _olusturanVal = document.getElementById('sp_olusturan').value.trim();
+  if (!_olusturanVal) {
+    alert('⚠️ "Sipariş Oluşturan" alanı boş bırakılamaz!');
+    document.getElementById('sp_olusturan').focus();
+    return;
+  }
   const yeni = {
     urunKodu: document.getElementById('sp_kod').value.trim(),
     urunAdi: document.getElementById('sp_ad').value.trim(),
     sipAdet: document.getElementById('sp_adet').value.trim(),
-    olusturan: document.getElementById('sp_olusturan').value.trim(),
+    olusturan: _olusturanVal,
     olusturmaTarihi: document.getElementById('sp_otar').value.trim(),
     terminTarihi: document.getElementById('sp_termin').value.trim(),
     notlar: document.getElementById('sp_notlar').value.trim(),
@@ -2800,6 +2806,12 @@ async function saveTeslim(editIdx) {
   const kodSel = document.getElementById('tk_kod').value;
   const kodM = document.getElementById('tk_kod_m').value.trim();
   const kod = kodSel || kodM;
+  const _teslimAlanVal = document.getElementById('tk_alan').value.trim();
+  if (!_teslimAlanVal) {
+    alert('⚠️ "Teslim Alan" alanı boş bırakılamaz!');
+    document.getElementById('tk_alan').focus();
+    return;
+  }
   const siparisRows = getSiparisRows();
   const siparis = siparisRows.find(s => s.urunKodu === kod);
   const yeni = {
@@ -2807,7 +2819,7 @@ async function saveTeslim(editIdx) {
     urunAdi: siparis ? siparis.urunAdi : kod,
     gelisAdet: document.getElementById('tk_adet').value.trim(),
     gelisTarihi: document.getElementById('tk_tarih').value.trim(),
-    teslimAlan: document.getElementById('tk_alan').value.trim(),
+    teslimAlan: _teslimAlanVal,
   };
   const _isYeniTeslim = editIdx < 0;
   // ── KALICI BİLDİRİM: satıra _notif ekle ──
