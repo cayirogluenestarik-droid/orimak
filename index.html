@@ -11354,17 +11354,17 @@ if (window._db) setTimeout(stLoad, 1800);
 .oriform-tbtn-pdf{background:var(--orange);color:#111;}
 .oriform-tbtn-close{background:#2a2a2a;color:#888;border:1px solid #3a3a3a;}
 .oriform-tbtn:hover{opacity:.85;}
-.oriform-page{padding:22px 24px;background:linear-gradient(180deg,#fffaf4 0%,#f7ecdd 100%);font-family:Arial,sans-serif;color:#2c241b;}
+.oriform-page{padding:22px 24px;background:linear-gradient(180deg,#fffaf4 0%,#f7ecdd 100%);font-family:"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#2c241b;}
 .oriform-scroll{overflow-x:auto;max-width:100%;}
 .oriform-scroll table{min-width:720px;}
 .oriform-inline-fields{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;}
 .oriform-inline-fields span{white-space:nowrap;}
-.oriform-input{border:none;border-bottom:1px solid #8d7961;background:rgba(255,248,240,.65);font-family:Arial,sans-serif;font-size:11px;color:#241b12;outline:none;padding:1px 3px;}
+.oriform-input{border:none;border-bottom:1px solid #8d7961;background:rgba(255,248,240,.65);font-family:"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;color:#241b12;outline:none;padding:1px 3px;}
 .oriform-input:focus{border-bottom-color:#e36400;background:rgba(245,166,35,.05);}
 .oriform-ta{border:1px solid #c7b299;background:rgba(255,250,244,.82);font-family:Arial,sans-serif;font-size:10.5px;color:#241b12;outline:none;padding:4px;resize:vertical;min-height:30px;width:100%;box-sizing:border-box;}
 .oriform-ta:focus{border-color:#e36400;}
 .pf-price-cell{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
-.pf-currency-select{width:52px;border:1px solid #c7b299;border-radius:4px;background:#fffaf4;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#5a3715;padding:3px 4px;outline:none;text-align:center;}
+.pf-currency-select{width:52px;border:1px solid #c7b299;border-radius:4px;background:#fffaf4;font-family:"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#5a3715;padding:3px 4px;outline:none;text-align:center;}
 .pf-currency-select:focus{border-color:#e36400;}
 .st-form-btn{border:none;border-radius:6px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
 .st-form-btn-teklif{background:rgba(245,166,35,.12);color:#e36400;border:1px solid rgba(245,166,35,.3);}
@@ -12666,8 +12666,8 @@ window.printOrimakForm = function(areaId) {
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Orimak Form</title>'+
     '<style>'+
     'html,body{margin:0;padding:0;background:#fff8f0;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}'+
-    'body{padding:16px;font-family:Arial,sans-serif;font-size:11px;color:#2c241b;}'+
-    '*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;box-sizing:border-box;}'+
+    'body{padding:16px;font-family:"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;color:#2c241b;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}'+
+    '*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}'+
     'table{border-collapse:collapse;} img{max-width:100%;display:block;}'+
     '.oriform-page{padding:22px 24px;background:linear-gradient(180deg,#fffaf4 0%,#f7ecdd 100%) !important;color:#2c241b;}'+
     '.oriform-scroll{overflow:visible !important;max-width:100%;}'+
