@@ -3487,6 +3487,9 @@ function showAdminMsg(text, type) {
     <button id="arsivBtn" class="hbtn hbtn-purple" onclick="openArsiv()" style="display:none">
       📁 ARŞİV
     </button>
+    <button id="invoiceBtn" class="hbtn" onclick="openInvoiceModal()" style="background:linear-gradient(135deg,#1a3a1a,#112811);color:#7fda9e;border:1px solid #2a6e4a!important;">
+      📄 INVOICE
+    </button>
     <button id="homeBtnHeader" class="hbtn hbtn-home" onclick="showHomePage()" title="Ana Sayfa">🏠 ANA SAYFA</button>
     <button class="hbtn hbtn-dark" onclick="loadData()">↺ Yenile</button>
     <button class="hbtn hbtn-dark" onclick="window.print()">🖨 Yazdır</button>
@@ -13183,6 +13186,562 @@ window.flRenderIfActive = function(){ window.flRender(null); };
 /* ── Yükle ── */
 setTimeout(flLoad, 2000);
 window.addEventListener('firebaseReady', function(){ setTimeout(flLoad, 500); }, {once:true});
+
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     INVOICE MODAL — Commercial Invoice + Packing List + Çeki Listesi
+     ══════════════════════════════════════════════════ -->
+<style>
+#invoiceModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 0;}
+#invoiceModal.open{display:flex;}
+.inv-shell{background:#1a1a1a;border:1px solid #2e2e2e;border-top:3px solid #7fda9e;border-radius:12px;width:860px;max-width:98vw;padding:0;box-shadow:0 24px 80px rgba(0,0,0,.7);font-family:'Barlow Condensed',sans-serif;}
+.inv-header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid #2a2a2a;}
+.inv-header h2{font-size:18px;font-weight:700;letter-spacing:2px;color:#7fda9e;margin:0;}
+.inv-tabs{display:flex;gap:6px;padding:14px 28px 0;border-bottom:1px solid #2a2a2a;}
+.inv-tab{padding:8px 20px;border:1px solid #333;border-bottom:none;border-radius:6px 6px 0 0;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;background:#141414;color:#666;transition:all .2s;}
+.inv-tab.active{background:#1e2e1e;color:#7fda9e;border-color:#2a6e4a;border-bottom-color:#1a1a1a;}
+.inv-body{padding:24px 28px;}
+.inv-section{margin-bottom:18px;}
+.inv-section-title{font-size:11px;font-weight:700;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #2a2a2a;padding-bottom:4px;}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.inv-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.inv-field{display:flex;flex-direction:column;gap:4px;}
+.inv-field label{font-size:11px;color:#666;letter-spacing:1px;}
+.inv-field input,.inv-field select,.inv-field textarea{background:#111;border:1px solid #2e2e2e;border-radius:5px;padding:7px 10px;color:#ddd;font-family:'Barlow Condensed',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.inv-field input:focus,.inv-field select:focus,.inv-field textarea:focus{border-color:#2a6e4a;}
+.inv-field textarea{resize:vertical;min-height:56px;}
+.inv-field.full{grid-column:1/-1;}
+/* Items table */
+.inv-items-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px;}
+.inv-items-table th{background:#111;color:#7fda9e;font-weight:700;letter-spacing:1px;padding:7px 8px;text-align:left;border:1px solid #2a2a2a;font-size:11px;}
+.inv-items-table td{padding:5px 6px;border:1px solid #1e1e1e;vertical-align:middle;}
+.inv-items-table td input{background:transparent;border:none;color:#ddd;font-family:'Barlow Condensed',sans-serif;font-size:13px;width:100%;outline:none;padding:2px 4px;}
+.inv-items-table td input:focus{background:#111;border-radius:3px;}
+.inv-items-table .td-total{color:#7fda9e;font-weight:700;text-align:right;}
+.inv-items-table .td-del{text-align:center;width:28px;}
+.inv-items-table .del-btn{background:none;border:none;color:#c04040;cursor:pointer;font-size:16px;line-height:1;padding:0;}
+.inv-add-row{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;background:#111;border:1px dashed #2a6e4a;border-radius:5px;color:#7fda9e;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.inv-add-row:hover{background:#1a2e1a;}
+.inv-totals{margin-top:10px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.inv-totals-row{display:flex;gap:16px;align-items:center;font-size:13px;}
+.inv-totals-label{color:#888;min-width:120px;text-align:right;}
+.inv-totals-value{color:#7fda9e;font-weight:700;min-width:80px;text-align:right;}
+.inv-totals-grand{font-size:15px;border-top:1px solid #2a6e4a;padding-top:6px;margin-top:4px;}
+/* Footer actions */
+.inv-footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 28px;border-top:1px solid #2a2a2a;}
+/* Packing/Çeki specific */
+.pk-items-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px;}
+.pk-items-table th{background:#111;color:#7fda9e;font-weight:700;letter-spacing:1px;padding:7px 8px;text-align:left;border:1px solid #2a2a2a;font-size:11px;}
+.pk-items-table td{padding:5px 6px;border:1px solid #1e1e1e;vertical-align:middle;}
+.pk-items-table td input{background:transparent;border:none;color:#ddd;font-family:'Barlow Condensed',sans-serif;font-size:13px;width:100%;outline:none;padding:2px 4px;}
+.pk-items-table td input:focus{background:#111;border-radius:3px;}
+.pk-items-table .td-del{text-align:center;width:28px;}
+.pk-items-table .del-btn{background:none;border:none;color:#c04040;cursor:pointer;font-size:16px;line-height:1;padding:0;}
+
+/* PDF print styles */
+@media print{
+  body > *:not(#invPrintFrame){display:none!important;}
+  #invPrintFrame{display:block!important;position:fixed;inset:0;width:100%;height:100%;border:none;}
+}
+</style>
+
+<div id="invoiceModal" onclick="invModalOutside(event)">
+  <div class="inv-shell" onclick="event.stopPropagation()">
+    <div class="inv-header">
+      <h2>📄 INVOICE / PACKING LIST / ÇEKİ LİSTESİ</h2>
+      <button onclick="closeInvoiceModal()" style="background:none;border:none;color:#666;font-size:22px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <div class="inv-tabs">
+      <button class="inv-tab active" onclick="switchInvTab('ci',this)">COMMERCIAL INVOICE</button>
+      <button class="inv-tab" onclick="switchInvTab('pl',this)">PACKING LIST</button>
+      <button class="inv-tab" onclick="switchInvTab('cl',this)">ÇEKİ LİSTESİ</button>
+    </div>
+    <div class="inv-body">
+
+      <!-- ── COMMERCIAL INVOICE ── -->
+      <div id="invTab-ci">
+        <div class="inv-section">
+          <div class="inv-section-title">Genel Bilgiler</div>
+          <div class="inv-grid">
+            <div class="inv-field"><label>INVOICE NO</label><input id="ci-invno" placeholder="ORM2025000000000"></div>
+            <div class="inv-field"><label>TARİH / DATE</label><input type="date" id="ci-date"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Satıcı / Seller</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="ci-seller-name" value="ORİMAK MAKİNA SAN.TİC.LTD.ŞTİ."></div>
+            <div class="inv-field full"><label>ADRES</label><input id="ci-seller-addr" value="MAHMUDİYE MAH. 19.MOBİLYA SK.NO:2E 16000 İNEGÖL/ BURSA"></div>
+            <div class="inv-field"><label>TEL</label><input id="ci-seller-tel" value="02247186268"></div>
+            <div class="inv-field"><label>WEB / E-POSTA</label><input id="ci-seller-web" value="www.orimak.com — muhasebe@orimak.com"></div>
+            <div class="inv-field"><label>VKN</label><input id="ci-seller-vkn" value="6470572044"></div>
+            <div class="inv-field"><label>MERSİS NO</label><input id="ci-seller-mersis" value="0647057204400001"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Alıcı / Buyer</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="ci-buyer-name" placeholder="Firma Adı"></div>
+            <div class="inv-field full"><label>KAYIT / VAT KODU</label><input id="ci-buyer-reg" placeholder="REG CODE / VAT CODE"></div>
+            <div class="inv-field full"><label>ADRES</label><input id="ci-buyer-addr" placeholder="Adres"></div>
+            <div class="inv-field"><label>ŞEHİR / İL</label><input id="ci-buyer-city" placeholder="Şehir"></div>
+            <div class="inv-field"><label>ÜLKE</label><input id="ci-buyer-country" placeholder="Ülke"></div>
+            <div class="inv-field"><label>TEL</label><input id="ci-buyer-tel" placeholder="Tel"></div>
+            <div class="inv-field full"><label>RESMİ UNVAN</label><input id="ci-buyer-official" placeholder="Resmi Unvan"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Kalemler</div>
+          <table class="inv-items-table" id="ci-items-table">
+            <thead>
+              <tr>
+                <th style="width:60px">MİKTAR</th>
+                <th>MAL CİNSİ / TYPE OF GOODS</th>
+                <th style="width:90px">BİRİM FİYAT</th>
+                <th style="width:90px">TOPLAM</th>
+                <th style="width:28px"></th>
+              </tr>
+            </thead>
+            <tbody id="ci-tbody"></tbody>
+          </table>
+          <button class="inv-add-row" onclick="ciAddRow()">＋ Kalem Ekle</button>
+          <div class="inv-totals">
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">ARA TOPLAM</span>
+              <span class="inv-totals-value" id="ci-subtotal">0.00</span>
+            </div>
+            <div class="inv-totals-row inv-totals-grand">
+              <span class="inv-totals-label">GENEL TOPLAM (EXW)</span>
+              <span class="inv-totals-value" id="ci-total">0.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-grid-3">
+            <div class="inv-field"><label>ÖDEME KOŞULLARI</label><input id="ci-payment" placeholder="EXW / FOB / CIF..."></div>
+            <div class="inv-field"><label>PARA BİRİMİ</label>
+              <select id="ci-currency">
+                <option value="USD">USD</option><option value="EUR">EUR</option><option value="TRY">TRY</option><option value="GBP">GBP</option>
+              </select>
+            </div>
+            <div class="inv-field"><label>NOT</label><input id="ci-note" placeholder="FREE UNDER WARRANTY vb."></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PACKING LIST ── -->
+      <div id="invTab-pl" style="display:none">
+        <div class="inv-section">
+          <div class="inv-grid">
+            <div class="inv-field"><label>TARİH / DATE</label><input type="date" id="pl-date"></div>
+            <div class="inv-field"><label>INVOICE NO (referans)</label><input id="pl-invno" placeholder="ORM2025000000000"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Satıcı / Seller</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="pl-seller-name" value="ORİMAK MAKİNA SAN.TİC.LTD.ŞTİ."></div>
+            <div class="inv-field full"><label>ADRES</label><input id="pl-seller-addr" value="MAHMUDİYE MAH. 19.MOBİLYA SK.NO:2E 16000 İNEGÖL/ BURSA"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Alıcı / Buyer</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="pl-buyer-name" placeholder="Firma Adı"></div>
+            <div class="inv-field full"><label>KAYIT / VAT KODU</label><input id="pl-buyer-reg" placeholder="REG CODE / VAT CODE"></div>
+            <div class="inv-field full"><label>ADRES</label><input id="pl-buyer-addr" placeholder="Adres"></div>
+            <div class="inv-field"><label>ŞEHİR / İL</label><input id="pl-buyer-city" placeholder="Şehir"></div>
+            <div class="inv-field"><label>ÜLKE</label><input id="pl-buyer-country" placeholder="Ülke"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Kalemler</div>
+          <table class="pk-items-table" id="pl-items-table">
+            <thead>
+              <tr>
+                <th style="width:70px">QUANTITY</th>
+                <th style="width:70px">UNIT</th>
+                <th style="width:70px">PACKS</th>
+                <th style="width:80px">PACK TYPE</th>
+                <th>TYPE OF GOODS</th>
+                <th style="width:80px">GROSS KG</th>
+                <th style="width:80px">NET KG</th>
+                <th style="width:28px"></th>
+              </tr>
+            </thead>
+            <tbody id="pl-tbody"></tbody>
+          </table>
+          <button class="inv-add-row" onclick="plAddRow()">＋ Kalem Ekle</button>
+          <div class="inv-totals">
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM PACKS</span>
+              <span class="inv-totals-value" id="pl-total-packs">0</span>
+            </div>
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM GROSS KG</span>
+              <span class="inv-totals-value" id="pl-total-gross">0.00</span>
+            </div>
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM NET KG</span>
+              <span class="inv-totals-value" id="pl-total-net">0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ÇEKİ LİSTESİ ── -->
+      <div id="invTab-cl" style="display:none">
+        <div class="inv-section">
+          <div class="inv-grid">
+            <div class="inv-field"><label>TARİH</label><input type="date" id="cl-date"></div>
+            <div class="inv-field"><label>INVOICE NO (referans)</label><input id="cl-invno" placeholder="ORM2025000000000"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Satıcı</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="cl-seller-name" value="ORİMAK MAKİNA SAN.TİC.LTD.ŞTİ."></div>
+            <div class="inv-field full"><label>ADRES</label><input id="cl-seller-addr" value="MAHMUDİYE MAH. 19.MOBİLYA SK.NO:2E 16000 İNEGÖL/ BURSA"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Alıcı</div>
+          <div class="inv-grid">
+            <div class="inv-field full"><label>UNVAN</label><input id="cl-buyer-name" placeholder="Firma Adı"></div>
+            <div class="inv-field full"><label>KAYIT / VAT KODU</label><input id="cl-buyer-reg" placeholder="REG KODU / VKN"></div>
+            <div class="inv-field full"><label>ADRES</label><input id="cl-buyer-addr" placeholder="Adres"></div>
+            <div class="inv-field"><label>ŞEHİR / İL</label><input id="cl-buyer-city" placeholder="Şehir"></div>
+            <div class="inv-field"><label>ÜLKE</label><input id="cl-buyer-country" placeholder="Ülke"></div>
+          </div>
+        </div>
+        <div class="inv-section">
+          <div class="inv-section-title">Kalemler</div>
+          <table class="pk-items-table" id="cl-items-table">
+            <thead>
+              <tr>
+                <th style="width:70px">MİKTAR</th>
+                <th style="width:70px">BİRİM</th>
+                <th style="width:70px">KAP ADEDİ</th>
+                <th style="width:80px">KAP TİPİ</th>
+                <th>MAL CİNSİ</th>
+                <th style="width:80px">BRÜT KG</th>
+                <th style="width:80px">NET KG</th>
+                <th style="width:28px"></th>
+              </tr>
+            </thead>
+            <tbody id="cl-tbody"></tbody>
+          </table>
+          <button class="inv-add-row" onclick="clAddRow()">＋ Kalem Ekle</button>
+          <div class="inv-totals">
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM KAP</span>
+              <span class="inv-totals-value" id="cl-total-packs">0</span>
+            </div>
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM BRÜT KG</span>
+              <span class="inv-totals-value" id="cl-total-gross">0.00</span>
+            </div>
+            <div class="inv-totals-row">
+              <span class="inv-totals-label">TOPLAM NET KG</span>
+              <span class="inv-totals-value" id="cl-total-net">0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end inv-body -->
+    <div class="inv-footer">
+      <button class="hbtn hbtn-dark" onclick="closeInvoiceModal()">✕ Kapat</button>
+      <button class="hbtn" style="background:linear-gradient(135deg,#1d3a5e,#16304f);color:#7ab8f5;border:1px solid #2a5a8e!important;" onclick="invSyncFields()">🔄 Alanları Senkronize Et</button>
+      <button class="hbtn" style="background:linear-gradient(135deg,#1d5c3a,#155230);color:#7fda9e;border:1px solid #2a6e4a!important;" onclick="invPDFIndir()">📥 PDF İndir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── open/close ── */
+window.openInvoiceModal = function(){
+  var m = document.getElementById('invoiceModal');
+  m.classList.add('open');
+  // set today as default date
+  var today = new Date().toISOString().slice(0,10);
+  ['ci-date','pl-date','cl-date'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el && !el.value) el.value = today;
+  });
+  if(!document.getElementById('ci-tbody').children.length) ciAddRow();
+  if(!document.getElementById('pl-tbody').children.length) plAddRow();
+  if(!document.getElementById('cl-tbody').children.length) clAddRow();
+};
+window.closeInvoiceModal = function(){
+  document.getElementById('invoiceModal').classList.remove('open');
+};
+window.invModalOutside = function(e){
+  if(e.target === document.getElementById('invoiceModal')) window.closeInvoiceModal();
+};
+
+/* ── tabs ── */
+window.switchInvTab = function(tab, btn){
+  ['ci','pl','cl'].forEach(function(t){
+    document.getElementById('invTab-'+t).style.display = t===tab ? '' : 'none';
+  });
+  document.querySelectorAll('.inv-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+};
+
+/* ── Commercial Invoice rows ── */
+window.ciAddRow = function(){
+  var tbody = document.getElementById('ci-tbody');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td><input type="number" min="0" step="any" class="ci-qty" oninput="ciCalc()" placeholder="1"></td>'+
+    '<td><input type="text" class="ci-desc" placeholder="Mal cinsi / açıklama"></td>'+
+    '<td><input type="number" min="0" step="any" class="ci-uprice" oninput="ciCalc()" placeholder="0.00"></td>'+
+    '<td class="td-total ci-line-total">0.00</td>'+
+    '<td class="td-del"><button class="del-btn" onclick="this.closest(\'tr\').remove();ciCalc()">✕</button></td>';
+  tbody.appendChild(tr);
+};
+window.ciCalc = function(){
+  var rows = document.querySelectorAll('#ci-tbody tr');
+  var sub = 0;
+  rows.forEach(function(tr){
+    var qty = parseFloat(tr.querySelector('.ci-qty').value)||0;
+    var up  = parseFloat(tr.querySelector('.ci-uprice').value)||0;
+    var line = qty * up;
+    tr.querySelector('.ci-line-total').textContent = line.toFixed(2);
+    sub += line;
+  });
+  document.getElementById('ci-subtotal').textContent = sub.toFixed(2);
+  document.getElementById('ci-total').textContent = sub.toFixed(2);
+};
+
+/* ── Packing List rows ── */
+window.plAddRow = function(){
+  var tbody = document.getElementById('pl-tbody');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td><input type="number" min="0" step="any" class="pl-qty" oninput="plCalc()" placeholder="1"></td>'+
+    '<td><input type="text" class="pl-unit" placeholder="ADET"></td>'+
+    '<td><input type="number" min="0" step="any" class="pl-packs" oninput="plCalc()" placeholder="1"></td>'+
+    '<td><input type="text" class="pl-packtype" placeholder="PACKS"></td>'+
+    '<td><input type="text" class="pl-desc" placeholder="Type of goods"></td>'+
+    '<td><input type="number" min="0" step="any" class="pl-gross" oninput="plCalc()" placeholder="0.00"></td>'+
+    '<td><input type="number" min="0" step="any" class="pl-net" oninput="plCalc()" placeholder="0.00"></td>'+
+    '<td class="td-del"><button class="del-btn" onclick="this.closest(\'tr\').remove();plCalc()">✕</button></td>';
+  tbody.appendChild(tr);
+};
+window.plCalc = function(){
+  var rows = document.querySelectorAll('#pl-tbody tr');
+  var tp=0, tg=0, tn=0;
+  rows.forEach(function(tr){
+    tp += parseFloat(tr.querySelector('.pl-packs').value)||0;
+    tg += parseFloat(tr.querySelector('.pl-gross').value)||0;
+    tn += parseFloat(tr.querySelector('.pl-net').value)||0;
+  });
+  document.getElementById('pl-total-packs').textContent = tp;
+  document.getElementById('pl-total-gross').textContent = tg.toFixed(2);
+  document.getElementById('pl-total-net').textContent = tn.toFixed(2);
+};
+
+/* ── Çeki Listesi rows ── */
+window.clAddRow = function(){
+  var tbody = document.getElementById('cl-tbody');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td><input type="number" min="0" step="any" class="cl-qty" oninput="clCalc()" placeholder="1"></td>'+
+    '<td><input type="text" class="cl-unit" placeholder="ADET"></td>'+
+    '<td><input type="number" min="0" step="any" class="cl-packs" oninput="clCalc()" placeholder="1"></td>'+
+    '<td><input type="text" class="cl-packtype" placeholder="KAP"></td>'+
+    '<td><input type="text" class="cl-desc" placeholder="Mal cinsi"></td>'+
+    '<td><input type="number" min="0" step="any" class="cl-gross" oninput="clCalc()" placeholder="0.00"></td>'+
+    '<td><input type="number" min="0" step="any" class="cl-net" oninput="clCalc()" placeholder="0.00"></td>'+
+    '<td class="td-del"><button class="del-btn" onclick="this.closest(\'tr\').remove();clCalc()">✕</button></td>';
+  tbody.appendChild(tr);
+};
+window.clCalc = function(){
+  var rows = document.querySelectorAll('#cl-tbody tr');
+  var tp=0, tg=0, tn=0;
+  rows.forEach(function(tr){
+    tp += parseFloat(tr.querySelector('.cl-packs').value)||0;
+    tg += parseFloat(tr.querySelector('.cl-gross').value)||0;
+    tn += parseFloat(tr.querySelector('.cl-net').value)||0;
+  });
+  document.getElementById('cl-total-packs').textContent = tp;
+  document.getElementById('cl-total-gross').textContent = tg.toFixed(2);
+  document.getElementById('cl-total-net').textContent = tn.toFixed(2);
+};
+
+/* ── Sync: CI buyer → PL & CL ── */
+window.invSyncFields = function(){
+  var map = {
+    'pl-invno'         : 'ci-invno',
+    'pl-date'          : 'ci-date',
+    'pl-seller-name'   : 'ci-seller-name',
+    'pl-seller-addr'   : 'ci-seller-addr',
+    'pl-buyer-name'    : 'ci-buyer-name',
+    'pl-buyer-reg'     : 'ci-buyer-reg',
+    'pl-buyer-addr'    : 'ci-buyer-addr',
+    'pl-buyer-city'    : 'ci-buyer-city',
+    'pl-buyer-country' : 'ci-buyer-country',
+    'cl-invno'         : 'ci-invno',
+    'cl-date'          : 'ci-date',
+    'cl-seller-name'   : 'ci-seller-name',
+    'cl-seller-addr'   : 'ci-seller-addr',
+    'cl-buyer-name'    : 'ci-buyer-name',
+    'cl-buyer-reg'     : 'ci-buyer-reg',
+    'cl-buyer-addr'    : 'ci-buyer-addr',
+    'cl-buyer-city'    : 'ci-buyer-city',
+    'cl-buyer-country' : 'ci-buyer-country'
+  };
+  Object.keys(map).forEach(function(dest){
+    var src = document.getElementById(map[dest]);
+    var d   = document.getElementById(dest);
+    if(src && d) d.value = src.value;
+  });
+  alert('✓ Tüm sekmelere aktarıldı!');
+};
+
+/* ── PDF İndir ── */
+window.invPDFIndir = function(){
+  var cur  = document.getElementById('ci-currency').value;
+  var date = document.getElementById('ci-date').value || new Date().toISOString().slice(0,10);
+  var invno= document.getElementById('ci-invno').value || 'INVOICE';
+
+  /* collect CI items */
+  var ciRows = Array.from(document.querySelectorAll('#ci-tbody tr')).map(function(tr){
+    return {
+      qty   : tr.querySelector('.ci-qty').value||'',
+      desc  : tr.querySelector('.ci-desc').value||'',
+      uprice: tr.querySelector('.ci-uprice').value||'',
+      total : tr.querySelector('.ci-line-total').textContent
+    };
+  });
+  /* collect PL items */
+  var plRows = Array.from(document.querySelectorAll('#pl-tbody tr')).map(function(tr){
+    return {
+      qty:tr.querySelector('.pl-qty').value||'',unit:tr.querySelector('.pl-unit').value||'',
+      packs:tr.querySelector('.pl-packs').value||'',packtype:tr.querySelector('.pl-packtype').value||'',
+      desc:tr.querySelector('.pl-desc').value||'',gross:tr.querySelector('.pl-gross').value||'',net:tr.querySelector('.pl-net').value||''
+    };
+  });
+  /* collect CL items */
+  var clRows = Array.from(document.querySelectorAll('#cl-tbody tr')).map(function(tr){
+    return {
+      qty:tr.querySelector('.cl-qty').value||'',unit:tr.querySelector('.cl-unit').value||'',
+      packs:tr.querySelector('.cl-packs').value||'',packtype:tr.querySelector('.cl-packtype').value||'',
+      desc:tr.querySelector('.cl-desc').value||'',gross:tr.querySelector('.cl-gross').value||'',net:tr.querySelector('.cl-net').value||''
+    };
+  });
+
+  function g(id){ var el=document.getElementById(id); return el?el.value:''; }
+  function sellerBlock(prefix){
+    return '<strong>'+g(prefix+'-seller-name')+'</strong><br>'+g(prefix+'-seller-addr')+'<br>Tel: '+g(prefix+'-seller-tel'||prefix+'-seller-addr');
+  }
+  function buyerBlock(prefix){
+    return '<strong>'+g(prefix+'-buyer-name')+'</strong><br>'+g(prefix+'-buyer-reg')+'<br>'+g(prefix+'-buyer-addr')+'<br>'+g(prefix+'-buyer-city')+' / '+g(prefix+'-buyer-country');
+  }
+
+  var ciSellerTel = g('ci-seller-tel');
+  var ciSellerWeb = g('ci-seller-web');
+  var ciSellerVkn = g('ci-seller-vkn');
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
+    '<title>'+invno+'</title>'+
+    '<style>'+
+    'body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:0;padding:0;}'+
+    '.page{width:210mm;min-height:297mm;padding:15mm 15mm 20mm;box-sizing:border-box;page-break-after:always;}'+
+    '.page:last-child{page-break-after:auto;}'+
+    'h1{font-size:15px;text-align:center;letter-spacing:3px;margin:10px 0 16px;text-transform:uppercase;border-bottom:2px solid #222;padding-bottom:6px;}'+
+    '.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}'+
+    '.info-box{border:1px solid #ccc;border-radius:4px;padding:8px 10px;line-height:1.6;}'+
+    '.info-box .lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:#888;text-transform:uppercase;margin-bottom:4px;}'+
+    'table{width:100%;border-collapse:collapse;margin-top:4px;}'+
+    'th{background:#222;color:#fff;font-size:10px;padding:5px 6px;text-align:left;letter-spacing:1px;}'+
+    'td{padding:4px 6px;border-bottom:1px solid #e0e0e0;font-size:11px;}'+
+    'tr:nth-child(even) td{background:#f9f9f9;}'+
+    '.total-row td{font-weight:700;border-top:2px solid #222;background:#f0f0f0!important;}'+
+    '.right{text-align:right;}'+
+    '.header-meta{display:flex;justify-content:space-between;margin-bottom:10px;font-size:11px;}'+
+    '@page{size:A4;margin:10mm;}'+
+    '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}'+
+    '</style></head><body>';
+
+  /* PAGE 1 — COMMERCIAL INVOICE */
+  html += '<div class="page">';
+  html += '<div class="header-meta"><span>📄 '+invno+'</span><span>'+date+'</span></div>';
+  html += '<h1>COMMERCIAL INVOICE</h1>';
+  html += '<div class="info-grid">';
+  html += '<div class="info-box"><div class="lbl">SELLER</div>'+
+    '<strong>'+g('ci-seller-name')+'</strong><br>'+g('ci-seller-addr')+'<br>'+
+    'Tel: '+ciSellerTel+'<br>'+ciSellerWeb+'<br>VKN: '+ciSellerVkn+
+    '<br>MERSİS: '+g('ci-seller-mersis')+'</div>';
+  html += '<div class="info-box"><div class="lbl">BUYER</div>'+
+    '<strong>'+g('ci-buyer-name')+'</strong><br>'+g('ci-buyer-reg')+'<br>'+
+    g('ci-buyer-addr')+'<br>'+g('ci-buyer-city')+' / '+g('ci-buyer-country')+
+    '<br>Tel: '+g('ci-buyer-tel')+'<br>Resmi: '+g('ci-buyer-official')+'</div>';
+  html += '</div>';
+  html += '<table><thead><tr><th>QUANTITY</th><th>TYPE OF GOODS</th><th class="right">UNIT PRICE ('+cur+')</th><th class="right">TOTAL ('+cur+')</th></tr></thead><tbody>';
+  ciRows.forEach(function(r){
+    html += '<tr><td>'+r.qty+'</td><td>'+r.desc+'</td><td class="right">'+r.uprice+'</td><td class="right">'+r.total+'</td></tr>';
+  });
+  html += '<tr class="total-row"><td colspan="2"><strong>TOTAL ........:</strong></td>';
+  html += '<td class="right"><strong>'+g('ci-payment')+'</strong></td>';
+  html += '<td class="right"><strong>'+document.getElementById('ci-total').textContent+' '+cur+'</strong></td></tr>';
+  if(g('ci-note')) html += '<tr><td colspan="4" style="color:#888;font-style:italic;">'+g('ci-note')+'</td></tr>';
+  html += '</tbody></table></div>';
+
+  /* PAGE 2 — PACKING LIST */
+  html += '<div class="page">';
+  html += '<div class="header-meta"><span>📦 '+g('pl-invno')+'</span><span>'+g('pl-date')+'</span></div>';
+  html += '<h1>PACKING LIST</h1>';
+  html += '<div class="info-grid">';
+  html += '<div class="info-box"><div class="lbl">SELLER</div><strong>'+g('pl-seller-name')+'</strong><br>'+g('pl-seller-addr')+'</div>';
+  html += '<div class="info-box"><div class="lbl">BUYER</div><strong>'+g('pl-buyer-name')+'</strong><br>'+g('pl-buyer-reg')+'<br>'+g('pl-buyer-addr')+'<br>'+g('pl-buyer-city')+' / '+g('pl-buyer-country')+'</div>';
+  html += '</div>';
+  html += '<table><thead><tr><th>QUANTITY</th><th>UNIT</th><th>QTY OF PACKS</th><th>PACK TYPE</th><th>TYPE OF GOODS</th><th class="right">GROSS KG</th><th class="right">NET KG</th></tr></thead><tbody>';
+  plRows.forEach(function(r){
+    html += '<tr><td>'+r.qty+'</td><td>'+r.unit+'</td><td>'+r.packs+'</td><td>'+r.packtype+'</td><td>'+r.desc+'</td><td class="right">'+r.gross+'</td><td class="right">'+r.net+'</td></tr>';
+  });
+  html += '<tr class="total-row"><td colspan="2"><strong>TOTAL ........:</strong></td>'+
+    '<td><strong>'+document.getElementById('pl-total-packs').textContent+' PACKS</strong></td>'+
+    '<td></td><td></td>'+
+    '<td class="right"><strong>'+document.getElementById('pl-total-gross').textContent+' KG</strong></td>'+
+    '<td class="right"><strong>'+document.getElementById('pl-total-net').textContent+' KG</strong></td></tr>';
+  html += '</tbody></table></div>';
+
+  /* PAGE 3 — ÇEKİ LİSTESİ */
+  html += '<div class="page">';
+  html += '<div class="header-meta"><span>📋 '+g('cl-invno')+'</span><span>'+g('cl-date')+'</span></div>';
+  html += '<h1>ÇEKİ LİSTESİ</h1>';
+  html += '<div class="info-grid">';
+  html += '<div class="info-box"><div class="lbl">SATICI</div><strong>'+g('cl-seller-name')+'</strong><br>'+g('cl-seller-addr')+'</div>';
+  html += '<div class="info-box"><div class="lbl">ALICI</div><strong>'+g('cl-buyer-name')+'</strong><br>'+g('cl-buyer-reg')+'<br>'+g('cl-buyer-addr')+'<br>'+g('cl-buyer-city')+' / '+g('cl-buyer-country')+'</div>';
+  html += '</div>';
+  html += '<table><thead><tr><th>MİKTAR</th><th>BİRİM</th><th>KAP ADEDİ</th><th>KAP TİPİ</th><th>MAL CİNSİ</th><th class="right">BRÜT KG</th><th class="right">NET KG</th></tr></thead><tbody>';
+  clRows.forEach(function(r){
+    html += '<tr><td>'+r.qty+'</td><td>'+r.unit+'</td><td>'+r.packs+'</td><td>'+r.packtype+'</td><td>'+r.desc+'</td><td class="right">'+r.gross+'</td><td class="right">'+r.net+'</td></tr>';
+  });
+  html += '<tr class="total-row"><td colspan="2"><strong>TOPLAM ........:</strong></td>'+
+    '<td><strong>'+document.getElementById('cl-total-packs').textContent+' KAP</strong></td>'+
+    '<td></td><td></td>'+
+    '<td class="right"><strong>'+document.getElementById('cl-total-gross').textContent+' KG</strong></td>'+
+    '<td class="right"><strong>'+document.getElementById('cl-total-net').textContent+' KG</strong></td></tr>';
+  html += '</tbody></table></div>';
+
+  html += '</body></html>';
+
+  var w = window.open('','_blank','width=900,height=700');
+  if(w){
+    w.document.write(html);
+    w.document.close();
+    setTimeout(function(){ w.focus(); w.print(); }, 600);
+  }
+};
 
 })();
 </script>
